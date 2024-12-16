@@ -173,6 +173,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ng-apexcharts
 MIT
 
+ng-otp-input
+MIT
+
 ngx-scrollbar
 MIT
 
