@@ -28,9 +28,6 @@
   </button>
 
   <span class="flex-1-auto"></span>
-
-  <a href="https://www.wrappixel.com/templates/materialm-free-angular-18-material-template/" target="_blank" mat-flat-button color="primary">Download Free</a>
-
   <!-- --------------------------------------------------------------- -->
   <!-- profile Dropdown -->
   <!-- --------------------------------------------------------------- -->
@@ -49,7 +46,7 @@
     />
   </button>
   <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
-    <button mat-menu-item>
+    <button mat-menu-item [routerLink]="'/user-managemnt/user-profile'">
       <mat-icon class="d-flex align-items-center"
         ><i
           data-icon="solar:shield-user-line-duotone"

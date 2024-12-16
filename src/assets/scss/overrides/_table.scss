@@ -6,7 +6,7 @@
 .mdc-data-table__cell,
 .mdc-data-table__header-cell,
 .mat-mdc-cell {
-  border-bottom-color: $bordertableColor !important;
+  border-bottom-color: rgba(0, 0, 0, 0.121) !important;
 }
 
 .table-responsive {
@@ -16,6 +16,10 @@
   mat-cell {
     white-space: nowrap;
     padding: 16px 24px;
+    padding-left: 0 !important;
+  }
+  mat-header-cell{
+    padding-left: 0.8rem !important;
   }
 }
 

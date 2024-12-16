@@ -1,0 +1,103 @@
+<div class="row">
+    <div class="col">
+        <mat-card class="mat-mdc-card mdc-card cardWithShadow">
+            <mat-card-content
+                class="mat-mdc-card-content p-y-24">
+                <mat-card-title class="mat-mdc-card-title">
+                    Change Profile
+                </mat-card-title>
+                <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
+                    Change your profile picture from here
+                </mat-card-subtitle>
+                <div class="text-center m-t-24" >
+                    <img src="/assets/images/profile/user-1.jpg"
+                        width="120" class="rounded-circle">
+                    <div class="m-t-24" >
+                        <button mat-flat-button="" color="primary"
+                            class="m-r-8 mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-primary mat-mdc-button-base"
+                             fdprocessedid="5dtmkq"><span
+                                class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
+                                class="mdc-button__label"> Upload </span><span
+                                class="mat-mdc-focus-indicator"></span><span
+                                class="mat-mdc-button-touch-target"></span><span
+                                class="mat-ripple mat-mdc-button-ripple"></span>
+                        </button>
+                        <button mat-stroked-button=""
+                            color="warn" 
+                            class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-warn mat-mdc-button-base"
+                            fdprocessedid="jbgdf">
+                            <span
+                                class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
+                                class="mdc-button__label">Reset</span>
+                            <span class="mat-mdc-focus-indicator"></span>
+                            <span
+                                class="mat-mdc-button-touch-target"></span>
+                            <span
+                                class="mat-ripple mat-mdc-button-ripple"></span>
+                        </button>
+                    </div>
+                    <span
+                        class="f-s-14 m-t-24 d-block">Allowed JPG, GIF or PNG. Max size of 800K</span>
+                </div>
+            </mat-card-content></mat-card>
+    </div>
+
+    <div class="col">
+        <mat-card class="mat-mdc-card mdc-card cardWithShadow">
+            <mat-card-content
+                class="mat-mdc-card-content p-y-24">
+                <mat-card-title class="mat-mdc-card-title">
+                    Change Password
+                </mat-card-title>
+                <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
+                    To change your password please confirm here
+                </mat-card-subtitle>
+                
+            </mat-card-content></mat-card>
+    </div>
+</div>
+<div class="row">
+    <mat-card class="cardWithShadow theme-card">
+        <mat-card-header>
+            <mat-card-title class="m-b-0">Add New User</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="b-t-1">
+            <form>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <!-- input -->
+                        <mat-label class="f-w-600 m-b-8 d-block">Name</mat-label>
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput placeholder="Name " />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6">
+                        <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-select [(value)]="selectedRole">
+                                @for(option of role; track option.value) {
+                                <mat-option [value]="option.value">{{
+                                    option.viewValue
+                                    }}</mat-option>
+                                }
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6">
+                        <!-- input -->
+                        <mat-label class="f-w-600 m-b-8 d-block">Email</mat-label>
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput type="email" placeholder="Email" />
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="m-t-12">
+                    <button mat-flat-button color="primary" class="m-r-8">Submit</button>
+                    <button mat-stroked-button color="warn">Cancel</button>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
+
+</div>

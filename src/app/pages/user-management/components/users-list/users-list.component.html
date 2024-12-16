@@ -1,0 +1,64 @@
+<h2 mat-dialog-title>Group Members</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-left m-b-6 m-t-6">
+            <mat-form-field style="margin-top: -0.06rem !important;" appearance="outline" class="w-100 m-b-0" color="primary">
+              <input matInput  placeholder="Search">
+              <button matSuffix mat-icon-button>
+                <mat-icon>search</mat-icon>
+              </button>
+            </mat-form-field>
+        </div>
+     </div>
+</div>
+<mat-dialog-content class="mat-typography">
+    <div class="container">
+                    <div class="row">
+                        <mat-list>
+                            @for(userItem of tableData; track userItem.user_id) {
+                            <mat-list-item>
+                                <div class="row justify-content-between m-l-4 m-r-4">
+                                    <div class="col d-flex align-items-center">
+                                        <button mat-fab extended color="inherit" aria-label="Notifications"
+                                            class="d-flex justify-content-center profile-btn-dd">
+                                            <img [src]="userItem.profile_image" class="rounded-circle object-cover icon-35 profile-dd" width="35" />
+                                        </button>
+                                        <div class="m-l-16">
+                                            <h6 class="mat-subtitle-1 f-s-14 f-w-600"> {{userItem.name}} </h6>
+                                            <span class="mat-body-1 f-s-12"> {{userItem.email}} </span>
+                                        </div>
+                                    </div>
+                                    <div class="col d-flex align-items-center">
+                                        @if(userItem.role == 'ADMIN') {
+                                            <span
+                                            class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2"
+                                          >
+                                            {{ userItem.role | titlecase }}
+                                          </span>
+                                        }
+
+                                        @if(userItem.role == 'USER') {
+                                            <span
+                                            class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2"
+                                          >
+                                            {{ userItem.role | titlecase }}
+                                          </span>
+                                          }
+                                    </div>
+            
+                                </div>
+        
+                            </mat-list-item>
+                        }
+                            
+                          </mat-list>
+                    </div>
+                      
+                     
+                  
+ 
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button [mat-dialog-close]="true" cdkFocusInitial>Close</button>
+</mat-dialog-actions>
