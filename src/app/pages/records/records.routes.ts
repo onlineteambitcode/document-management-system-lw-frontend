@@ -9,6 +9,7 @@ export const RecordsRoutes: Routes = [
       {
         path: 'activity',
         component: ActivityComponent,
+        data: { title: 'Monitor User Activities' }
       }
     ],
   },

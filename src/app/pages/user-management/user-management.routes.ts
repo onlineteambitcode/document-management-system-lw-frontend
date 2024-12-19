@@ -12,18 +12,22 @@ export const UserManagemntRoutes: Routes = [
       {
         path: 'user-groups',
         component: UserGroupsComponent,
+        data: { title: 'Available User Groups' }
       },
       {
         path: 'single-group-users',
         component: SingleGroupUsersTablePaginationComponent,
+        data: { title: 'User Group Detail' }
       },
       {
         path: 'users',
         component: UsersComponent,
+        data: { title: 'Available Users' }
       },
       {
         path: 'user-profile',
         component: UserProfileComponent,
+        data: { title: 'User Profile' }
       }
 
     ],

@@ -1,72 +1,73 @@
 <div class="container">
-    <div class="row">
+
+    <p><mat-slide-toggle  (change)="onToggleChange()" [(ngModel)]="isAdmin">{{ isAdmin ? 'Admin View': 'User View'}}</mat-slide-toggle></p>
+
+    <div *ngIf="!isUpload" class="row">
         <div class="col">
             <mat-card class="b-1 shadow-none">
-
-                  <mat-card-content>
-                <div class="row">
-                    <div class="col">
-                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Name</mat-label>
-                        <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                            <input matInput [(ngModel)]="caseName" (keyup)="applyFilter($event)" placeholder="">
-                          </mat-form-field>
-                    </div>
-
-                    <div class="col">
-                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Description</mat-label>
-                        <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                            <textarea matInput [(ngModel)]="caseDescription"></textarea>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                 <div class="col">
-                   <mat-form-field class="example-chip-list w-100">
-                    <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Allowed users or groups</mat-label>
-                    <mat-chip-grid #chipGrid aria-label="User or Group selection">
-                      @for (userOrGroup of usersOrGroups(); track userOrGroup.id) {
-                        <mat-chip-row (removed)="remove(userOrGroup)">
-                          {{userOrGroup.name}}
-                          <button matChipRemove [attr.aria-label]="'remove ' + userOrGroup.name">
-                            <mat-icon>cancel</mat-icon>
-                          </button>
-                        </mat-chip-row>
-                      }
-                    </mat-chip-grid>
-                    <input
-                      name="currentUserOrGroup.name"
-                      placeholder="New User or Group..."
-                      #fruitInput
-                      [(ngModel)]="currentUserOrGroup"
-                      [matChipInputFor]="chipGrid"
-                      [matAutocomplete]="auto"
-                      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                      (matChipInputTokenEnd)="add($event)"
-                      (keydown.backspace)="handleBackspace()"
-                    />
-                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
-                      @for (filteredUserOrGroup of filteredUsersOrGroups(); track filteredUserOrGroup.id) {
-                        <mat-option [value]="filteredUserOrGroup">
-                          <app-user-thumbnail  
-                          [item]="filteredUserOrGroup.isGroup ? filteredUserOrGroup : filteredUserOrGroup.user"
-                          [isGroup]="filteredUserOrGroup.isGroup"
             
-                           ></app-user-thumbnail>
-                      </mat-option>
-                      }
-                    </mat-autocomplete>
-                  </mat-form-field>
-                 </div>
-                </div>
-                    </mat-card-content>
+              <mat-card-content>
+                <form>
+                  <div class="row">
+                    <div class="col">
+                      <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-2 d-block">
+                        <i-tabler *ngIf="!isAdmin" style="color: black; vertical-align: middle; margin-bottom: 3px;" name="lock" class="icon-22">
+                        </i-tabler>
+                        Case ID 
+                      </mat-label>
+                      <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+                        <input matInput [disabled]="!isAdmin" placeholder="" value="CASE_NOV_102">
+                      </mat-form-field>
+                    </div>
+              
+                    <div class="col">
+                      <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-2 d-block">
+                        <i-tabler *ngIf="!isAdmin" style="color: black; vertical-align: middle; margin-bottom: 3px;" name="lock" class="icon-22">
+                        </i-tabler>
+                        Description</mat-label>
+                      <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+                        <textarea [disabled]="!isAdmin" matInput value="Test Description about case" ></textarea>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                
+                  <mat-card-actions *ngIf="isAdmin" align="end">
+                    <button mat-flat-button color="primary" class="m-r-8">Save This</button>
+                    <button routerLink="/document-managemnt/document-upload" mat-stroked-button color="warn">Cancel</button>
+                  </mat-card-actions>
+                  
+                </form>
+              </mat-card-content>
             </mat-card>
         </div>
     </div>
-   <div class="row">
-    <div class="col-md-6">
-        <mat-card class="b-1 shadow-none">
+
+    <div *ngIf="isUpload && isAdmin" class="row justify-content-start">
+      <button mat-button (click)="backToCase()" >
+        <mat-icon style="    font-size: 1.4rem;">arrow_back</mat-icon>
+                            </button>
+      <app-file-upload-ui></app-file-upload-ui>
+    </div>
+   <div *ngIf="!isUpload" class="row">
+    <div class="col-md-7">
+        <mat-card class="document-card b-1 shadow-none">
             <mat-card-header>
-                <mat-card-title  class="m-t-8 m-b-0">Documents ({{tableData.length}})</mat-card-title>
+              <div class="row justify-content-between">
+                <div class="col p-t-4">
+                  <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
+                    Documents ({{tableData.length}})
+                  </mat-label>
+                
+                </div>
+                <div class="col" *ngIf="isAdmin">
+                  <button mat-stroked-button (click)="openFileUploadDialog()">
+                    <mat-icon aria-hidden="false">upload_file</mat-icon>
+                    Upload Files
+                  </button>
+                
+                </div>
+              </div>
+                
               </mat-card-header>
         <mat-card-content  >
             
@@ -80,17 +81,17 @@
               <div class="justify-content-between">
                 <div class="row">
                   <div class="col align-items-start">
-                    <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
+                    <!-- <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
                     </mat-checkbox>
-                    {{checkboxLabel()}}
+                    {{checkboxLabel()}} -->
                   </div>
                   <div class="col align-items-start d-flex align-items-center gap-2">    
-                    <span class="cursor-pointer">
+                    <!-- <span class="cursor-pointer">
                       <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
                       </i-tabler>
                       <mat-label class="p-5 align-middle">Delete Selected</mat-label>
-                    </span>
+                    </span> -->
                   </div>
                 </div>
               </div>
@@ -98,18 +99,18 @@
                 
                 <ng-container matColumnDef="select">
                   <th mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                    <!-- <mat-checkbox (change)="$event ? toggleAllRows() : null"
                                   [checked]="selection.hasValue() && isAllSelected()"
                                   [indeterminate]="selection.hasValue() && !isAllSelected()"
                                   [aria-label]="checkboxLabel()">
-                    </mat-checkbox>
+                    </mat-checkbox> -->
                   </th>
                   <td mat-cell *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()"
+                    <!-- <mat-checkbox (click)="$event.stopPropagation()"
                                   (change)="$event ? selection.toggle(row) : null"
                                   [checked]="selection.isSelected(row)"
                                   [aria-label]="checkboxLabel(row)">
-                    </mat-checkbox>
+                    </mat-checkbox> -->
                   </td>
                 </ng-container>
 
@@ -126,7 +127,7 @@
                             <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
                           </div>
                       
-                          <a class="cursor-pointer">
+                          <a class="cursor-pointer" *ngIf="isAdmin">
                             <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
                           </a>
                         </div>
@@ -140,13 +141,17 @@
                   
                   <td mat-cell *matCellDef="let element" class="mat-body-1">
                     <div class="d-flex justify-content-center gap-4">
-                        <a class="cursor-pointer" >
+                      <a class="cursor-pointer" *ngIf="isAdmin" >
                       <i-tabler name="edit" class="icon-22">
                     </i-tabler>
                     </a>
-                    <a class="cursor-pointer" >
+                    <a class="cursor-pointer" *ngIf="isAdmin" >
                         <i-tabler style="color: red;" name="trash" class="icon-22">
                       </i-tabler>
+                      </a>
+
+                      <a class="cursor-pointer" *ngIf="!isAdmin">
+                        <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
                       </a>
                     </div>
                   </td>
@@ -163,10 +168,10 @@
         </mat-card>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-5">
         <mat-card class="b-1 shadow-none">
             <mat-card-header>
-                <mat-card-title  class="m-t-8 m-b-0">Allowed Members</mat-card-title>
+                <mat-card-title  class="m-t-8 m-b-0">Allowed Members ({{userTableData.length}})</mat-card-title>
               </mat-card-header>
             <mat-card-content>
                  
@@ -180,14 +185,7 @@
                     @for(userItem of userTableData; track userItem.user_id) {
                     <mat-list-item>
                         <div class="row justify-content-between m-l-4 m-r-4">
-                          <app-user-thumbnail  [item]="userItem"></app-user-thumbnail>
-                            <div class="col d-flex align-items-center">
-                                <a class="cursor-pointer m-t-4">
-                                    <i-tabler style="color: rgb(10, 17, 219);fill: rgb(10, 17, 219);" name="user-plus" class="icon-22">
-                                  </i-tabler>
-                                  </a>
-                            </div>
-    
+                          <app-user-thumbnail  [item]="userItem"></app-user-thumbnail>    
                         </div>
 
                     </mat-list-item>

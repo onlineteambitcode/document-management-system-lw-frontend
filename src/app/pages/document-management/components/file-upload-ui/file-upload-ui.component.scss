@@ -1,0 +1,202 @@
+/* Full-width container for drag-and-drop */
+.container {
+    width: 50vw; /* Full width of the viewport */
+    max-width: 100%; /* Prevent restrictions on width */
+    padding: 0; /* Remove any padding */
+    margin: 0; /* Remove any margin */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+/* Title */
+h1.mat-dialog-title {
+    font-size: 24px;
+    color: #2196f3;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Description */
+.description {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #424242;
+}
+/* Drag-and-drop area */
+
+.upload-area-desabled {
+    border: 2px dashed #4e5052 !important;
+    background-color: #ebf2f7 !important;
+}
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px; /* Increase padding for more spacing */
+    background-color: #f1f8ff;
+    border-radius: 8px;
+    border: 2px dashed #2196f3;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    text-align: center;
+    min-height: 300px; /* Increase the minimum height */
+    width: 100%; /* Stretch to the container width */
+    box-sizing: border-box; /* Include padding/border in width */
+
+    &:hover {
+        border-color: #1976d2;
+    }
+
+    mat-icon {
+        font-size: 60px; /* Icon size */
+        color: #1976d2;
+        margin-bottom: 10px;
+    }
+
+    span {
+        font-size: 20px;
+        color: #424242;
+    }
+}
+
+/* Remove restrictions from parent elements */
+.row,
+.col {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* File List */
+.file-list {
+    flex-direction: column;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    max-height: 300px;
+    width: 100%;
+    .mdc-list-item__primary-text{
+        font-size: small;
+    }
+    .mdc-list-item__secondary-text{
+        font-size: smaller;
+    }
+}
+.files-list-section{
+    display: ruby;
+}
+
+
+/* Upload Button */
+button[mat-raised-button] {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #2196f3;
+    color: #ffffff;
+    border-radius: 8px;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    border: none;
+    &:hover {
+      background-color: #1976d2;
+    }
+}
+
+/* Upload Disabled Button */
+button[mat-stroked-button] {
+    padding: 12px 24px;
+    font-size: 16px;
+    background-color: #2092ec54 !important;
+    border-radius: 8px;
+    margin-top: 20px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+/* Responsive Design */
+
+/* For small screens (mobile) */
+@media (max-width: 600px) {
+    mat-dialog-content {
+        padding: 10px;  /* Reduce padding for smaller screens */
+        min-width: 100%;
+    }
+
+    .upload-area {
+        padding: 20px;  /* Reduce padding to fit screen */
+        min-height: 250px;  /* Adjust height */
+        span {
+            font-size: 10px;  /* Increase font size for the text */
+            color: #424242;
+          }
+    }
+
+    .file-list {
+        max-height: 250px;  /* Allow for more space on smaller screens */
+    }
+    .file-list-item {
+        font-size: 12px; /* Reduce font size for compactness */
+        padding: 8px;
+    }
+    .file-card {
+        padding: 12px;  /* Adjust padding for smaller cards */
+        flex-direction: column;  /* Stack elements vertically */
+        align-items: flex-start;  /* Align items to the start */
+    }
+
+    .file-list-item mat-icon {
+        font-size: 18px; /* Adjust icon size */
+    }
+    .file-list-item .close-icon {
+        font-size: 16px; /* Smaller close icon */
+    }
+
+    span {
+        font-size: 16px;  /* Reduce text size */
+    }
+
+    button[mat-raised-button] {
+        padding: 10px 20px;  /* Adjust button padding */
+        font-size: 14px;  /* Adjust font size for button */
+    }
+}
+
+/* For larger screens (tablet and desktop) */
+@media (min-width: 601px) {
+    .upload-area {
+        padding: 40px; /* Default padding for larger screens */
+        min-height: 280px; /* Maintain a consistent height */
+    }
+}
+
+/* For large screens (tablet and desktop) */
+@media (min-width: 769px) { 
+     mat-dialog-content {
+    padding: 20px;
+    min-width: 500px;
+    min-height: 360px;
+}
+
+.upload-area {
+    padding: 40px;  /* Default padding for larger screens */
+    min-height: 180px;
+}
+
+.file-card {
+    padding: 15px;
+}
+
+button[mat-raised-button] {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+    .upload-icon{
+        font-size: 100px !important;
+    display: contents !important;
+    }
+}

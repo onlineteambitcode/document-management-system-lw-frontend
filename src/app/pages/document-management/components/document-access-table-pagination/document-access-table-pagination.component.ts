@@ -1,7 +1,7 @@
 import { DialogModule } from '@angular/cdk/dialog';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import { AfterViewInit, Component, computed, inject, Input, model, OnInit, signal, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
-import { CaseDocumentData } from 'src/app/common/interfaces/case.interface';
+import { CaseData, CaseDocumentData } from 'src/app/common/interfaces/case.interface';
 import { UserData, UserOrGroup } from 'src/app/common/interfaces/user.interface';
 import { MaterialModule } from 'src/app/material.module';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -25,14 +25,15 @@ import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/ma
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { UserThumbnailComponent } from 'src/app/components/user-thumbnail/user-thumbnail.component';
+import { MatInputModule } from '@angular/material/input';
 import { FileUploadUiComponent } from '../file-upload-ui/file-upload-ui.component';
-import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/delete-confirm.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { map, Observable, startWith } from 'rxjs';
 
 @Component({
-  selector: 'app-single-case-table-pagination',
+  selector: 'app-document-access-table-pagination',
   standalone: true,
-  imports: [MatTableModule,
+    imports: [MatTableModule,
     CommonModule,
     FormsModule,
     MatCardModule,
@@ -49,15 +50,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatChipsModule,
     MatAutocompleteModule,
     UserThumbnailComponent,
-  FileUploadUiComponent,
   MatSlideToggleModule,
-  MatFormFieldModule],
-  templateUrl: './single-case-table-pagination.component.html',
-  styleUrl: './single-case-table-pagination.component.scss'
+MatInputModule,
+FileUploadUiComponent,
+  MatSelectModule,
+  ReactiveFormsModule,
+  AsyncPipe],
+  templateUrl: './document-access-table-pagination.component.html',
+  styleUrl: './document-access-table-pagination.component.scss'
 })
-export class SingleCaseTablePaginationComponent {
+export class DocumentAccessTablePaginationComponent {
+  myControl = new FormControl<string | CaseData>('');
+  filteredOptions: Observable<CaseData[]>;
+
   isAdmin: boolean = true;
   tableData: CaseDocumentData[] = [];
+  selectData: CaseData[] = [];
   userTableData: UserData[] = [];
   displayedColumns: string[]  = ['select','name', 'action'];
   selection = new SelectionModel<CaseDocumentData>(true, []);
@@ -132,6 +140,54 @@ export class SingleCaseTablePaginationComponent {
     this.dataSource.paginator = this.paginator;
   }
   ngOnInit(): void {
+    this.selectData = [
+      {
+        case_id: 'CASE_2012_SPE_15',
+        name: '',
+        allowed_users: 10,
+        documents: 17,
+        created_date: '2024-10-27',
+        last_updated_date: '2024-12-15',
+        description: 'Test description'
+      },
+      {
+        case_id: 'CASE_2019_FEB_11_ADMIN_GROUP',
+        name: '',
+        allowed_users: 10,
+        documents: 20,
+        created_date: '2024-10-27',
+        last_updated_date: '2024-12-15',
+        description: 'Test description'
+      },
+      {
+        case_id: 'CASE_2022_MAR_18',
+        name: '',
+        allowed_users: 10,
+        documents: 30,
+        created_date: '2024-10-27',
+        last_updated_date: '2024-12-15',
+        description: 'Test description'
+      },
+      {
+        case_id: 'CASE_2024_JAN_2',
+        name: '',
+        allowed_users: 30,
+        documents: 28,
+        created_date: '2024-10-27',
+        last_updated_date: '2024-12-15',
+        description: 'Test description'
+      },
+      {
+        case_id: 'CASE_2024_NOV_2',
+        name: '',
+        allowed_users: 10,
+        documents: 11,
+        created_date: '2024-10-27',
+        last_updated_date: '2024-12-15',
+        description: 'Test description'
+      }
+    ];
+
       this.tableData = [
         {
           document_id: 'DOC_CASE_2012_SPE_15_1',
@@ -168,48 +224,7 @@ export class SingleCaseTablePaginationComponent {
         {
           document_id: 'DOC_CASE_2012_SPE_15_5',
           name: 'Case 2012 Sep.pdf',
-          file_size: 2.8,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-
-        {
-          document_id: 'DOC_CASE_2014_MAY_15_6',
-          name: 'Case 2014 May.pdf',
-          file_size: 6.7,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2017_MAR_11_1',
-          name: 'Case 2017 March.pdf',
-          file_size: 8.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2011_JAN_11_4',
-          name: 'Case 2011 Jan.pdf',
-          file_size: 1.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2009_FEB_15_4',
-          name: 'Case 2009 Feb.pdf',
-          file_size: 2.5,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2004_DEC_01_2',
-          name: 'Case 2004 Dec.pdf',
-          file_size: 5.3,
+          file_size: 1.3,
           created_date: '2024-10-27',
           last_updated_date: '2024-12-15',
           description: 'Test description'
@@ -291,6 +306,16 @@ export class SingleCaseTablePaginationComponent {
         },
       ];
     this.dataSource = new MatTableDataSource<CaseDocumentData>(this.tableData);
+  
+    this.filteredOptions = this.myControl.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const name = typeof value === 'string' ? value : value?.name;
+        return name ? this._filter(name as string) : this.selectData.slice();
+      }),
+    );
+  
+  
   }
   onToggleChange(){
     
@@ -415,4 +440,13 @@ selected(event: MatAutocompleteSelectedEvent): void {
     this.isUpload = true;
   }
 
+  private _filter(name: string): CaseData[] {
+    const filterValue = name.toLowerCase();
+
+    return this.selectData.filter(option => option.case_id.toLowerCase().includes(filterValue));
+  }
+
+  displayFn(user: CaseData): string {
+    return user && user.case_id ? user.case_id : '';
+  }
 }

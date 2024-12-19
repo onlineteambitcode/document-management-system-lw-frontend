@@ -10,6 +10,20 @@ export const navItems: NavItem[] = [
     route: '/dashboard',
   },
   {
+    navCap: 'Document Management',
+    divider: true
+  },
+  {
+    displayName: 'My Cases',
+    iconName: 'solar:archive-minimalistic-line-duotone',
+    route: '/document-managemnt/document-upload',
+  },
+  {
+    displayName: 'Document Access',
+    iconName: 'solar:archive-minimalistic-line-duotone',
+    route: '/document-managemnt/document-access',
+  },
+  {
     navCap: 'User Management',
     divider: true
   },
@@ -22,20 +36,6 @@ export const navItems: NavItem[] = [
     displayName: 'Users',
     iconName: 'solar:archive-minimalistic-line-duotone',
     route: '/user-managemnt/users',
-  },
-  {
-    navCap: 'Document Management',
-    divider: true
-  },
-  {
-    displayName: 'Document upload',
-    iconName: 'solar:archive-minimalistic-line-duotone',
-    route: '/document-managemnt/document-upload',
-  },
-  {
-    displayName: 'Document Access',
-    iconName: 'solar:archive-minimalistic-line-duotone',
-    route: '/document-managemnt/document-access',
   },
   {
     navCap: 'Records',

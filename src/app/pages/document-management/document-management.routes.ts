@@ -10,14 +10,17 @@ export const DocumentManagemntRoutes: Routes = [
       {
         path: 'document-upload',
         component: DocumentUploadComponent,
+        data: { title: 'Available Cases' }
       },
       {
         path: 'document-access',
         component: DocumentAccessComponent,
+        data: { title: 'Manage Document Access' }
       },
       {
         path: 'single-case',
-        component: SingleCaseDetailsComponent
+        component: SingleCaseDetailsComponent,
+        data: { title: 'Case Detail' }
       }
     ],
   },

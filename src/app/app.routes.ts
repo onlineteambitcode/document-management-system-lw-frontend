@@ -18,17 +18,17 @@ export const routes: Routes = [
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
       {
-        path: 'user-managemnt',
-        loadChildren: () =>
-          import('./pages/user-management/user-management.routes').then(
-            (m) => m.UserManagemntRoutes
-          ),
-      },
-      {
         path: 'document-managemnt',
         loadChildren: () =>
           import('./pages/document-management/document-management.routes').then(
             (m) => m.DocumentManagemntRoutes
+          ),
+      },
+      {
+        path: 'user-managemnt',
+        loadChildren: () =>
+          import('./pages/user-management/user-management.routes').then(
+            (m) => m.UserManagemntRoutes
           ),
       },
       {

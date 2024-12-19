@@ -1,0 +1,172 @@
+<mat-card class="b-1 shadow-none">
+                
+    <mat-card-content>
+      <form>
+        <div class="row">
+          <div class="col-md-6">
+              <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Select Case ID</mat-label>
+             <mat-form-field appearance="outline" class="w-100 m-b-0 m-t-2" color="primary">
+              <input matInput [formControl]="myControl" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                @for (option of filteredOptions | async; track option) {
+                  <mat-option [value]="option">{{option.case_id}}</mat-option>
+                }
+              </mat-autocomplete>
+             </mat-form-field>
+          </div>
+          <div class="col-md-6">
+              <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Allow users or groups</mat-label>
+
+              <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+                  <mat-chip-grid #chipGrid aria-label="User or Group selection">
+                    @for (userOrGroup of usersOrGroups(); track userOrGroup.id) {
+                    <mat-chip-row (removed)="remove(userOrGroup)">
+
+                      <i-tabler *ngIf="userOrGroup.isGroup" style="color: rgb(10, 17, 219);fill: rgb(10, 17, 219);" name="users-group" class="icon-15">
+                      </i-tabler>
+                      <i-tabler *ngIf="!userOrGroup.isGroup" name="user" class="icon-15">
+                      </i-tabler>
+                      <span class="f-s-12">{{userOrGroup.name}}</span>
+                      <button matChipRemove [attr.aria-label]="'remove ' + userOrGroup.name">
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                    }
+                  </mat-chip-grid>
+                  <input name="currentUserOrGroup.name"  #fruitInput
+                    [(ngModel)]="currentUserOrGroup" [matChipInputFor]="chipGrid" [matAutocomplete]="autoAllowUsersOrGroups"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)"
+                    (keydown.backspace)="handleBackspace()" />
+                  <mat-autocomplete #autoAllowUsersOrGroups="matAutocomplete" (optionSelected)="selected($event)">
+                    @for (filteredUserOrGroup of filteredUsersOrGroups(); track filteredUserOrGroup.id) {
+                    <mat-option [value]="filteredUserOrGroup">
+                      <app-user-thumbnail [item]="filteredUserOrGroup.isGroup ? filteredUserOrGroup : filteredUserOrGroup.user"
+                        [isGroup]="filteredUserOrGroup.isGroup"></app-user-thumbnail>
+                    </mat-option>
+                    }
+                  </mat-autocomplete>
+                </mat-form-field>
+          </div>
+
+        </div>
+        <div class="row">
+      
+    
+          
+        </div>
+        <mat-card-actions align="end">
+          <button mat-flat-button color="primary" class="m-r-8">Save This</button>
+          <button routerLink="/document-managemnt/document-upload" mat-stroked-button color="warn">Cancel</button>
+        </mat-card-actions>
+        
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="document-card b-1 shadow-none">
+    <mat-card-header>
+      <div class="row justify-content-between">
+        <div class="col p-t-4">
+          <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
+            Documents ({{tableData.length}})
+          </mat-label>
+        
+        </div>
+
+      </div>
+        
+      </mat-card-header>
+<mat-card-content  >
+    
+      <div class="col-left col-md-4">
+        <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+          <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+        </mat-form-field>
+      </div>
+     
+    <div class="table-responsive">
+      <div class="justify-content-between">
+        <div class="row">
+          <div class="col align-items-start">
+            <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+            {{checkboxLabel()}}
+          </div>
+          <div class="col align-items-start d-flex align-items-center gap-2">    
+            <span class="cursor-pointer">
+              <!-- <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
+              </i-tabler>
+              <mat-label class="p-5 align-middle">Delete Selected</mat-label> -->
+            </span>
+          </div>
+        </div>
+      </div>
+      <table mat-table [dataSource]="dataSource" class="w-100">
+        
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                          [checked]="selection.hasValue() && isAllSelected()"
+                          [indeterminate]="selection.hasValue() && !isAllSelected()"
+                          [aria-label]="checkboxLabel()">
+            </mat-checkbox>
+          </th>
+          <td style="width: 5%;" mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          
+            <td mat-cell *matCellDef="let element" class="mat-body-1">
+                <div class="d-flex align-items-center">
+                  <i-tabler style="color: rgb(190, 8, 8); font-weight: bold;" name="file-type-pdf" class="icon-20"></i-tabler>
+                  <div class="d-flex flex-column">
+                    <!-- File Name -->
+                    <div>{{ element.name }}</div>
+              
+                    <!-- File Size -->
+                    <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
+                  </div>
+              
+                  <a class="cursor-pointer">
+                    <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
+                  </a>
+                </div>
+              </td>
+              
+        </ng-container>
+
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="action">
+          
+          <td mat-cell *matCellDef="let element" class="mat-body-1">
+            <div class="d-flex justify-content-center gap-4">
+              <a class="cursor-pointer" >
+              <i-tabler name="edit" class="icon-22">
+            </i-tabler>
+            </a>
+            <a class="cursor-pointer" >
+                <i-tabler style="color: red;" name="trash" class="icon-22">
+              </i-tabler>
+              </a>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons
+    aria-label="Select page of periodic elements">
+</mat-paginator>
+  </mat-card-content>
+</mat-card>
+  

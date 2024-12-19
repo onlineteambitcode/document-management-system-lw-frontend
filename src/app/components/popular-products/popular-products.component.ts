@@ -1,61 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { MaterialModule } from '../../material.module';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
-import { TablerIconsModule } from 'angular-tabler-icons';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { NgScrollbarModule } from 'ngx-scrollbar';
+import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
+import { MatFormField } from '@angular/material/form-field';
 
 
-export interface productsData {
-    id: number;
-    imagePath: string;
-    uname: string;
-    price: string;
-    paid: string;
-    status: string;
-    progress: string;
+export type ChartOptions = {
+    series: ApexAxisChartSeries;
+    chart: ApexChart;
+    dataLabels: ApexDataLabels;
+    plotOptions: ApexPlotOptions;
+    yaxis: ApexYAxis;
+    xaxis: ApexXAxis;
+    fill: ApexFill;
+    tooltip: ApexTooltip;
+    stroke: ApexStroke;
+    legend: ApexLegend;
+  };
+
+
+  interface month {
+    value: string;
+    viewValue: string;
 }
 
-const ELEMENT_DATA: productsData[] = [
-    {
-        id: 1,
-        imagePath: 'assets/images/products/s1.jpg',
-        uname: 'iPhone 13 pro max-Pacific Blue-128GB storage',
-        price: '$180',
-        paid: 'Partially paid',
-        status: 'Confirmed',
-        progress: 'accent',
-    },
-    {
-        id: 2,
-        imagePath: 'assets/images/products/s2.jpg',
-        uname: 'Apple MacBook Pro 13 inch-M1-8/256GB-space',
-        price: '$120',
-        paid: 'Full paid',
-        status: 'Confirmed',
-        progress: 'success',
-    },
-    {
-        id: 3,
-        imagePath: 'assets/images/products/s3.jpg',
-        uname: 'PlayStation 5 DualSense Wireless Controller',
-        price: '$120',
-        paid: 'Cancelled',
-        status: 'Confirmed',
-        progress: 'error',
-    },
-    {
-        id: 4,
-        imagePath: 'assets/images/products/s4.jpg',
-        uname: 'Amazon Basics Mesh, Mid-Back, Swivel Office De...',
-        price: '$120',
-        paid: 'Partially paid',
-        status: 'Confirmed',
-        progress: 'accent',
-    },
-];
+
 @Component({
     selector: 'app-popular-products',
     standalone: true,
@@ -64,16 +35,81 @@ const ELEMENT_DATA: productsData[] = [
         MatMenuModule,
         MatButtonModule,
         CommonModule,
-        TablerIconsModule,
-        MatProgressBarModule,
-        NgScrollbarModule
+        NgApexchartsModule,
+            MatFormField
     ],
     templateUrl: './popular-products.component.html',
 })
 export class AppPopularProductsComponent {
 
-    displayedColumns: string[] = ['products', 'payment', 'status', 'menu'];
-    dataSource = ELEMENT_DATA;
+    months: month[] = [
+        { value: 'mar', viewValue: 'Sep 2024' },
+        { value: 'apr', viewValue: 'Oct 2024' },
+        { value: 'june', viewValue: 'Nov 2024' },
+    ];
 
-    constructor() { }
+    @ViewChild("chart") chart: ChartComponent;
+    public chartOptions: Partial<ChartOptions>;
+  
+    constructor() {
+      this.chartOptions = {
+        series: [
+          {
+            name: "Downloads",
+            data: [6.4, 5.1, 3.4, 3.2, 7.1, 7.4, 2.3, 3.1, 4.1]
+          },
+          {
+            name: "Uploads",
+            data: [2.1, 1.2, 0.4, 0.5, 4.1, 2.6, 1.2, 1.7, 1.1]
+          }
+        ],
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "55%",
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ["transparent"]
+        },
+        xaxis: {
+          categories: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct"
+          ]
+        },
+        yaxis: {
+          title: {
+            text: "GB (Gigabyte)"
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function(val) {
+              return "GB " + val;
+            }
+          }
+        }
+      };
+    }
 }

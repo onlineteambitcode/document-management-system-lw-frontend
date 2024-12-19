@@ -6,10 +6,10 @@ export const PagesRoutes: Routes = [
     path: '',
     component: StarterComponent,
     data: {
-      title: 'Starter',
+      title: '',
       urls: [
         { title: 'Dashboard', url: '/dashboard' },
-        { title: 'Starter' },
+        { title: '' },
       ],
     },
   },
