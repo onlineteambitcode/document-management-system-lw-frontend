@@ -1,8 +1,13 @@
+<ng-container *ngIf="isOtpEnable && !isRegisterEnable">
+  <app-otp></app-otp>
+</ng-container>
+
+<ng-container *ngIf="isRegisterEnable && !isOtpEnable">
 <div
   class="blank-layout-container justify-content-center align-items-center bg-light"
 >
   <div
-    class="position-relative row w-100 h-100 bg-gredient justify-content-center"
+    class="position-relative row w-100 h-100 p-t-20 bg-gredient justify-content-center"
   >
     <div class="col-lg-4 d-flex align-items-center">
       <mat-card class="cardWithShadow boxed-auth">
@@ -17,71 +22,87 @@
             </a>
           </div>
 
-          <div class="row m-t-24 custom-row">
-            <div class="col-6">
-              <button mat-stroked-button class="w-100">
-                <div class="d-flex align-items-center">
-                  <img
-                    src="/assets/images/svgs/google-icon.svg"
-                    alt="google"
-                    width="16"
-                    class="m-r-8"
-                  />
-                  <span class="d-none d-lg-block">Sign in with Google</span>
-                </div>
-              </button>
-            </div>
-            <div class="col-6">
-              <button
-                mat-stroked-button
-                class="w-100 d-flex align-items-center"
-              >
-                <div class="d-flex align-items-center">
-                  <img
-                    src="/assets/images/svgs/facebook-icon.svg"
-                    alt="facebook"
-                    width="40"
-                    class="m-r-4"
-                  />
-                  <span class="d-none d-lg-block">Sign in with FB</span>
-                </div>
-              </button>
-            </div>
-          </div>
-
-          <div class="or-border m-t-30">or sign up with</div>
-
-          <form class="m-t-30">
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Name</mat-label
-            >
+        
+          <form [formGroup]="form" class="m-t-30">
+            <!-- Name -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Name</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput />
+              <input matInput formControlName="name" placeholder="Enter your name" />
+              <mat-error *ngIf="f['name'].hasError('required') && (f['name'].touched || f['name'].dirty)">
+                Name is required.
+              </mat-error>
+              <mat-error *ngIf="f['name'].hasError('minlength') && (f['name'].touched || f['name'].dirty)">
+                Name must be at least 6 characters long.
+              </mat-error>
+              <mat-error *ngIf="f['name'].hasError('maxlength') && (f['name'].touched || f['name'].dirty)">
+                Name cannot exceed 50 characters.
+              </mat-error>
             </mat-form-field>
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Email Adddress</mat-label
-            >
+          
+            <!-- Email -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Email Address</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="email" />
+              <input matInput formControlName="email" type="email" placeholder="Enter your email" />
+              <mat-error *ngIf="f['email'].hasError('required') && (f['email'].touched || f['email'].dirty)">
+                Email is required.
+              </mat-error>
+              <mat-error *ngIf="f['email'].hasError('email') && (f['email'].touched || f['email'].dirty)">
+                Enter a valid email address.
+              </mat-error>
             </mat-form-field>
-            <!-- password -->
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Password</mat-label
-            >
+          
+            <!-- Mobile Number -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Mobile Number</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="password" />
+              <span matTextPrefix>+94 &nbsp;</span>
+              <input matInput formControlName="mobileNumber" type="tel" placeholder="71-222-2222" />
+              <mat-error *ngIf="f['mobileNumber'].hasError('required') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                Mobile number is required.
+              </mat-error>
+              <mat-error *ngIf="f['mobileNumber'].hasError('pattern') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                Enter a valid 9-digit mobile number.
+              </mat-error>
             </mat-form-field>
-
-            <a
-              [routerLink]="['/']"
-              mat-flat-button
-              color="primary"
-              class="w-100"
-            >
+            
+          
+            <!-- Password -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="password" type="password" placeholder="Enter your password" />
+              <mat-icon
+              matSuffix
+              *ngIf="f['password'].invalid && (f['password'].touched || f['password'].dirty)"
+              matTooltip="Password must be at least 8 characters long.
+        Password must include an uppercase letter, a number, and a minimum of 8 characters.
+        Confirm Password">
+              error
+            </mat-icon>
+              <mat-error *ngIf="f['password'].hasError('required') && (f['password'].touched || f['password'].dirty)">
+                Password is required.
+              </mat-error>
+            </mat-form-field>
+            
+          
+            <!-- Confirm Password -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="confirmPassword" type="password" placeholder="Confirm your password" />
+              <mat-error
+              *ngIf="f['confirmPassword'].hasError('required') && (f['confirmPassword'].touched || f['confirmPassword'].dirty)">
+              Confirm Password is required.
+            </mat-error>
+            <mat-error *ngIf="f['confirmPassword'].hasError('passwordsMismatch') && (f['confirmPassword'].touched || f['confirmPassword'].dirty)">
+              Passwords do not match.
+            </mat-error>
+            </mat-form-field>
+            
+          
+            <!-- Submit Button -->
+            <button (click)="submit()" mat-flat-button color="primary" class="w-100" [disabled]="form.invalid">
               Sign Up
-            </a>
-            <!-- input -->
+            </button>
           </form>
+          
           <span class="d-block f-w-500 text-center m-t-24"
             >Already have an Account?
 
@@ -97,3 +118,4 @@
     </div>
   </div>
 </div>
+</ng-container>

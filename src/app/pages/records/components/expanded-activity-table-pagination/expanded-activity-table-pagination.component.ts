@@ -192,7 +192,7 @@ const ELEMENT_DATA: ActivityElement[] = [
           name: 'Kasun janaka',
           email: 'test@gmail.com',
           role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.PENDING,
+          status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
           profile_image: 'assets/images/profile/user-3.jpg'
         }
@@ -221,7 +221,7 @@ const ELEMENT_DATA: ActivityElement[] = [
           name: 'Kasun janaka',
           email: 'test@gmail.com',
           role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.PENDING,
+          status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
           profile_image: 'assets/images/profile/user-3.jpg'
         }
@@ -308,7 +308,7 @@ const ELEMENT_DATA: ActivityElement[] = [
           name: 'Kasun janaka',
           email: 'test@gmail.com',
           role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.PENDING,
+          status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
           profile_image: 'assets/images/profile/user-3.jpg'
         }
@@ -337,7 +337,7 @@ const ELEMENT_DATA: ActivityElement[] = [
           name: 'Kasun janaka',
           email: 'test@gmail.com',
           role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.PENDING,
+          status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
           profile_image: 'assets/images/profile/user-3.jpg'
         }

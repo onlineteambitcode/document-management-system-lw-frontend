@@ -7,3 +7,10 @@
         display: inline-block;
     }
 }
+
+.download-mat-spinner{
+    mat-spinner{
+    width: 18px !important;
+    height: 18px !important;
+    }
+}

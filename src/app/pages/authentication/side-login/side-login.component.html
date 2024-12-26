@@ -57,30 +57,7 @@
 
 <ng-container *ngIf="!isOtpEnable">
  
-  <div class="blank-layout-container justify-content-center align-items-center bg-light">
-    <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
-      <div class="col-lg-4 d-flex align-items-center">
-        <mat-card class="cardWithShadow boxed-auth">
-          <mat-card-header>
-            <mat-card-title class="m-b-0">OTP Verification</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="p-32">
-            <app-otp></app-otp>
-  
-  
-            <span class="d-block f-w-500 text-center m-t-24">
-              Enter OTP code sent to +9471****123
-            </span>
-          </mat-card-content>
-          <mat-card-actions>
-            <a [routerLink]="'/dashboard'"  mat-flat-button color="primary" class="w-100">
-              Verify & Proceed
-            </a>
-          </mat-card-actions>
-        </mat-card>
-      </div>
-    </div>
-  </div>
+<app-otp></app-otp>
 </ng-container>
 
 

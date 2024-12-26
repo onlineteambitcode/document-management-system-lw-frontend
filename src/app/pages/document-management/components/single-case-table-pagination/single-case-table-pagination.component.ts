@@ -28,6 +28,9 @@ import { UserThumbnailComponent } from 'src/app/components/user-thumbnail/user-t
 import { FileUploadUiComponent } from '../file-upload-ui/file-upload-ui.component';
 import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/delete-confirm.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-single-case-table-pagination',
@@ -51,7 +54,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     UserThumbnailComponent,
   FileUploadUiComponent,
   MatSlideToggleModule,
-  MatFormFieldModule],
+  MatFormFieldModule,
+  MatProgressSpinnerModule],
   templateUrl: './single-case-table-pagination.component.html',
   styleUrl: './single-case-table-pagination.component.scss'
 })
@@ -61,6 +65,7 @@ export class SingleCaseTablePaginationComponent {
   userTableData: UserData[] = [];
   displayedColumns: string[]  = ['select','name', 'action'];
   selection = new SelectionModel<CaseDocumentData>(true, []);
+  enableDownloadSelected: boolean = false;
   dataSource: MatTableDataSource<CaseDocumentData> = new MatTableDataSource<CaseDocumentData>();
   removeDialogTitle:string = 'Do you want to remove?';
   messageBodayKey:string = '';
@@ -126,6 +131,7 @@ export class SingleCaseTablePaginationComponent {
       );
   });
   readonly announcer = inject(LiveAnnouncer);
+  private http = inject(HttpClient); // Inject HttpClient
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngAfterViewInit() {
@@ -314,6 +320,12 @@ export class SingleCaseTablePaginationComponent {
 
   this.selection.select(...this.dataSource.data);
 }
+
+docwnloadSelected(){
+  console.log(this.selection);
+  this.sendBatchDownloadRequest();
+}
+
  /** The label for the checkbox on the passed row */
  checkboxLabel(row?: CaseDocumentData): string {
   if (!row) {
@@ -415,4 +427,51 @@ selected(event: MatAutocompleteSelectedEvent): void {
     this.isUpload = true;
   }
 
+  sendBatchDownloadRequest() {
+    const requestBody = {
+      case_id: '4',
+      fileKeys: [
+        'DOC-20241209-WA0051 - signed.pdf',
+        'IMG-20240516-WA0002.jpg',
+        'Wireframe UIs.pdf'
+      ]
+    };
+
+    // Send POST request to the batch download API with pipe and catchError
+    this.http.post('http://localhost:3000/api/documents/batch-download', requestBody, {
+      headers: new HttpHeaders().set('Authorization', 'Bearer your-token'), // Optional: Add your authorization token
+      responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
+    })
+    .pipe(
+      catchError(error => {
+        console.error('Error during file download:', error);
+        // Handle the error: you can throw the error again or return an empty observable, depending on how you want to handle it
+        throw error;  // Re-throw the error for downstream subscribers
+      })
+    )
+    .subscribe({
+      next: (response: Blob) => {
+        // Handle successful response (e.g., trigger download)
+        this.downloadFile(response);
+      },
+      error: (error) => {
+        // Handle the error if the observable throws (after catchError)
+        console.error('Error in subscription:', error);
+      },
+      complete: () => {
+        console.log('Batch download request completed.');
+      }
+    });
+  }
+
+  downloadFile(response: Blob) {
+    // Create a link element to trigger the file download
+    const blob = new Blob([response], { type: 'application/zip' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'batch-files.zip'; // Default file name for the downloaded ZIP
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
 }

@@ -57,12 +57,27 @@
                   <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
                     Documents ({{tableData.length}})
                   </mat-label>
+                </div>
+              </div>
+              <div class="row justify-content-between">
+                
+                <div class="col-sm-6 col-md-6 col-lg-6 p-t-6" *ngIf="isAdmin">
+                  <button [disabled]="enableDownloadSelected" mat-stroked-button (click)="openFileUploadDialog()">
+                    <mat-icon style="color: #4456e9;" aria-hidden="false">upload_file</mat-icon>
+                    Upload Files
+                  </button>
                 
                 </div>
-                <div class="col" *ngIf="isAdmin">
-                  <button mat-stroked-button (click)="openFileUploadDialog()">
-                    <mat-icon aria-hidden="false">upload_file</mat-icon>
-                    Upload Files
+                <div class="col-sm-6 col-md-6 col-lg-6 p-t-6">
+                  <button *ngIf="!enableDownloadSelected" [disabled]="(!(selection.hasValue() && (selection.selected.length <= 5)))" mat-stroked-button (click)="docwnloadSelected()">
+                    <mat-icon style="color: #24db0e;" aria-hidden="false">download_file</mat-icon>
+                    Download Files
+                  </button>
+
+                  <button class="download-mat-spinner" *ngIf="enableDownloadSelected" [disabled]="true" mat-stroked-button>
+                    <mat-icon><mat-spinner color="accent" diameter="20">
+                    </mat-spinner></mat-icon>
+                    Download Files
                   </button>
                 
                 </div>
@@ -80,12 +95,12 @@
             <div class="table-responsive">
               <div class="justify-content-between">
                 <div class="row">
-                  <div class="col align-items-start">
-                    <!-- <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
+                  <!-- <div class="col align-items-start">
+                    <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
                     </mat-checkbox>
-                    {{checkboxLabel()}} -->
-                  </div>
+                    {{checkboxLabel()}}
+                  </div> -->
                   <div class="col align-items-start d-flex align-items-center gap-2">    
                     <!-- <span class="cursor-pointer">
                       <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
@@ -106,11 +121,11 @@
                     </mat-checkbox> -->
                   </th>
                   <td mat-cell *matCellDef="let row">
-                    <!-- <mat-checkbox (click)="$event.stopPropagation()"
+                    <mat-checkbox (click)="$event.stopPropagation()"
                                   (change)="$event ? selection.toggle(row) : null"
                                   [checked]="selection.isSelected(row)"
                                   [aria-label]="checkboxLabel(row)">
-                    </mat-checkbox> -->
+                    </mat-checkbox>
                   </td>
                 </ng-container>
 
