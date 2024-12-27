@@ -1,5 +1,5 @@
 <ng-container *ngIf="isOtpEnable && !isRegisterEnable">
-  <app-otp></app-otp>
+  <app-otp [otpType]="otpType" ></app-otp>
 </ng-container>
 
 <ng-container *ngIf="isRegisterEnable && !isOtpEnable">

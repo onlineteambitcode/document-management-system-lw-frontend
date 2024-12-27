@@ -18,6 +18,8 @@ import { OtpComponent } from '../otp/otp.component';
 import { ComponentApiService } from '../services/componentApi.service';
 import { StorageService } from 'src/app/common/services/storage.service';
 import { Response } from 'src/app/common/interfaces/response.interface';
+import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
+import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
 
 @Component({
   selector: 'app-side-register',
@@ -38,11 +40,13 @@ export class AppSideRegisterComponent {
   isRegisterEnable: boolean = true;
   isOtpEnable: boolean = false;
   form: FormGroup;
+  otpType: OTP_TYPE = OTP_TYPE.REGISTER_OTP_PENDING;
   constructor(
     private router: Router,
     private alertService: SweetAlertService,
     private apiService: ComponentApiService,
-    private storageService: StorageService) {
+    private storageService: StorageService,
+    private fullPageLoaderService: FullPageLoaderService) {
     this.form = new FormGroup(
       {
         name: new FormControl('', [
@@ -99,6 +103,8 @@ export class AppSideRegisterComponent {
       return;
     }
 
+    this.fullPageLoaderService.setLoadingStatus(true);
+
     // Prepare the request body from the form data
     const requestBody = {
       name: this.form.value.name,
@@ -119,11 +125,13 @@ export class AppSideRegisterComponent {
           // Add success message or redirect here
         },
         error: (error) => {
+          this.fullPageLoaderService.setLoadingStatus(false);
           console.error('Registration failed:', error);
           this.alertService.errorAlert('center', 'Registration failed', '');
           // Handle error scenarios here
         },
         complete: () => {
+          this.fullPageLoaderService.setLoadingStatus(false);
           console.log('Registration request completed.');
         },
       }

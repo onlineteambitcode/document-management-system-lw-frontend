@@ -7,14 +7,23 @@ import Swal, { SweetAlertPosition } from 'sweetalert2'
 export class SweetAlertService {
 
 
-    successAlert(position: SweetAlertPosition, title: string, text:string, timer: number): void {
+    successAlert(
+      position: SweetAlertPosition, 
+      title: string, text:string,
+      timer: number,
+      allowOutsideClick: boolean = true,
+      allowEscapeKey: boolean = true,
+      allowEnterKey: boolean = true): void {
         Swal.fire({
             position: position,
             icon: "success",
             title,
             text,
             showConfirmButton: false,
-            timer
+            timer,
+            allowOutsideClick,  // This prevents the modal from closing when clicking outside
+            allowEscapeKey,     // Optionally, you can also disable closing with the Escape key
+            allowEnterKey,       // Optionally, you can disable closing with the Enter key
         });
     }
 
@@ -29,7 +38,10 @@ export class SweetAlertService {
     });
     }
 
-    successToster(position: SweetAlertPosition, title: string, timer: number){
+    successToster(
+      position: SweetAlertPosition, 
+      title: string, 
+      timer: number ){
         const Toast = Swal.mixin({
             toast: true,
             position,
