@@ -11,6 +11,8 @@ import { StorageService } from 'src/app/common/services/storage.service';
 import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
 import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
+import { CountdownModule } from 'ngx-countdown';
+
 @Component({
   selector: 'app-otp',
   standalone: true,
@@ -21,8 +23,8 @@ import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    MatButtonModule
-
+    MatButtonModule,
+    CountdownModule
   ],
   templateUrl: './otp.component.html',
   styleUrl: './otp.component.scss',
@@ -75,7 +77,7 @@ export class OtpComponent {
         error: (error) => {
           this.fullPageLoaderService.setLoadingStatus(false);
           console.error('Registration failed:', error);
-          this.alertService.errorAlert('center', 'OTP Verification failed', '');
+          this.alertService.errorAlert('center', 'OTP Verification failed', '',3000,false,'',false);
           // Handle error scenarios here
         },
         complete: () => {
@@ -114,5 +116,8 @@ export class OtpComponent {
       false);
   }
 
+  handleEvent(eventData: any){
+    console.log(eventData);
+  }
 
 }

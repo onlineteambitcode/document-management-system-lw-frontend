@@ -127,7 +127,7 @@ export class AppSideRegisterComponent {
         error: (error) => {
           this.fullPageLoaderService.setLoadingStatus(false);
           console.error('Registration failed:', error);
-          this.alertService.errorAlert('center', 'Registration failed', '');
+          this.alertService.errorAlert('center', 'Registration failed', '',3000,false,'',false);
           // Handle error scenarios here
         },
         complete: () => {

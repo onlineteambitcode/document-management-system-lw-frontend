@@ -3,4 +3,5 @@ export interface Response {
     error: any;
     message: string;
     data: any;
+    erroroCode: string;
   }

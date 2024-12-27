@@ -27,14 +27,17 @@ export class SweetAlertService {
         });
     }
 
-    errorAlert(position: SweetAlertPosition, title: string, text:string){
+    errorAlert(position: SweetAlertPosition, title: string, text:string, timer: number | null, showCancelButton: boolean | false,confirmButtonText: string | 'Ok', showConfirmButton: boolean | false){
       Swal.fire({
         position: position,
         icon: "error",
         title,
         text,
-        showConfirmButton: false,
-        timer: 1500
+        showConfirmButton,
+        timer: timer ? timer : undefined,
+        showCancelButton,
+        confirmButtonText
+
     });
     }
 
