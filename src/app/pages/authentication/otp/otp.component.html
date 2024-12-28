@@ -3,22 +3,46 @@
       <div class="col-lg-4 d-flex align-items-center">
         <mat-card class="cardWithShadow boxed-auth">
           <mat-card-header>
-            <mat-card-title class="m-b-0">OTP Verification</mat-card-title>
+            <mat-card-title class="m-b-0 ">OTP Verification</mat-card-title>
           </mat-card-header>
-          <mat-card-content class="p-32">
-            <ng-otp-input [(ngModel)]="otpCode" (onInputChange)="onOtpChange($event)" [config]="{ length: 5, allowNumbersOnly: true }"></ng-otp-input>
-            <span class="d-block f-w-500 text-center m-t-24">
-              Enter OTP code sent to +9471****123
-              <countdown 
+          <mat-card-content class="p-32 align-items-center justify-content-center">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12 col-sm-12 col-lg-12" style="display: ruby;">
+                  <ng-otp-input [(ngModel)]="otpCode" (onInputChange)="onOtpChange($event)" [config]="{ length: 5, allowNumbersOnly: true }"></ng-otp-input>
+                </div>
+                <div class="col-md-12 col-sm-12 col-lg-12">
+                  <span class="d-block f-w-500 m-t-24 text-center">
+                    Enter OTP code sent to +9471****123
+                  </span>
+                </div>
+                <div class="col-md-12 col-sm-12 col-lg-12 text-center">
+                  <span class="d-block f-w-500 m-t-24">
+                    <countdown 
               [config]="{ leftTime: 60, format: 'mm:ss' }" 
               (event)="handleEvent($event)">
             </countdown>
-            </span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            
           </mat-card-content>
           <mat-card-actions>
-            <button [disabled]="!enableVerify" (click)="proceedToVerify()" mat-flat-button color="primary" class="w-100">
-              Verify & Proceed
-            </button>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12 col-sm-6 col-lg-12">
+                  <button [disabled]="!enableVerify" (click)="proceedToVerify()" mat-flat-button color="primary" class="w-100">
+                    Verify & Proceed
+                  </button>
+                  
+                </div>
+                <div class="col-md-12 col-sm-6 col-lg-12">
+                  Didn't recive the verification OTP? <a class="text-link">Click me</a>
+                </div>
+              </div>
+            </div>
           </mat-card-actions>
         </mat-card>
       </div>

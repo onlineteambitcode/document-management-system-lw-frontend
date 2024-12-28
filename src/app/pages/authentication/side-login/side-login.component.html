@@ -20,7 +20,7 @@
                   Email is required.
                 </mat-error>
                 <mat-error *ngIf="f['uname'].hasError('email') && (f['uname'].touched || f['uname'].dirty)">
-                  Enter a valid user name address.
+                  Enter a valid email address.
                 </mat-error>
               </mat-form-field>
               <!-- password -->
@@ -43,9 +43,46 @@
               <!-- input -->
             </form>
             <span class="d-block f-w-500 text-center m-t-24">New to Lawyercloud?
-              <a [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
-                Create an account</a>
+              <button [disabled]="form.invalid" [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
+                Create an account</button>
             </span>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="isResetPasswordEnable">
+  <div class="blank-layout-container justify-content-center align-items-center bg-light">
+    <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
+      <div class="col-lg-4 d-flex align-items-center">
+        <mat-card class="cardWithShadow boxed-auth">
+          <mat-card-content class="p-32">
+            <div class="text-center">
+              Enter your email to reset password
+            </div>
+  
+
+  
+            <form [formGroup]="formPasswordReset" class="m-t-30">
+              <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input matInput formControlName="uname" type="email" placeholder="Enter User name" />
+                <mat-error *ngIf="fReset['uname'].hasError('required') && (fReset['uname'].touched || fReset['uname'].dirty)">
+                  Email is required.
+                </mat-error>
+                <mat-error *ngIf="fReset['uname'].hasError('email') && (fReset['uname'].touched || fReset['uname'].dirty)">
+                  Enter a valid email address.
+                </mat-error>
+              </mat-form-field>
+             
+              <button [disabled]="formPasswordReset.invalid" (click)="passwordResetFlow()" mat-flat-button color="primary" class="w-100">
+                Reset password
+              </button>
+              <!-- input -->
+            </form>
+          
           </mat-card-content>
         </mat-card>
       </div>

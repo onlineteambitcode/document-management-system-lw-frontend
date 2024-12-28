@@ -16,6 +16,11 @@ export class ComponentApiService {
     return this.apiService.post<T>('/auth/login', body, options);
   }
 
+  // POST method
+  passwordResetOtp<T>(body: any, options?: object): Observable<T> {
+    return this.apiService.post<T>('/auth/forget-password-otp', body, options);
+  }
+
   // PUT method
   verifyOtp<T>(body: any, options?: object): Observable<T> {
     return this.apiService.post<T>('/auth/verify-otp', body, options);

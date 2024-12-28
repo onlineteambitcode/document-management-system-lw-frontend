@@ -20,6 +20,7 @@ import { StorageService } from 'src/app/common/services/storage.service';
 import { Response } from 'src/app/common/interfaces/response.interface';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
 import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
+import { COMMON_ERROR_CODES } from 'src/app/common/enums/common-error-codes.enum';
 
 @Component({
   selector: 'app-side-register',
@@ -127,8 +128,12 @@ export class AppSideRegisterComponent {
         error: (error) => {
           this.fullPageLoaderService.setLoadingStatus(false);
           console.error('Registration failed:', error);
+          if(error.error.errorCode === COMMON_ERROR_CODES.ALREADY_EXIST){
+            this.alertService.confirmAlert("Hay we know you!","You have registered befor with this email",'info',true,"No",true,"Try SignIn",this.calbackForPendingRegisterOtpVerification.bind(this));
+          }else{
           this.alertService.errorAlert('center', 'Registration failed', '',3000,false,'',false);
-          // Handle error scenarios here
+          }
+
         },
         complete: () => {
           this.fullPageLoaderService.setLoadingStatus(false);
@@ -136,5 +141,9 @@ export class AppSideRegisterComponent {
         },
       }
     );
+  }
+
+  calbackForPendingRegisterOtpVerification(){
+    this.router.navigate(["/authentication/login"])
   }
 }
