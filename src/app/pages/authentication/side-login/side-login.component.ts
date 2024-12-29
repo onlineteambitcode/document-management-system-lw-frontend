@@ -20,6 +20,8 @@ import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
 import { ErrorSweetAlertData } from 'src/app/common/interfaces/errorSweetAlertData';
 import { LoginAndRegisterErrorHandlerUtil } from '../utils/loginAndRegisterErrorHandle'; // Adjust the path as needed
 import { USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
+import { OtpEvent } from 'src/app/common/interfaces/otp-event.interface';
+import { PasswordResetComponent } from '../password-reset/password-reset.component';
 
 @Component({
   selector: 'app-side-login',
@@ -31,16 +33,17 @@ import { USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
-    OtpComponent
+    OtpComponent,
+    PasswordResetComponent
   ],
   providers: [ComponentApiService],
   templateUrl: './side-login.component.html',
 })
 export class AppSideLoginComponent {
   otpType: OTP_TYPE = OTP_TYPE.LOGIN_OTP_PENDING;
-  isLoginEnable:boolean = false;
+  isLoginEnable:boolean = true;
   isOtpEnable:boolean = false;
-  isResetPasswordEnable: boolean = true;
+  isResetPasswordEnable: boolean = false;
   isFrogetPasswordEnable:boolean = false;
   constructor(
     private router: Router,
@@ -102,7 +105,7 @@ export class AppSideLoginComponent {
               this.isOtpEnable = true;
               this.isLoginEnable = false;
               this.alertService.successToster('top-end', 'OTP verification sent to your mobile', 5000);
-              this.storageService.setItem('user',response.data.user_id)
+              this.storageService.setItem('user',response.data.user_id);
               // Add success message or redirect here
             },
             error: (error) => {
@@ -111,7 +114,8 @@ export class AppSideLoginComponent {
               if(error && error.error && error.error.erroroCode){
                 let errorData: ErrorSweetAlertData = LoginAndRegisterErrorHandlerUtil.handleErrorAndGetAlertData(error.error);
                 if(error.error.erroroCode === USER_STATUS_ENUM.REGISTRATION_OTP_VERIFICATION_PENDING){
-                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this));
+                  this.otpType = OTP_TYPE.REGISTER_OTP_PENDING;
+                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this,''));
                   this.storageService.setItem('user',error.error.data)
                 }else{
                   this.alertService.errorAlert('center',errorData.title, errorData.text, errorData.timer, errorData.showCancelButton, errorData.confirmButtonText, errorData.showConfirmButton);
@@ -150,8 +154,6 @@ export class AppSideLoginComponent {
           {
             next: (response: Response) => {
               console.log('Password reset successful and OTP verification pending:', response);
-              this.isOtpEnable = true;
-              this.isLoginEnable = false;
               this.alertService.successToster('top-end', 'OTP verification sent to your mobile', 5000);
               this.storageService.setItem('user',response.data.user_id)
               this.isOtpEnable = true;
@@ -165,7 +167,7 @@ export class AppSideLoginComponent {
               if(error && error.error && error.error.erroroCode){
                 let errorData: ErrorSweetAlertData = LoginAndRegisterErrorHandlerUtil.handleErrorAndGetAlertData(error.error);
                 if(error.error.erroroCode === USER_STATUS_ENUM.REGISTRATION_OTP_VERIFICATION_PENDING){
-                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this));
+                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this, error.error.data));
                   this.storageService.setItem('user',error.error.data)
                 }else{
                   this.alertService.errorAlert('center',errorData.title, errorData.text, errorData.timer, errorData.showCancelButton, errorData.confirmButtonText, errorData.showConfirmButton);
@@ -185,8 +187,94 @@ export class AppSideLoginComponent {
 
   }
 
-  calbackForPendingRegisterOtpVerification(){
-    this.isOtpEnable = true;
+  calbackForPendingRegisterOtpVerification(userId: string){
+
+    if(!this.formPasswordReset.controls['uname'].valid){
+      this.alertService.errorToaster('top-end',"Please enter valid email address");
+      return;
+    }
+    
+    this.otpType = OTP_TYPE.REGISTER_OTP_PENDING;
+
+    this.fullPageLoaderService.setLoadingStatus(true);
+
+    // Prepare the request body from the form data
+    const requestBody = {
+      email:this.formPasswordReset.value.uname,
+      user_id: userId,
+      otp_type: this.otpType
+    };
+
+     // Use the API service to send the POST request
+        this.apiService.resendOtp<Response>(requestBody).subscribe(
+          {
+            next: (response: Response) => {
+              console.log('Register OTP verification pending:', response);
+              this.alertService.successToster('top-end', 'OTP verification sent to your mobile', 5000);
+              this.storageService.setItem('user',response.data.user_id);
+              this.isOtpEnable = true;
+              this.isLoginEnable = false;
+              this.isResetPasswordEnable= false;
+              this.isFrogetPasswordEnable= false;
+            },
+            error: (error) => {
+              this.fullPageLoaderService.setLoadingStatus(false);
+              console.error('Register OTP sending failed:', error);
+              if(error && error.error && error.error.erroroCode){
+                let errorData: ErrorSweetAlertData = LoginAndRegisterErrorHandlerUtil.handleErrorAndGetAlertData(error.error);
+                this.alertService.errorAlert('center',errorData.title, errorData.text, errorData.timer, errorData.showCancelButton, errorData.confirmButtonText, errorData.showConfirmButton);
+              }else{
+                this.alertService.errorAlert('center','OTP sending failed', ((error?.error?.message) ? error.error.message :  ''), 4000, false,'', false);
+              }
+              // Handle error scenarios here
+            },
+            complete: () => {
+              this.fullPageLoaderService.setLoadingStatus(false);
+              console.log('Register OTP request completed.');
+            },
+          }
+        );
+  }
+
+  navigateToForgotPassword(){
+    this.isFrogetPasswordEnable = false;
+    this.isOtpEnable = false;
     this.isLoginEnable = false;
+    this.isResetPasswordEnable = true;
+  }
+
+  onOtpVerifyEvent(eventData: OtpEvent){
+    console.log(eventData);
+    if(this.otpType === OTP_TYPE.LOGIN_OTP_PENDING){
+      this.navigateToHome();
+    }else{
+      this.isFrogetPasswordEnable = false;
+      this.isOtpEnable = false;
+      this.isLoginEnable = false;
+      this.isResetPasswordEnable = true;
+    }
+    
+  }
+
+  onPasswordRestOutputEvent(eventData: boolean){
+    console.log(eventData);
+    if(eventData){
+      this.backToLogin();
+    }
+  }
+
+  backToLogin(){
+    this.isFrogetPasswordEnable = false;
+    this.isOtpEnable = false;
+    this.isLoginEnable = true;
+    this.isResetPasswordEnable = false;
+  }
+
+  navigateToRegister(){
+    this.router.navigate(["/authentication/register"]);
+  }
+
+  navigateToHome(){
+    this.router.navigate(["/dashboard"]);
   }
 }

@@ -24,7 +24,7 @@ export class LoginAndRegisterErrorHandlerUtil {
         }else if(errorResponse.erroroCode === USER_STATUS_ENUM.REGISTRATION_OTP_VERIFICATION_PENDING){
             return {
                 position: "center",
-                text: "Your account has been successfully registered! Please complete the verification process to start using it.",
+                text: "Your account was previously created, but the verification process is not yet complete.",
                 title: "Hay, We got you!",
                 allowOutsideClick: false,
                 allowEscapeKey: false,

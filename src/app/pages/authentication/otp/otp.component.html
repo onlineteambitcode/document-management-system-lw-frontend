@@ -1,6 +1,6 @@
 <div class="blank-layout-container justify-content-center align-items-center bg-light">
     <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
-      <div class="col-lg-4 d-flex align-items-center">
+      <div *ngIf="showVerify" class="col-lg-4 d-flex align-items-center">
         <mat-card class="cardWithShadow boxed-auth">
           <mat-card-header>
             <mat-card-title class="m-b-0 ">OTP Verification</mat-card-title>
@@ -45,6 +45,20 @@
             </div>
           </mat-card-actions>
         </mat-card>
+      </div>
+
+      <div *ngIf="enableSuccess" class="col-lg-4 d-flex justify-content-center align-items-center">
+        <div class="row">
+          <div class="col-md-12 col-lg-12 col-sm-12">
+            <mat-label class="f-s-24 f-w-600 m-b-12 d-block text-center">{{otpSuccessTitle}}</mat-label>
+            <mat-label class="mat-subtitle-2 f-s-16 f-w-600 m-b-12 d-block text-center">{{otpSuccessMessage}}</mat-label>
+          </div>
+          <div class="col-md-12 col-lg-12 col-sm-12">
+        <img src="./assets/images/backgrounds/otp-success.png" alt="Young Man Euphoric Gesture Celebrate Victory">
+          
+          </div>
+        
+      </div>        
       </div>
     </div>
   </div>

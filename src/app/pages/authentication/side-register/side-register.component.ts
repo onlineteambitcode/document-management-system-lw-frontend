@@ -21,6 +21,7 @@ import { Response } from 'src/app/common/interfaces/response.interface';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
 import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
 import { COMMON_ERROR_CODES } from 'src/app/common/enums/common-error-codes.enum';
+import { FromUtil } from '../utils/form.util';
 
 @Component({
   selector: 'app-side-register',
@@ -70,28 +71,11 @@ export class AppSideRegisterComponent {
         ]),
         confirmPassword: new FormControl('', [Validators.required]),
       },
-      { validators: this.passwordMatchValidator }
+      { validators: FromUtil.passwordMatchValidator }
     );
   }
 
-  // Custom validator for matching passwords
-  passwordMatchValidator: ValidatorFn = (group: AbstractControl): { [key: string]: boolean } | null => {
-    const passwordControl = group.get('password');
-    const confirmPasswordControl = group.get('confirmPassword');
 
-    if (!passwordControl || !confirmPasswordControl) return null;
-
-    const password = passwordControl.value;
-    const confirmPassword = confirmPasswordControl.value;
-
-    if (password !== confirmPassword) {
-      confirmPasswordControl.setErrors({ passwordsMismatch: true });
-    } else {
-      confirmPasswordControl.setErrors(null); // Clear previous errors if any
-    }
-
-    return null; // No errors at the form group level
-  };
 
   get f() {
     return this.form.controls;

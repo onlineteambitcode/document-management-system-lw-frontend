@@ -87,21 +87,6 @@
           </td>
         </ng-container>
 
-
-        <!-- <ng-container matColumnDef="role">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-600 mat-subtitle-1 f-s-14"
-          >
-            Role
-          </th>
-          <td mat-cell *matCellDef="let element">
-            {{element.role}}
-          </td>
-        </ng-container> -->
-
-
         <ng-container matColumnDef="status">
           <th
             mat-header-cell
@@ -117,9 +102,15 @@
             @if(element.status == 'DEACTIVE'){
               <p><mat-slide-toggle [checked]="false">Deactivated</mat-slide-toggle></p>
             }
-            @if(element.status == 'PENDING'){
+            @if(element.status == 'ADMIN_VERIFICATION_PENDING'){
+              <!-- <p> -->
+                <mat-chip>Admin Not Verified</mat-chip>
+              <!-- </p> -->
+            }
+            @if(element.status == 'REGISTRATION_OTP_VERIFICATION_PENDING'){
               <p>
-                <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Not Verified</mat-label>
+
+                <mat-chip class="mat-subtitle-1 f-s-8">OTP Verification Pending</mat-chip>
               </p>
             }
           </td>
@@ -134,7 +125,7 @@
             Created Date
           </th>
           <td mat-cell class="mat-body-1 f-s-12 f-w-600" *matCellDef="let element">
-            {{element.created_date}}
+            {{element.createdAt}}
           </td>
         </ng-container>
 
@@ -163,9 +154,17 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
     </div>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+    <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]"
     showFirstLastButtons
     aria-label="Select page of periodic elements">
+</mat-paginator> -->
+
+ <!-- Paginator -->
+ <mat-paginator
+ [length]="resultsLength"
+ [pageSize]="pageSize"
+ [pageSizeOptions]="[5, 10, 25, 100]"
+ (page)="onPageChange()">
 </mat-paginator>
   </mat-card-content>
 </mat-card>

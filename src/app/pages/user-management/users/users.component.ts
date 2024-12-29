@@ -3,13 +3,15 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
 import { UserData } from 'src/app/common/interfaces/user.interface';
-import { AppTablePaginationComponent } from 'src/app/components/table-pagination/table-pagination.component';
+import { ComponentApiService } from '../services/componentApi.service';
+import { AppTablePaginationComponent } from '../components/table-pagination/table-pagination.component';
 // table 1
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [AppTablePaginationComponent],
+  providers: [ComponentApiService],
   templateUrl: './users.component.html',
   styleUrl: './user.component.scss'
 })

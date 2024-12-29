@@ -7,13 +7,20 @@ export class StorageService {
 
   // Encode a string and store it in localStorage
   setItem(key: string, value: string): void {
-    const encodedValue = this.encode(value);
-    localStorage.setItem(key, encodedValue);
+    if(key !== 'token'){
+      const encodedValue = this.encode(value);
+      localStorage.setItem(key, encodedValue);
+    }else{
+      localStorage.setItem(key, value);
+    }
   }
 
   // Get and decode a string from localStorage
   getItem(key: string): string | null {
     const encodedValue = localStorage.getItem(key);
+    if(key === 'token') {
+      return encodedValue;
+    }
     return encodedValue ? this.decode(encodedValue) : null;
   }
 

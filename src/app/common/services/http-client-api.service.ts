@@ -12,7 +12,7 @@ export class HttpClientApiService {
 
   // GET method
   get<T>(endpoint: string, params?: HttpParams): Observable<T> {
-    const url = `/auth/${this.baseUrl}${endpoint}`; // Combine base URL with endpoint
+    const url = `${this.baseUrl}${endpoint}`; // Combine base URL with endpoint
     return this.http.get<T>(url, { params });
   }
 

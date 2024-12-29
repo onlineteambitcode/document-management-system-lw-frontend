@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ngxLoadingAnimationTypes, NgxLoadingModule } from 'ngx-loading';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { MaterialModule } from 'src/app/material.module';
@@ -12,6 +12,8 @@ import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
 import { OTP_TYPE } from 'src/app/common/enums/otp-type.enum';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
 import { CountdownModule } from 'ngx-countdown';
+import { OtpEvent } from 'src/app/common/interfaces/otp-event.interface';
+import { Response } from 'src/app/common/interfaces/response.interface';
 
 @Component({
   selector: 'app-otp',
@@ -32,16 +34,21 @@ import { CountdownModule } from 'ngx-countdown';
 })
 export class OtpComponent {
   @Input() otpType: OTP_TYPE;
+  @Output() otpVerifyEvent = new EventEmitter<OtpEvent>();
 
   otpCode: string = '';
-  enableVerify: boolean = false;
+  enableVerify: boolean = true;
+  showVerify: boolean = true;
+  enableSuccess:boolean = false;
   userIdEncoded: string = '';
-
+  otpSuccessMessage: string = "Please wait for admin approval to proceed.";
+  otpSuccessTitle: string = "Your registration was successful";
   constructor(
     private apiService: ComponentApiService,
     private storageService: StorageService,
     private alertService: SweetAlertService,
-    private fullPageLoaderService: FullPageLoaderService) { }
+    private fullPageLoaderService: FullPageLoaderService,
+  private router: Router) { }
   onOtpChange(event: any): void {
     console.log(event);
     this.otpCode = event;
@@ -67,11 +74,11 @@ export class OtpComponent {
     };
 
     // Use the API service to send the POST request
-    this.apiService.verifyOtp(requestBody).subscribe(
+    this.apiService.verifyOtp<Response>(requestBody).subscribe(
       {
-        next: (response) => {
+        next: (response: Response) => {
           console.log('OTP Verification successful:', response);
-          this.onSuccessOtpVerification();
+          this.onSuccessOtpVerification(response.data);
           // Add success message or redirect here
         },
         error: (error) => {
@@ -88,14 +95,23 @@ export class OtpComponent {
     );
   }
 
-  private onSuccessOtpVerification(): void {
-
+  private onSuccessOtpVerification(data: any): void {
+    this.showVerify = false;
     switch (this.otpType) {
       case OTP_TYPE.REGISTER_OTP_PENDING:
         this.showSuccessRegisterModal();
+        this.enableSuccess = true;
+        this.otpSuccessMessage = "Your registration was successful. Please wait for admin approval to proceed.";
         break;
       case OTP_TYPE.LOGIN_OTP_PENDING:
         this.showSuccessLoginToaster();
+        this.storageService.setItem('token',data);
+        this.otpVerifyEvent.emit({data:'',status: true,type: OTP_TYPE.LOGIN_OTP_PENDING})
+        break;
+      case OTP_TYPE.FORGET_PASSWORD_OTP_PENDING:
+        this.showSuccessLoginToaster();
+        this.storageService.setItem('token',data);
+        this.otpVerifyEvent.emit({data:'',status: true,type: OTP_TYPE.FORGET_PASSWORD_OTP_VERIFIED})
         break;
       default:
         break;

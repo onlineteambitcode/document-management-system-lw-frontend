@@ -34,7 +34,7 @@
   
               <div class="d-flex align-items-center m-b-12">
                 <mat-checkbox color="primary">Remember this Device</mat-checkbox>
-                <a [routerLink]="['/']" class="text-primary f-w-600 text-decoration-none m-l-auto f-s-14">Forgot Password
+                <a (click)="navigateToForgotPassword()" class="cursor-pointer text-primary f-w-600 text-decoration-none m-l-auto f-s-14">Forgot Password
                   ?</a>
               </div>
               <a (click)="submit()" mat-flat-button color="primary" class="w-100">
@@ -43,8 +43,8 @@
               <!-- input -->
             </form>
             <span class="d-block f-w-500 text-center m-t-24">New to Lawyercloud?
-              <button [disabled]="form.invalid" [routerLink]="['/authentication/register']" class="text-decoration-none text-primary f-w-500 f-s-14">
-                Create an account</button>
+              <a (click)="navigateToRegister() "class="text-decoration-none cursor-pointer  text-primary f-w-500 f-s-14">
+                Create an account</a>
             </span>
           </mat-card-content>
         </mat-card>
@@ -77,8 +77,11 @@
                 </mat-error>
               </mat-form-field>
              
-              <button [disabled]="formPasswordReset.invalid" (click)="passwordResetFlow()" mat-flat-button color="primary" class="w-100">
+              <button [disabled]="formPasswordReset.invalid" (click)="passwordResetFlow()" mat-flat-button color="primary" class="w-100  m-b-5">
                 Reset password
+              </button>
+              <button type="button" (click)="backToLogin()" mat-stroked-button class="w-100 m-t-15">
+                Back to Sign In
               </button>
               <!-- input -->
             </form>
@@ -92,10 +95,10 @@
 
 <ng-container *ngIf="isOtpEnable">
  
-<app-otp [otpType]="otpType"></app-otp>
+<app-otp (otpVerifyEvent)="onOtpVerifyEvent($event)" [otpType]="otpType"></app-otp>
 </ng-container>
 
 
 <ng-container *ngIf="isFrogetPasswordEnable">
-  
+  <app-password-reset (passwordRestOutputEvent)="onPasswordRestOutputEvent($event)" ></app-password-reset>
 </ng-container>

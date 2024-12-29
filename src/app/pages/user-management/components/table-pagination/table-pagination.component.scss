@@ -1,0 +1,26 @@
+th{
+    padding-left: 0.7rem !important;
+}
+
+.outline-red {
+    color: red;
+}
+
+.mat-mdc-card-header-text{
+    display: contents !important;
+}
+
+mat-chip{
+    border-radius: 0px !important;
+    .mdc-evolution-chip__cell{
+        .mat-mdc-chip-action-label{
+            font-size: 10px !important;
+        }
+    }
+
+}
+
+.mat-mdc-standard-chip .mdc-evolution-chip__text-label {
+    font-size: 10px !important;
+}
+

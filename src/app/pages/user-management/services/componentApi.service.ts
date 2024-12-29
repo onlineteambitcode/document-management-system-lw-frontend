@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClientApiService } from 'src/app/common/services/http-client-api.service';
@@ -7,8 +8,23 @@ export class ComponentApiService {
   constructor(private apiService: HttpClientApiService) {}
 
   // GET method
-  registerUser<T>(body: any, options?: object): Observable<T> {
-    return this.apiService.post<T>('/auth/register', body, options);
+  getOneUser<T>(userId:string): Observable<T> {
+    return this.apiService.get<T>(`/users/${userId}`);
+  }
+
+  // GET method
+  getAllUsers<T>(userId:string): Observable<T> {
+    return this.apiService.get<T>(`/users`);
+  }
+
+    // GET method
+  getAllUsersWithServerSidePagination<T>(page: number, limit: number, sortBy: string, order: string): Observable<T> {
+    const params = new HttpParams()
+    .set('page', page.toString())
+    .set('limit', limit.toString())
+    .set('sortBy', sortBy)
+    .set('order', order);  
+    return this.apiService.get<T>(`/users`, params);
   }
 
   // POST method
