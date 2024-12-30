@@ -9,18 +9,22 @@ th{
 .mat-mdc-card-header-text{
     display: contents !important;
 }
-
-mat-chip{
-    border-radius: 0px !important;
-    .mdc-evolution-chip__cell{
-        .mat-mdc-chip-action-label{
-            font-size: 10px !important;
-        }
-    }
-
+.admin-verification-pending{
+    color: rgb(228, 38, 38);
 }
 
-.mat-mdc-standard-chip .mdc-evolution-chip__text-label {
-    font-size: 10px !important;
+.otp-verification-pending{
+    color: rgb(255 163 30 / 99%);
 }
 
+@keyframes vibrate {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+  }
+  
+  .mat-icon.vibrate {
+    animation: vibrate 0.5s ease-in-out 3 !important; /* Vibrates infinitely with smooth easing */
+    animation-delay: 1s !important; /* Delay before the vibration starts */
+}
+  

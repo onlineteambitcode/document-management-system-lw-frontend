@@ -8,6 +8,7 @@ export interface UserData {
     status: USER_STATUS_ENUM;
     created_date: string;
     profile_image: string;
+    mobileNumber: string;
   }
 
 

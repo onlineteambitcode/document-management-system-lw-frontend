@@ -4,7 +4,7 @@
             <mat-card-content
                 class="mat-mdc-card-content p-y-24">
                 <mat-card-title class="mat-mdc-card-title">
-                    Change Profile
+                    Update Profile Picture
                 </mat-card-title>
                 <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
                     Change your profile picture from here
@@ -62,39 +62,105 @@
             <mat-card-title class="m-b-0">Add New User</mat-card-title>
         </mat-card-header>
         <mat-card-content class="b-t-1">
-            <form>
+            <form [formGroup]="form" >
                 <div class="row">
                     <div class="col-lg-6">
                         <!-- input -->
                         <mat-label class="f-w-600 m-b-8 d-block">Name</mat-label>
-                        <mat-form-field appearance="outline" class="w-100" color="primary">
-                            <input matInput placeholder="Name " />
+                        <mat-form-field  appearance="outline" class="w-100" color="primary">
+                            <input formControlName="name" matInput placeholder="Name " />
+                            <mat-error *ngIf="f['name'].hasError('required') && (f['name'].touched || f['name'].dirty)">
+                                Name is required.
+                              </mat-error>
+                              <mat-error *ngIf="f['name'].hasError('minlength') && (f['name'].touched || f['name'].dirty)">
+                                Name must be at least 6 characters long.
+                              </mat-error>
+                              <mat-error *ngIf="f['name'].hasError('maxlength') && (f['name'].touched || f['name'].dirty)">
+                                Name cannot exceed 50 characters.
+                              </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
                         <mat-form-field appearance="outline" class="w-100">
-                            <mat-select [(value)]="selectedRole">
+                            <mat-select formControlName="role" [(value)]="selectedRole">
                                 @for(option of role; track option.value) {
                                 <mat-option [value]="option.value">{{
                                     option.viewValue
                                     }}</mat-option>
                                 }
                             </mat-select>
+                            <mat-error *ngIf="f['role'].hasError('required') && (f['role'].touched || f['role'].dirty)">
+                                Role is required.
+                              </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="col-lg-6">
                         <!-- input -->
                         <mat-label class="f-w-600 m-b-8 d-block">Email</mat-label>
                         <mat-form-field appearance="outline" class="w-100" color="primary">
-                            <input matInput type="email" placeholder="Email" />
+                            <input formControlName="email"  matInput type="email" placeholder="Email" />
+                            <mat-error *ngIf="f['email'].hasError('required') && (f['email'].touched || f['email'].dirty)">
+                                Email is required.
+                              </mat-error>
+                              <mat-error *ngIf="f['email'].hasError('email') && (f['email'].touched || f['email'].dirty)">
+                                Enter a valid email address.
+                              </mat-error>
                         </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Mobile Number</mat-label>
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                        <span matTextPrefix>+94 &nbsp;</span>
+                        <input matInput formControlName="mobileNumber" type="tel" placeholder="71-222-2222" />
+                        <mat-error *ngIf="f['mobileNumber'].hasError('required') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                            Mobile number is required.
+                        </mat-error>
+                        <mat-error *ngIf="f['mobileNumber'].hasError('pattern') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                            Enter a valid 9-digit mobile number.
+                        </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-lg-6" *ngIf="!isUserProfile">
+                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="new_password"  [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password" />
+              <mat-icon
+              matSuffix
+              *ngIf="f['new_password'].invalid && (f['new_password'].touched || f['new_password'].dirty)"
+              matTooltip="Password must be at least 8 characters long.
+        Password must include an uppercase letter, a number, and a minimum of 8 characters.
+        Confirm Password">
+              error
+            </mat-icon>
+            <mat-icon (click)="showHidePassword()" class="show-hide-icon" matSuffix>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+
+              <mat-error *ngIf="f['new_password'].hasError('required') && (f['new_password'].touched || f['new_password'].dirty)">
+                Password is required.
+              </mat-error>
+            </mat-form-field>
+          
+            <!-- Confirm Password -->
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
+            <mat-form-field appearance="outline" class="w-100" color="primary">
+              <input matInput formControlName="confirm_password" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password" />
+              <mat-icon (click)="showHideConfirmPassword()" class="show-hide-icon" matSuffix>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              <mat-error
+              *ngIf="f['confirm_password'].hasError('required') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
+              Confirm Password is required.
+            </mat-error>
+            <mat-error *ngIf="f['confirm_password'].hasError('passwordsMismatch') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
+              Passwords do not match.
+            </mat-error>
+            </mat-form-field>
                     </div>
                 </div>
 
                 <div class="m-t-12">
-                    <button mat-flat-button color="primary" class="m-r-8">Submit</button>
-                    <button mat-stroked-button color="warn">Cancel</button>
+                    <button [disabled]="form.invalid" mat-flat-button color="primary" class="m-r-8" (click)="clickCreateUser()" >{{ isUserProfile ? 'Save Changes' : 'Create User'}}</button>
+                    <button mat-stroked-button color="warn">Clear</button>
                 </div>
             </form>
         </mat-card-content>

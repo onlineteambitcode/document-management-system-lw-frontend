@@ -40,6 +40,7 @@ import { PasswordResetComponent } from '../password-reset/password-reset.compone
   templateUrl: './side-login.component.html',
 })
 export class AppSideLoginComponent {
+  hidePassword: boolean = true;
   otpType: OTP_TYPE = OTP_TYPE.LOGIN_OTP_PENDING;
   isLoginEnable:boolean = true;
   isOtpEnable:boolean = false;
@@ -276,5 +277,9 @@ export class AppSideLoginComponent {
 
   navigateToHome(){
     this.router.navigate(["/dashboard"]);
+  }
+
+  showHidePassword(){
+    this.hidePassword = !this.hidePassword;
   }
 }

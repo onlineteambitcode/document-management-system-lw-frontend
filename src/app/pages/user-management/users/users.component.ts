@@ -29,7 +29,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.ADMIN,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-1.jpg'
+        profile_image: 'assets/images/profile/user-1.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '2',
@@ -38,7 +39,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-2.jpg'
+        profile_image: 'assets/images/profile/user-2.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '3',
@@ -47,7 +49,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-3.jpg'
+        profile_image: 'assets/images/profile/user-3.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '4',
@@ -56,7 +59,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-4.jpg'
+        profile_image: 'assets/images/profile/user-4.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '5',
@@ -65,7 +69,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.DEACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-5.jpg'
+        profile_image: 'assets/images/profile/user-5.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '6',
@@ -74,7 +79,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-6.jpg'
+        profile_image: 'assets/images/profile/user-6.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '7',
@@ -83,7 +89,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-7.jpg'
+        profile_image: 'assets/images/profile/user-7.jpg',
+          mobileNumber: '+94712390348'
       },
       {
         user_id: '8',
@@ -92,7 +99,8 @@ export class UsersComponent implements OnInit {
         role: USER_ROLE_ENUM.USER,
         status: USER_STATUS_ENUM.ACTIVE,
         created_date: '202-10-27',
-        profile_image: 'assets/images/profile/user-8.jpg'
+        profile_image: 'assets/images/profile/user-8.jpg',
+          mobileNumber: '+94712390348'
       },
     ];
     this.dataSource = new MatTableDataSource<UserData>(this.tableData);

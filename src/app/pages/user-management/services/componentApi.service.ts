@@ -50,4 +50,10 @@ export class ComponentApiService {
   resendOtp<T>(body: any, options?: object): Observable<T> {
     return this.apiService.post<T>('/auth/resend-otp', body, options);
   }
+  
+  // POST method
+  createNewUser<T>(body: any, options?: object): Observable<T> {
+    return this.apiService.post<T>('/auth/direct-user-register', body, options);
+  }
+
 }

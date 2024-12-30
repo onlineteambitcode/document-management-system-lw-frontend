@@ -39,6 +39,8 @@ import { FromUtil } from '../utils/form.util';
   providers: [ComponentApiService]
 })
 export class AppSideRegisterComponent {
+  hideConfirmPassword: boolean = true;
+  hidePassword: boolean = true;
   isRegisterEnable: boolean = true;
   isOtpEnable: boolean = false;
   form: FormGroup;
@@ -129,5 +131,13 @@ export class AppSideRegisterComponent {
 
   calbackForPendingRegisterOtpVerification(){
     this.router.navigate(["/authentication/login"])
+  }
+
+  showHideConfirmPassword(){
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
+
+  showHidePassword(){
+    this.hidePassword = !this.hidePassword;
   }
 }

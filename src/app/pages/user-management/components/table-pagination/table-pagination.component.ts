@@ -62,6 +62,7 @@ export class AppTablePaginationComponent implements AfterViewInit {
   isRateLimitReached = false;
   pageSize = 5;
   constructor(
+    private router: Router,
     private apiService: ComponentApiService,
     private alertService: SweetAlertService,
     private deleteConfirmDialog: MatDialog
@@ -148,5 +149,11 @@ export class AppTablePaginationComponent implements AfterViewInit {
       data: { item: element[this.messageBodayKey], title: this.removeDialogTitle }
     });
   }
+  navigateToEdit(userData: any){
+    console.log(userData);
+    const params = { id: userData.user_id };
+    // Navigate to the target route with parameters
+    this.router.navigate(['/user-managemnt/user-profile'], { queryParams: params });
 
+  }
 }

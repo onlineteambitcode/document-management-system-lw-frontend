@@ -106,7 +106,8 @@ const ELEMENT_DATA: ActivityElement[] = [
             role: USER_ROLE_ENUM.ADMIN,
             status: USER_STATUS_ENUM.ACTIVE,
             created_date: '202-10-27',
-            profile_image: 'assets/images/profile/user-1.jpg'
+            profile_image: 'assets/images/profile/user-1.jpg',
+          mobileNumber: '+94712390348'
           }
   },
   {
@@ -136,7 +137,8 @@ const ELEMENT_DATA: ActivityElement[] = [
       role: USER_ROLE_ENUM.USER,
       status: USER_STATUS_ENUM.ACTIVE,
       created_date: '202-10-27',
-      profile_image: 'assets/images/profile/user-6.jpg'
+      profile_image: 'assets/images/profile/user-6.jpg',
+          mobileNumber: '+94712390348'
     }
   },{
     date: '2024:12:10 11:33:54',
@@ -165,7 +167,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ACTIVE,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-6.jpg'
+          profile_image: 'assets/images/profile/user-6.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -194,7 +197,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-3.jpg'
+          profile_image: 'assets/images/profile/user-3.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -223,7 +227,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-3.jpg'
+          profile_image: 'assets/images/profile/user-3.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -252,7 +257,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ACTIVE,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-4.jpg'
+          profile_image: 'assets/images/profile/user-4.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -281,7 +287,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ACTIVE,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-4.jpg'
+          profile_image: 'assets/images/profile/user-4.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -310,7 +317,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-3.jpg'
+          profile_image: 'assets/images/profile/user-3.jpg',
+          mobileNumber: '+94712390348'
         }
   },{
     date: '2024:12:16 13:27:11',
@@ -339,7 +347,8 @@ const ELEMENT_DATA: ActivityElement[] = [
           role: USER_ROLE_ENUM.USER,
           status: USER_STATUS_ENUM.ADMIN_VERIFICATION_PENDING,
           created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-3.jpg'
+          profile_image: 'assets/images/profile/user-3.jpg',
+          mobileNumber: '+94712390348'
         }
   },
 ];

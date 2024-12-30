@@ -97,21 +97,31 @@
           </th>
           <td mat-cell *matCellDef="let element">
             @if(element.status == 'ACTIVE') {
-              <p><mat-slide-toggle [checked]="true">Active</mat-slide-toggle></p>
+              <p><mat-slide-toggle
+                matTooltip="Active User"
+                [checked]="true">Active</mat-slide-toggle></p>
             }
             @if(element.status == 'DEACTIVE'){
-              <p><mat-slide-toggle [checked]="false">Deactivated</mat-slide-toggle></p>
+              <p><mat-slide-toggle
+                matTooltip="Deactivated account"
+                 [checked]="false">Deactivated</mat-slide-toggle></p>
             }
             @if(element.status == 'ADMIN_VERIFICATION_PENDING'){
               <!-- <p> -->
-                <mat-chip>Admin Not Verified</mat-chip>
+                <mat-icon
+                matTooltip="Admin verification pending"
+                class="vibrate admin-verification-pending">admin_panel_settings</mat-icon>
               <!-- </p> -->
             }
             @if(element.status == 'REGISTRATION_OTP_VERIFICATION_PENDING'){
-              <p>
-
-                <mat-chip class="mat-subtitle-1 f-s-8">OTP Verification Pending</mat-chip>
-              </p>
+              <!-- <mat-label appearance="outlined">
+                OTP Verification Pending
+              </mat-label> -->
+              
+              <mat-icon
+              matTooltip="OTP Verification pending"
+              class="otp-verification-pending">app_blocking</mat-icon>
+          
             }
           </td>
         </ng-container>
@@ -139,8 +149,8 @@
             class="f-w-600 mat-subtitle-1 f-s-14"
           >Action</th>
           <td mat-cell *matCellDef="let element" class="mat-body-1">
-            <a class="m-r-10 cursor-pointer">
-              <i-tabler [routerLink]="editRouterLink" name="edit" class="icon-22">
+            <a class="m-r-10 cursor-pointer" (click)="navigateToEdit(element)">
+              <i-tabler name="edit" class="icon-22">
             </i-tabler>
             </a>
             <a class="m-r-10 cursor-pointer">
