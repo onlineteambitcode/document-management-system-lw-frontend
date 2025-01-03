@@ -22,6 +22,7 @@ import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 import { MatChipsModule } from '@angular/material/chips';
 import { ComponentApiService } from '../../services/componentApi.service';
 import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/delete-confirm.component';
+import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
 
 
 @Component({
@@ -41,24 +42,26 @@ import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/
     RouterModule,
     MatSortModule,
     HttpCommonApiModule,
-    MatChipsModule
+    MatChipsModule,
+    ContentLoaderComponent
   ],
   providers: [ComponentApiService],
   templateUrl: './table-pagination.component.html',
   styleUrl: 'table-pagination.component.scss'
 })
 export class AppTablePaginationComponent implements AfterViewInit {
-  tableData: any[] = [];
   @Input() displayedColumns: any[] = [];
-  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
   @Input() removeDialogTitle: string = 'Do you want to remove?';
   @Input() messageBodayKey: string = '';
   @Input() editRouterLink: string = '';
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  tableData: any[] = [];
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
   resultsLength = 0;
   isLoadingResults = true;
+  isLoading = true;
   isRateLimitReached = false;
   pageSize = 5;
   constructor(

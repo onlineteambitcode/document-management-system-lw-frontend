@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { BlankComponent } from './layouts/blank/blank.component';
 import { FullComponent } from './layouts/full/full.component';
+import { RoleGuard } from './common/guards/role.guard';
+import { USER_ROLE_ENUM } from './common/enums/user.enum';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 export const routes: Routes = [
   {
@@ -16,6 +19,8 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () =>
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
+        canActivate: [RoleGuard], // Apply the canActivate guard here
+        data: { expectedRole: USER_ROLE_ENUM.ADMIN }, 
       },
       {
         path: 'document-managemnt',
@@ -64,6 +69,10 @@ export const routes: Routes = [
           ),
       },
     ],
+  },
+  {
+    path: 'unauthorized',
+    component: NotFoundComponent,
   },
   {
     path: '**',

@@ -48,7 +48,7 @@
     />
   </button>
   <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
-    <button mat-menu-item [routerLink]="'/user-managemnt/user-profile'">
+    <button mat-menu-item (click)="navigateToProfile()">
       <mat-icon class="d-flex align-items-center"
         ><i
           data-icon="solar:shield-user-line-duotone"
@@ -75,7 +75,7 @@
 
     <div class="p-x-12 m-t-12">
       <a
-        [routerLink]="['/authentication/login']"
+        (click)="clickOnLogout()"
         mat-stroked-button
         color="primary"
         class="w-100"

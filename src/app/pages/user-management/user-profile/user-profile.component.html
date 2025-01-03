@@ -1,88 +1,106 @@
 <div class="row">
     <div class="col">
         <mat-card class="mat-mdc-card mdc-card cardWithShadow">
-            <mat-card-content
-                class="mat-mdc-card-content p-y-24">
+            <mat-card-content class="mat-mdc-card-content p-y-24">
                 <mat-card-title class="mat-mdc-card-title">
                     Update Profile Picture
                 </mat-card-title>
                 <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
                     Change your profile picture from here
                 </mat-card-subtitle>
-                <div class="text-center m-t-24" >
-                    <img src="/assets/images/profile/user-1.jpg"
-                        width="120" class="rounded-circle">
-                    <div class="m-t-24" >
+                <div *ngIf="!isLoading" class="text-center m-t-24">
+                    <img src="/assets/images/profile/user-1.jpg" width="120" class="rounded-circle">
+                    <div class="m-t-24">
                         <button mat-flat-button="" color="primary"
                             class="m-r-8 mdc-button mdc-button--unelevated mat-mdc-unelevated-button mat-primary mat-mdc-button-base"
-                             fdprocessedid="5dtmkq"><span
+                            fdprocessedid="5dtmkq"><span
                                 class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
                                 class="mdc-button__label"> Upload </span><span
                                 class="mat-mdc-focus-indicator"></span><span
                                 class="mat-mdc-button-touch-target"></span><span
                                 class="mat-ripple mat-mdc-button-ripple"></span>
                         </button>
-                        <button mat-stroked-button=""
-                            color="warn" 
+                        <button mat-stroked-button="" color="warn"
                             class="mdc-button mdc-button--outlined mat-mdc-outlined-button mat-warn mat-mdc-button-base"
                             fdprocessedid="jbgdf">
-                            <span
-                                class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
+                            <span class="mat-mdc-button-persistent-ripple mdc-button__ripple"></span><span
                                 class="mdc-button__label">Reset</span>
                             <span class="mat-mdc-focus-indicator"></span>
-                            <span
-                                class="mat-mdc-button-touch-target"></span>
-                            <span
-                                class="mat-ripple mat-mdc-button-ripple"></span>
+                            <span class="mat-mdc-button-touch-target"></span>
+                            <span class="mat-ripple mat-mdc-button-ripple"></span>
                         </button>
                     </div>
-                    <span
-                        class="f-s-14 m-t-24 d-block">Allowed JPG, GIF or PNG. Max size of 800K</span>
+                    <span class="f-s-14 m-t-24 d-block">Allowed JPG, GIF or PNG. Max size of 800K</span>
                 </div>
+                <app-content-loader *ngIf="isLoading" [loaderType]="'profile-picture'"></app-content-loader>
             </mat-card-content></mat-card>
     </div>
 
     <div class="col">
         <mat-card class="mat-mdc-card mdc-card cardWithShadow">
-            <mat-card-content
-                class="mat-mdc-card-content p-y-24">
+            <mat-card-content class="mat-mdc-card-content p-y-24">
                 <mat-card-title class="mat-mdc-card-title">
                     Change Password
                 </mat-card-title>
                 <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
                     To change your password please confirm here
+
                 </mat-card-subtitle>
-                
+
             </mat-card-content></mat-card>
     </div>
 </div>
 <div class="row">
-    <mat-card class="cardWithShadow theme-card">
+    <mat-card *ngIf="!isLoading" class="cardWithShadow theme-card">
         <mat-card-header>
-            <mat-card-title class="m-b-0">Add New User</mat-card-title>
+            <mat-card-title class="m-b-0">{{ isUserProfile ? 'Profile' : 'Add New User'}}</mat-card-title>
         </mat-card-header>
         <mat-card-content class="b-t-1">
-            <form [formGroup]="form" >
+            <form [formGroup]="form">
                 <div class="row">
                     <div class="col-lg-6">
                         <!-- input -->
                         <mat-label class="f-w-600 m-b-8 d-block">Name</mat-label>
-                        <mat-form-field  appearance="outline" class="w-100" color="primary">
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
                             <input formControlName="name" matInput placeholder="Name " />
                             <mat-error *ngIf="f['name'].hasError('required') && (f['name'].touched || f['name'].dirty)">
                                 Name is required.
-                              </mat-error>
-                              <mat-error *ngIf="f['name'].hasError('minlength') && (f['name'].touched || f['name'].dirty)">
+                            </mat-error>
+                            <mat-error
+                                *ngIf="f['name'].hasError('minlength') && (f['name'].touched || f['name'].dirty)">
                                 Name must be at least 6 characters long.
-                              </mat-error>
-                              <mat-error *ngIf="f['name'].hasError('maxlength') && (f['name'].touched || f['name'].dirty)">
+                            </mat-error>
+                            <mat-error
+                                *ngIf="f['name'].hasError('maxlength') && (f['name'].touched || f['name'].dirty)">
                                 Name cannot exceed 50 characters.
-                              </mat-error>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-6">
+                        <!-- input -->
+                        <mat-label class="f-w-600 m-b-8 d-block">Email</mat-label>
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input formControlName="email" matInput type="email" placeholder="Email" />
+                            <mat-error
+                                *ngIf="f['email'].hasError('required') && (f['email'].touched || f['email'].dirty)">
+                                Email is required.
+                            </mat-error>
+                            <mat-error *ngIf="f['email'].hasError('email') && (f['email'].touched || f['email'].dirty)">
+                                Enter a valid email address.
+                            </mat-error>
                         </mat-form-field>
                     </div>
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
-                        <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>
+                            <span
+                                [ngClass]="{'bg-light-error text-error': userData.role === 'ADMIN', 'bg-light-warning text-warning' : userData.role === 'USER'}"
+                                class="rounded f-w-600 p-6 m-t-4 p-y-4 f-s-12 m-r-2">
+                                {{ userData.role | titlecase }}
+                            </span>
+
+                        </mat-label>
+                        <mat-form-field *ngIf="!isUserProfile" appearance="outline" class="w-50 m-l--16">
                             <mat-select formControlName="role" [(value)]="selectedRole">
                                 @for(option of role; track option.value) {
                                 <mat-option [value]="option.value">{{
@@ -92,78 +110,102 @@
                             </mat-select>
                             <mat-error *ngIf="f['role'].hasError('required') && (f['role'].touched || f['role'].dirty)">
                                 Role is required.
-                              </mat-error>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-lg-6">
-                        <!-- input -->
-                        <mat-label class="f-w-600 m-b-8 d-block">Email</mat-label>
-                        <mat-form-field appearance="outline" class="w-100" color="primary">
-                            <input formControlName="email"  matInput type="email" placeholder="Email" />
-                            <mat-error *ngIf="f['email'].hasError('required') && (f['email'].touched || f['email'].dirty)">
-                                Email is required.
-                              </mat-error>
-                              <mat-error *ngIf="f['email'].hasError('email') && (f['email'].touched || f['email'].dirty)">
-                                Enter a valid email address.
-                              </mat-error>
+                            </mat-error>
                         </mat-form-field>
                     </div>
 
+
                     <div class="col-lg-6">
-                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Mobile Number</mat-label>
+                        <mat-label class="f-w-600 m-b-8 d-block">Mobile Number</mat-label>
                         <mat-form-field appearance="outline" class="w-100" color="primary">
-                        <span matTextPrefix>+94 &nbsp;</span>
-                        <input matInput formControlName="mobileNumber" type="tel" placeholder="71-222-2222" />
-                        <mat-error *ngIf="f['mobileNumber'].hasError('required') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
-                            Mobile number is required.
-                        </mat-error>
-                        <mat-error *ngIf="f['mobileNumber'].hasError('pattern') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
-                            Enter a valid 9-digit mobile number.
-                        </mat-error>
+                            <span matTextPrefix>+94 &nbsp;</span>
+                            <input matInput formControlName="mobileNumber" type="tel" placeholder="71-222-2222" />
+                            <mat-error
+                                *ngIf="f['mobileNumber'].hasError('required') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                                Mobile number is required.
+                            </mat-error>
+                            <mat-error
+                                *ngIf="f['mobileNumber'].hasError('pattern') && (f['mobileNumber'].touched || f['mobileNumber'].dirty)">
+                                Enter a valid 9-digit mobile number.
+                            </mat-error>
                         </mat-form-field>
                     </div>
 
                     <div class="col-lg-6" *ngIf="!isUserProfile">
                         <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput formControlName="new_password"  [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password" />
-              <mat-icon
-              matSuffix
-              *ngIf="f['new_password'].invalid && (f['new_password'].touched || f['new_password'].dirty)"
-              matTooltip="Password must be at least 8 characters long.
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput formControlName="new_password" [type]="hidePassword ? 'password' : 'text'"
+                                placeholder="Enter your password" />
+                            <mat-icon matSuffix
+                                *ngIf="f['new_password'].invalid && (f['new_password'].touched || f['new_password'].dirty)"
+                                matTooltip="Password must be at least 8 characters long.
         Password must include an uppercase letter, a number, and a minimum of 8 characters.
         Confirm Password">
-              error
-            </mat-icon>
-            <mat-icon (click)="showHidePassword()" class="show-hide-icon" matSuffix>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                                error
+                            </mat-icon>
+                            <mat-icon (click)="showHidePassword()" class="show-hide-icon" matSuffix>{{ hidePassword ?
+                                'visibility_off' : 'visibility' }}</mat-icon>
 
-              <mat-error *ngIf="f['new_password'].hasError('required') && (f['new_password'].touched || f['new_password'].dirty)">
-                Password is required.
-              </mat-error>
-            </mat-form-field>
-          
-            <!-- Confirm Password -->
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
-            <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput formControlName="confirm_password" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password" />
-              <mat-icon (click)="showHideConfirmPassword()" class="show-hide-icon" matSuffix>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-              <mat-error
-              *ngIf="f['confirm_password'].hasError('required') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
-              Confirm Password is required.
-            </mat-error>
-            <mat-error *ngIf="f['confirm_password'].hasError('passwordsMismatch') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
-              Passwords do not match.
-            </mat-error>
-            </mat-form-field>
+                            <mat-error
+                                *ngIf="f['new_password'].hasError('required') && (f['new_password'].touched || f['new_password'].dirty)">
+                                Password is required.
+                            </mat-error>
+                        </mat-form-field>
+
+                        <!-- Confirm Password -->
+                        <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
+                        <mat-form-field appearance="outline" class="w-100" color="primary">
+                            <input matInput formControlName="confirm_password"
+                                [type]="hideConfirmPassword ? 'password' : 'text'"
+                                placeholder="Confirm your password" />
+                            <mat-icon (click)="showHideConfirmPassword()" class="show-hide-icon" matSuffix>{{
+                                hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                            <mat-error
+                                *ngIf="f['confirm_password'].hasError('required') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
+                                Confirm Password is required.
+                            </mat-error>
+                            <mat-error
+                                *ngIf="f['confirm_password'].hasError('passwordsMismatch') && (f['confirm_password'].touched || f['confirm_password'].dirty)">
+                                Passwords do not match.
+                            </mat-error>
+                        </mat-form-field>
                     </div>
                 </div>
 
                 <div class="m-t-12">
-                    <button [disabled]="form.invalid" mat-flat-button color="primary" class="m-r-8" (click)="clickCreateUser()" >{{ isUserProfile ? 'Save Changes' : 'Create User'}}</button>
-                    <button mat-stroked-button color="warn">Clear</button>
+
+                    @if(userData.status === 'ADMIN_VERIFICATION_PENDING') {
+                    <button class="m-r-8 verify-button" *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly"
+                        mat-stroked-button color="accent">Verify Account</button>
+                    }@else if(userData.status === 'DEACTIVE') {
+
+                    }@else{
+                    <button *ngIf="!isUserProfile" [disabled]="form.invalid  || isReadOnly" mat-flat-button
+                        color="primary" class="m-r-8" (click)="clickCreateUser()">Create User</button>
+                    <button *ngIf="isUserProfile" [disabled]="form.invalid || isReadOnly" mat-flat-button
+                        color="primary" class="m-r-8" (click)="clickUpdateUser()">Save Changes</button>
+
+                    <button *ngIf="!isUserProfile" [disabled]="isReadOnly" mat-stroked-button
+                        color="warn">Clear</button>
+                    <button class="m-r-8" *ngIf="isUserProfile" [disabled]="isReadOnly" (click)="loadUserData()"
+                        mat-stroked-button color="warn">Revert changes</button>
+                    }
+                    <button *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly" mat-flat-button
+                        color="warn">Deactivate</button>
                 </div>
             </form>
         </mat-card-content>
     </mat-card>
+    <div *ngIf="isLoading" class="col-md-6">
+        <mat-card class="mat-mdc-card mdc-card cardWithShadow">
+            <mat-card-header>
+                <mat-card-title class="m-b-0">{{ isUserProfile ? 'Profile' : 'Add New User'}}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="mat-mdc-card-content p-y-24">
+            
+                <app-content-loader [loaderType]="'form-card'"></app-content-loader>
+
+            </mat-card-content></mat-card>
+    </div>
 
 </div>

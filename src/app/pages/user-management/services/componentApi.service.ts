@@ -56,4 +56,9 @@ export class ComponentApiService {
     return this.apiService.post<T>('/auth/direct-user-register', body, options);
   }
 
+  // POST method
+  updateUser<T>(body: any,userId: string, options?: object): Observable<T> {
+    return this.apiService.put<T>(`/users/${userId}`, body, options);
+  }
+
 }

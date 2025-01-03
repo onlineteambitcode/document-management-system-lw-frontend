@@ -140,96 +140,96 @@ export class DocumentAccessTablePaginationComponent {
     this.dataSource.paginator = this.paginator;
   }
   ngOnInit(): void {
-    this.selectData = [
-      {
-        case_id: 'CASE_2012_SPE_15',
-        name: '',
-        allowed_users: 10,
-        documents: 17,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2019_FEB_11_ADMIN_GROUP',
-        name: '',
-        allowed_users: 10,
-        documents: 20,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2022_MAR_18',
-        name: '',
-        allowed_users: 10,
-        documents: 30,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2024_JAN_2',
-        name: '',
-        allowed_users: 30,
-        documents: 28,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2024_NOV_2',
-        name: '',
-        allowed_users: 10,
-        documents: 11,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      }
-    ];
+    // this.selectData = [
+    //   {
+    //     case_id: 'CASE_2012_SPE_15',
+    //     name: '',
+    //     allowed_users: 10,
+    //     documents: 17,
+    //     created_date: '2024-10-27',
+    //     last_updated_date: '2024-12-15',
+    //     description: 'Test description'
+    //   },
+    //   {
+    //     case_id: 'CASE_2019_FEB_11_ADMIN_GROUP',
+    //     name: '',
+    //     allowed_users: 10,
+    //     documents: 20,
+    //     created_date: '2024-10-27',
+    //     last_updated_date: '2024-12-15',
+    //     description: 'Test description'
+    //   },
+    //   {
+    //     case_id: 'CASE_2022_MAR_18',
+    //     name: '',
+    //     allowed_users: 10,
+    //     documents: 30,
+    //     created_date: '2024-10-27',
+    //     last_updated_date: '2024-12-15',
+    //     description: 'Test description'
+    //   },
+    //   {
+    //     case_id: 'CASE_2024_JAN_2',
+    //     name: '',
+    //     allowed_users: 30,
+    //     documents: 28,
+    //     created_date: '2024-10-27',
+    //     last_updated_date: '2024-12-15',
+    //     description: 'Test description'
+    //   },
+    //   {
+    //     case_id: 'CASE_2024_NOV_2',
+    //     name: '',
+    //     allowed_users: 10,
+    //     documents: 11,
+    //     created_date: '2024-10-27',
+    //     last_updated_date: '2024-12-15',
+    //     description: 'Test description'
+    //   }
+    // ];
 
-      this.tableData = [
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_1',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_MAY_15_2',
-          name: 'Case 2012 May.pdf',
-          file_size: 7.1,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2018_JAN_15_3',
-          name: 'Case 2018 Jan.pdf',
-          file_size: 3.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_4',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 0.5,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_5',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 1.3,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        }
-      ];
+      // this.tableData = [
+      //   {
+      //     document_id: 'DOC_CASE_2012_SPE_15_1',
+      //     name: 'Case 2012 Sep.pdf',
+      //     file_size: 2,
+      //     created_date: '2024-10-27',
+      //     last_updated_date: '2024-12-15',
+      //     description: 'Test description'
+      //   },
+      //   {
+      //     document_id: 'DOC_CASE_2012_MAY_15_2',
+      //     name: 'Case 2012 May.pdf',
+      //     file_size: 7.1,
+      //     created_date: '2024-10-27',
+      //     last_updated_date: '2024-12-15',
+      //     description: 'Test description'
+      //   },
+      //   {
+      //     document_id: 'DOC_CASE_2018_JAN_15_3',
+      //     name: 'Case 2018 Jan.pdf',
+      //     file_size: 3.2,
+      //     created_date: '2024-10-27',
+      //     last_updated_date: '2024-12-15',
+      //     description: 'Test description'
+      //   },
+      //   {
+      //     document_id: 'DOC_CASE_2012_SPE_15_4',
+      //     name: 'Case 2012 Sep.pdf',
+      //     file_size: 0.5,
+      //     created_date: '2024-10-27',
+      //     last_updated_date: '2024-12-15',
+      //     description: 'Test description'
+      //   },
+      //   {
+      //     document_id: 'DOC_CASE_2012_SPE_15_5',
+      //     name: 'Case 2012 Sep.pdf',
+      //     file_size: 1.3,
+      //     created_date: '2024-10-27',
+      //     last_updated_date: '2024-12-15',
+      //     description: 'Test description'
+      //   }
+      // ];
 
       this.userTableData = [
         {

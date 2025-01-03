@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, inject, Input, ViewChild } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { AfterViewInit, Component, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MaterialModule } from 'src/app/material.module';
@@ -11,9 +11,17 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { DialogModule } from '@angular/cdk/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CaseData } from 'src/app/common/interfaces/case.interface';
 import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/delete-confirm.component';
+import { ComponentApiService } from '../../services/conponent-api.service';
+import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
+import { MatSort } from '@angular/material/sort';
+import { catchError, map, Observable, startWith, switchMap } from 'rxjs';
+import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
+import { AuthService } from 'src/app/common/services/auth.service';
+import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
+import { USER_ROLE_ENUM } from 'src/app/common/enums/user.enum';
 @Component({
   selector: 'app-case-table-pagination',
   standalone: true,
@@ -28,76 +36,109 @@ import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/
     TablerIconsModule,
     DialogModule,
     RouterModule,
-],
+    HttpCommonApiModule
+  ],
   templateUrl: './case-table-pagination.component.html',
-  styleUrl: './case-table-pagination.component.scss'
+  styleUrl: './case-table-pagination.component.scss',
+  providers: [ComponentApiService, DatePipe],
 })
-export class CaseTablePaginationComponent {
-  public tableData: CaseData[] = [];
-  public displayedColumns: string[]  = ['id', 'allowed','documents', 'last_updated', 'action'];
-  removeDialogTitle:string = 'Do you want to remove?';
-  messageBodayKey:string = '';
-  editRouterLink:string = '';
-  public dataSource: MatTableDataSource<CaseData> = new MatTableDataSource<CaseData>();
-  readonly deleteConfirmDialog = inject(MatDialog);
-
+export class CaseTablePaginationComponent implements AfterViewInit,OnInit {
+  @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  tableData: CaseData[] = [];
+  public displayedColumns: string[] = ['id', 'documents', 'last_updated', 'action'];
+  removeDialogTitle: string = 'Do you want to remove?';
+  messageBodayKey: string = '';
+  editRouterLink: string = '';
+  resultsLength = 0;
+  isLoadingResults = true;
+  isLoading = true;
+  isRateLimitReached = false;
+  pageSize = 5;
+  isAdmin: boolean = false; 
+  caseId: string = '';
+  dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
 
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private apiService: ComponentApiService,
+    private alertService: SweetAlertService,
+    private deleteConfirmDialog: MatDialog,
+    private authService: AuthService,
+    private fullPageLoaderService: FullPageLoaderService
+  ) { }
 
-
-  ngOnInit(): void {
-    this.tableData = [
-      {
-        case_id: 'CASE_2012_SPE_15',
-        name: '',
-        allowed_users: 10,
-        documents: 17,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2019_FEB_11_ADMIN_GROUP',
-        name: '',
-        allowed_users: 10,
-        documents: 20,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2022_MAR_18',
-        name: '',
-        allowed_users: 10,
-        documents: 30,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2024_JAN_2',
-        name: '',
-        allowed_users: 30,
-        documents: 28,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      },
-      {
-        case_id: 'CASE_2024_NOV_2',
-        name: '',
-        allowed_users: 10,
-        documents: 11,
-        created_date: '2024-10-27',
-        last_updated_date: '2024-12-15',
-        description: 'Test description'
-      }
-    ];
-    this.dataSource = new MatTableDataSource<CaseData>(this.tableData);
+  ngOnInit() {
+    this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
+    // Subscribe to query parameters
+    
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    // Only bind the sort if it's available
+    if (this.sort) {
+      this.dataSource.sort = this.sort;
+    }
+
+    // Listen for changes in the paginator and sort after view initialization
+    this.paginator.page
+      .pipe(
+        startWith({}),
+        switchMap(() => {
+          this.isLoadingResults = true;
+
+          // Ensure that sort direction and active column are available
+          const sortDirection = this.sort ? this.sort.direction : 'asc';
+          const sortActive = this.sort ? this.sort.active : 'case_id';
+
+          return this.requestTableData(sortActive, sortDirection);
+        })
+      )
+      .subscribe((data) => {
+        this.isLoadingResults = false;
+        this.tableData = data;
+        this.dataSource = new MatTableDataSource(this.tableData);
+      });
+  }
+  // Method to disable the "Back" button
+  isBackDisabled(): boolean {
+    return this.paginator.pageIndex === 0;
+  }
+  // Method to disable the "Next" button
+  isNextDisabled(): boolean {
+    return this.paginator.pageIndex === Math.ceil(this.resultsLength / this.paginator.pageSize) - 1;
+  }
+  requestTableData(sortActive: string, sortDirection: string): Observable<any> {
+    return this.apiService.getAllCasesWithServerSidePagination<any>(
+      this.paginator.pageIndex,
+      this.paginator.pageSize,
+      sortActive,
+      sortDirection
+    ).pipe(
+      map((data: any) => {
+        this.resultsLength = data.total;
+        return data.data;
+      }),
+      catchError(() => {
+        this.isLoadingResults = false;
+        this.isRateLimitReached = true;
+        return [];
+      })
+    );
+  }
+
+  onPageChange() {
+    this.isLoadingResults = true;
+    const sortDirection = this.sort ? this.sort.direction : 'asc';
+    const sortActive = this.sort ? this.sort.active : 'case_id';
+
+    this.requestTableData(sortActive, sortDirection).subscribe((data: any) => {
+      this.isLoadingResults = false;
+      this.resultsLength = data.total;
+      this.dataSource.data = data.data;
+    });
   }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value; // Cast target to HTMLInputElement
@@ -116,4 +157,11 @@ export class CaseTablePaginationComponent {
   // navigateSingleCase(element: CaseData){
 
   // }
+  navigateSingleCase(caseData: any){
+    console.log(caseData);
+    const params = { id: caseData.id };
+    // Navigate to the target route with parameters
+    this.router.navigate(['/document-managemnt/single-case'], { queryParams: params });
+
+  }
 }

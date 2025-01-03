@@ -7,7 +7,7 @@
             <mat-card class="b-1 shadow-none">
             
               <mat-card-content>
-                <form>
+                <form [formGroup]="form">
                   <div class="row">
                     <div class="col">
                       <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-2 d-block">
@@ -16,7 +16,16 @@
                         Case ID 
                       </mat-label>
                       <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                        <input matInput [disabled]="!isAdmin" placeholder="" value="CASE_NOV_102">
+                        <input formControlName="case_id" matInput [disabled]="!isAdmin" placeholder="" value="CASE_NOV_102">
+                        <mat-error *ngIf="f['case_id'].hasError('required') && (f['case_id'].touched || f['case_id'].dirty)">
+                          Case ID is required.
+                        </mat-error>
+                        <mat-error *ngIf="f['case_id'].hasError('minlength') && (f['case_id'].touched || f['case_id'].dirty)">
+                          Case ID must be at least 3 characters long.
+                        </mat-error>
+                        <mat-error *ngIf="f['case_id'].hasError('maxlength') && (f['case_id'].touched || f['case_id'].dirty)">
+                          Case ID cannot exceed 50 characters.
+                        </mat-error>
                       </mat-form-field>
                     </div>
               
@@ -26,14 +35,19 @@
                         </i-tabler>
                         Description</mat-label>
                       <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                        <textarea [disabled]="!isAdmin" matInput value="Test Description about case" ></textarea>
+                        <textarea formControlName="description" [disabled]="!isAdmin" matInput value="Test Description about case" ></textarea>
+                      
+                        <mat-error *ngIf="f['description'].hasError('maxlength') && (f['description'].touched || f['description'].dirty)">
+                          Name cannot exceed 300 characters.
+                        </mat-error>
                       </mat-form-field>
                     </div>
                   </div>
                 
                   <mat-card-actions *ngIf="isAdmin" align="end">
-                    <button mat-flat-button color="primary" class="m-r-8">Save This</button>
-                    <button routerLink="/document-managemnt/document-upload" mat-stroked-button color="warn">Cancel</button>
+                    <button *ngIf="!isCaseCreation" [disabled]="isReadOnly" class="m-r-8" mat-flat-button color="warn">Delete</button>
+                    <button mat-flat-button color="primary" (click)="clickCreateCase()" [disabled]="form.invalid" class="m-r-8">Save This</button>
+                    <button  mat-stroked-button color="warn">Cancel</button>
                   </mat-card-actions>
                   
                 </form>
@@ -49,20 +63,20 @@
       <app-file-upload-ui></app-file-upload-ui>
     </div>
    <div *ngIf="!isUpload" class="row">
-    <div class="col-md-7">
+    <div class="col" *ngIf="!isCaseCreation">
         <mat-card class="document-card b-1 shadow-none">
             <mat-card-header>
               <div class="row justify-content-between">
                 <div class="col p-t-4">
                   <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
-                    Documents ({{tableData.length}})
+                    Documents ({{documentTableData.length}})
                   </mat-label>
                 </div>
               </div>
               <div class="row justify-content-between">
                 
                 <div class="col-sm-6 col-md-6 col-lg-6 p-t-6" *ngIf="isAdmin">
-                  <button [disabled]="enableDownloadSelected" mat-stroked-button (click)="openFileUploadDialog()">
+                  <button [disabled]="enableDownloadSelected || isReadOnly" mat-stroked-button (click)="openFileUploadDialog()">
                     <mat-icon style="color: #4456e9;" aria-hidden="false">upload_file</mat-icon>
                     Upload Files
                   </button>
@@ -86,21 +100,21 @@
               </mat-card-header>
         <mat-card-content  >
             
-              <div class="col-left">
+              <div class="col-left" *ngIf="!isCaseCreation">
                 <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                  <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+                  <input  matInput (keyup)="applyFilter($event)" placeholder="Filter">
                 </mat-form-field>
               </div>
              
-            <div class="table-responsive">
+            <div class="table-responsive" *ngIf="!isCaseCreation">
               <div class="justify-content-between">
                 <div class="row">
-                  <!-- <div class="col align-items-start">
+                  <div class="col align-items-start">
                     <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
                       [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
                     </mat-checkbox>
                     {{checkboxLabel()}}
-                  </div> -->
+                  </div>
                   <div class="col align-items-start d-flex align-items-center gap-2">    
                     <!-- <span class="cursor-pointer">
                       <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
@@ -129,14 +143,14 @@
                   </td>
                 </ng-container>
 
-                <ng-container matColumnDef="name">
+                <ng-container matColumnDef="document_name">
                   
                     <td mat-cell *matCellDef="let element" class="mat-body-1">
                         <div class="d-flex align-items-center">
                           <i-tabler style="color: rgb(190, 8, 8); font-weight: bold;" name="file-type-pdf" class="icon-20"></i-tabler>
                           <div class="d-flex flex-column">
                             <!-- File Name -->
-                            <div>{{ element.name }}</div>
+                            <div>{{ element.document_name }}</div>
                       
                             <!-- File Size -->
                             <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
@@ -175,7 +189,7 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
               </table>
             </div>
-            <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+            <mat-paginator *ngIf="!isCaseCreation" [pageSizeOptions]="[5, 10, 20]"
             showFirstLastButtons
             aria-label="Select page of periodic elements">
         </mat-paginator>
@@ -183,7 +197,7 @@
         </mat-card>
     </div>
 
-    <div class="col-md-5">
+    <!-- <div class="col-md-5">
         <mat-card class="b-1 shadow-none">
             <mat-card-header>
                 <mat-card-title  class="m-t-8 m-b-0">Allowed Members ({{userTableData.length}})</mat-card-title>
@@ -210,7 +224,7 @@
               
             </mat-card-content>
           </mat-card>
-    </div>
+    </div> -->
    </div>
   </div>
   

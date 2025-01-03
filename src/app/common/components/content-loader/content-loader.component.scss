@@ -1,0 +1,158 @@
+/* Shared Styles */
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  /* Profile Picture Loader */
+  .skeleton-profile-picture {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .skeleton-profile-circle {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+  }
+  
+  .skeleton-button-group {
+    display: flex;
+    gap: 16px;  /* Space between buttons */
+  }
+  
+  .skeleton-button {
+    height: 40px;
+    width: 120px;
+    border-radius: 8px;
+  }
+  
+  /* Thumbnail Loader */
+  .skeleton-thumbnail {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .skeleton-profile-circle {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+  }
+  
+  .skeleton-text {
+    height: 16px;
+    width: 120px;
+    border-radius: 8px;
+  }
+  
+  /* Table Loader */
+  .skeleton-table {
+    display: grid;
+    gap: 8px;
+  }
+  
+  .skeleton-table-header {
+    height: 40px;
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  .skeleton-table-row {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .skeleton-table-cell {
+    height: 40px;
+    width: 100px;
+    flex: 1;
+    border-radius: 4px;
+  }
+  
+/* Paginator Loader */
+.skeleton-paginator {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end; /* Aligns the pagination buttons to the right */
+    margin-top: 16px;
+  }
+  
+  .skeleton-button {
+    height: 30px;
+    width: 80px;  /* Adjusted width to make it rectangular */
+    border-radius: 8px;  /* Rounded corners */
+    margin: 0 4px;
+    margin-bottom: 10px;
+  }
+  
+  /* Form Card and other loaders... */
+  .skeleton-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  
+  .skeleton-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .skeleton-label {
+    height: 12px;
+    width: 80%;
+  }
+  
+/* Input Loader */
+.skeleton-input {
+    height: 40px;
+    width: 50%; /* Set width to half of the container width */
+    border-radius: 8px;
+  }
+  
+  .skeleton-button-group {
+    display: flex;
+    gap: 16px;
+  }
+  
+  .skeleton-card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .skeleton-card-header {
+    height: 30px;
+    width: 100%;
+    border-radius: 4px;
+  }
+  
+  /* Optional styling for other loaders */
+  .skeleton-card {
+    height: 200px;
+    width: 100%;
+  }
+  
+  .skeleton-badge {
+    height: 20px;
+    width: 50px;
+    border-radius: 12px;
+  }
+  

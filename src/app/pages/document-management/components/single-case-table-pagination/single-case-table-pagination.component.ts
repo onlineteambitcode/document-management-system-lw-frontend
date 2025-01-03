@@ -1,7 +1,7 @@
 import { DialogModule } from '@angular/cdk/dialog';
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, computed, inject, Input, model, OnInit, signal, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,10 +12,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TablerIconsModule } from 'angular-tabler-icons';
 import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
-import { CaseDocumentData } from 'src/app/common/interfaces/case.interface';
+import { CaseData, CaseDocumentData } from 'src/app/common/interfaces/case.interface';
 import { UserData, UserOrGroup } from 'src/app/common/interfaces/user.interface';
 import { MaterialModule } from 'src/app/material.module';
 import {SelectionModel} from '@angular/cdk/collections';
@@ -31,6 +31,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
+import { AuthService } from 'src/app/common/services/auth.service';
+import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
+import { COMMON_ERROR_CODES } from 'src/app/common/enums/common-error-codes.enum';
+import { ComponentApiService } from '../../services/conponent-api.service';
+import { Response } from 'src/app/common/interfaces/response.interface';
+import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit.util';
+import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 
 @Component({
   selector: 'app-single-case-table-pagination',
@@ -38,6 +46,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [MatTableModule,
     CommonModule,
     FormsModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
     MatCardModule,
     MaterialModule,
     MatIconModule,
@@ -52,18 +62,24 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatChipsModule,
     MatAutocompleteModule,
     UserThumbnailComponent,
-  FileUploadUiComponent,
-  MatSlideToggleModule,
-  MatFormFieldModule,
-  MatProgressSpinnerModule],
+    FileUploadUiComponent,
+    MatSlideToggleModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    HttpCommonApiModule],
   templateUrl: './single-case-table-pagination.component.html',
-  styleUrl: './single-case-table-pagination.component.scss'
+  styleUrl: './single-case-table-pagination.component.scss',
+  providers: [ComponentApiService, AuthService]
 })
 export class SingleCaseTablePaginationComponent {
-  isAdmin: boolean = true;
-  tableData: CaseDocumentData[] = [];
+  isAdmin: boolean = false; 
+  caseId: string = '';
+  isCaseCreation: boolean = false;
+  isReadOnly: boolean = true;
+  isLoading: boolean = true;
+  documentTableData: CaseDocumentData[] = [];
   userTableData: UserData[] = [];
-  displayedColumns: string[]  = ['select','name', 'action'];
+  displayedColumns: string[]  = ['select','document_name', 'action'];
   selection = new SelectionModel<CaseDocumentData>(true, []);
   enableDownloadSelected: boolean = false;
   dataSource: MatTableDataSource<CaseDocumentData> = new MatTableDataSource<CaseDocumentData>();
@@ -73,6 +89,8 @@ export class SingleCaseTablePaginationComponent {
   caseName = 'CASE_2012_SPE_15_1';
   caseDescription='Test description'
   isUpload: boolean = false;
+  form: FormGroup;
+  caseData: CaseData;
   readonly deleteConfirmDialog = inject(MatDialog);
   readonly documentUploadDialog = inject(MatDialog);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -134,93 +152,40 @@ export class SingleCaseTablePaginationComponent {
   private http = inject(HttpClient); // Inject HttpClient
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
+    constructor(
+      private router: Router,
+        private activatedRoute: ActivatedRoute,
+        private alertService: SweetAlertService,
+        private apiService: ComponentApiService,
+        private authService: AuthService,
+        private fullPageLoaderService: FullPageLoaderService){
+      this.form = new FormGroup(
+            {
+              case_id: new FormControl('', [
+                Validators.required,
+                Validators.minLength(3),
+                Validators.maxLength(50),
+              ]),
+              description: new FormControl('', [
+                Validators.maxLength(300),
+              ]),
+            }
+          );
+    }
+
+  get f() {
+      return this.form.controls;
+  }
+  
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
   ngOnInit(): void {
-      this.tableData = [
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_1',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_MAY_15_2',
-          name: 'Case 2012 May.pdf',
-          file_size: 7.1,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2018_JAN_15_3',
-          name: 'Case 2018 Jan.pdf',
-          file_size: 3.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_4',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 0.5,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2012_SPE_15_5',
-          name: 'Case 2012 Sep.pdf',
-          file_size: 2.8,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-
-        {
-          document_id: 'DOC_CASE_2014_MAY_15_6',
-          name: 'Case 2014 May.pdf',
-          file_size: 6.7,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2017_MAR_11_1',
-          name: 'Case 2017 March.pdf',
-          file_size: 8.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2011_JAN_11_4',
-          name: 'Case 2011 Jan.pdf',
-          file_size: 1.2,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2009_FEB_15_4',
-          name: 'Case 2009 Feb.pdf',
-          file_size: 2.5,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        },
-        {
-          document_id: 'DOC_CASE_2004_DEC_01_2',
-          name: 'Case 2004 Dec.pdf',
-          file_size: 5.3,
-          created_date: '2024-10-27',
-          last_updated_date: '2024-12-15',
-          description: 'Test description'
-        }
-      ];
+    this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.caseId = params['id'];
+      this.loadCaseData();
+    });
 
       this.userTableData = [
         {
@@ -304,7 +269,6 @@ export class SingleCaseTablePaginationComponent {
           mobileNumber: '+94712390348'
         },
       ];
-    this.dataSource = new MatTableDataSource<CaseDocumentData>(this.tableData);
   }
   onToggleChange(){
     
@@ -482,4 +446,118 @@ selected(event: MatAutocompleteSelectedEvent): void {
     a.click();
     window.URL.revokeObjectURL(url);
   }
+
+  clickCreateCase(){
+    // if(this.isReadOnly){
+    //   return;
+    // }
+    const caseId = this.form.value.case_id;
+    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with Case ID: ${caseId}?`,"warning",true,"No",true,"Yes, Proceed",this.submit.bind(this));
+  }
+
+    submit() {
+      if (this.form.invalid) {
+        // Ensure form is valid before submission
+        console.error('Form is invalid');
+        return;
+      }
+  
+      this.fullPageLoaderService.setLoadingStatus(true);
+  
+      // Prepare the request body from the form data
+      const requestBody = {
+        case_id: this.form.value.case_id,
+        description: this.form.value.description
+      };
+  
+      // Use the API service to send the POST request
+      this.apiService.createNewCase<Response>(requestBody).subscribe(
+        {
+          next: (response: Response) => {
+            console.log('Case creation successful:', response);
+            this.alertService.successAlert('center', 'Case creation success','', 3000);
+          },
+          error: (error) => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.error('Registration failed:', error);
+            if(error.error.errorCode === COMMON_ERROR_CODES.ALREADY_EXIST){
+              this.alertService.errorAlert('center', 'Case creation failed', error.error.message, 3000, false, '', false);
+            }else if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+              this.alertService.errorAlert('center', 'Case creation failed', error.error.message, 3000, false, '', false);
+            }else{
+              this.alertService.errorAlert('center', 'Case creation failed', '', 3000, false, '', false);
+            }
+  
+  
+          },
+          complete: () => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.log('Case creation request completed.');
+          },
+        }
+      );
+    }
+
+    loadCaseData(){
+      
+          if (!this.caseId) {
+            this.isLoading = true;
+            // Ensure form is valid before submission
+            this.isCaseCreation = true;
+            console.error('User Id is invalid');
+            return;
+          }
+          this.isReadOnly = (!PermittedRoleToEdit.hasCommonEditPermission(this.authService));
+          this.isCaseCreation = false;
+      
+          this.fullPageLoaderService.setLoadingStatus(true);
+      
+          // Use the API service to send the POST request
+          this.apiService.getOneCase<Response>(this.caseId).subscribe(
+            {
+              next: (response: Response) => {
+                console.log('Case fetching successful:', response);
+                // this.alertService.successAlert('center', 'User fetching success','', 3000);
+                this.caseData = response.data;
+                this.form.patchValue(this.caseData);
+                if(this.isReadOnly){
+                  this.form.disable();
+                }
+                this.documentTableData = this.caseData.documents;
+                this.dataSource = new MatTableDataSource<CaseDocumentData>(this.documentTableData);
+                console.log('this.caseData');
+                console.log(this.caseData);
+                console.log('this.caseData');
+                this.isLoading = false;
+              },
+              error: (error) => {
+                this.fullPageLoaderService.setLoadingStatus(false);
+                console.error('Case loading failed:', error);
+                if(error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND){
+                  this.alertService.errorAlert('center', 'Case not found', error.error.message, 3000, false, '', false);
+                }else if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+                  this.alertService.errorAlert('center', `You are not permitted to load this case`, error.error.message, 4000, false, '', false);
+                }else{
+                  this.alertService.errorAlert('center', 'Error while loading case details', '', 3000, false, '', false);
+                }
+                this.router.navigate(['/document-managemnt/document-upload']);
+              },
+              complete: () => {
+                this.fullPageLoaderService.setLoadingStatus(false);
+                console.log('Case loading request completed.');
+              },
+            }
+          );
+    }
+
+    // mapAndLoadDocuments(documents: any[]){
+      
+    //   this.documentTableData = [];
+
+    //   documents.forEach(element => {
+    //     const mappedElement: CaseDocumentData = {
+          
+    //     };
+    //   });
+    // }
 }

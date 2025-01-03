@@ -13,6 +13,8 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { filter, map } from 'rxjs';
+import { AuthService } from 'src/app/common/services/auth.service';
+import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
 
 @Component({
   selector: 'app-header',
@@ -30,7 +32,11 @@ export class HeaderComponent implements OnInit {
 
   headerTitle = '';
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private alertService: SweetAlertService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private authService: AuthService) {}
 
   ngOnInit(): void {
      // Handle initial load
@@ -65,5 +71,21 @@ export class HeaderComponent implements OnInit {
     if (title) {
       this.headerTitle = title;
     }
+  }
+
+  navigateToProfile(){
+    const logedInUserId = this.authService.getLogedInUserId();
+    const params = { id: logedInUserId };
+    // Navigate to the target route with parameters
+    this.router.navigate(['/user-managemnt/user-profile'], { queryParams: params });
+  }
+
+  clickOnLogout(){
+    this.alertService.confirmAlert("Are you sure?",`You're about to log out`,"warning",true,"No",true,"Yes, Logout",this.logoutUser.bind(this))
+  }
+
+  logoutUser(){
+    this.authService.logout();
+    this.router.navigate(['/authentication/login']);
   }
 }

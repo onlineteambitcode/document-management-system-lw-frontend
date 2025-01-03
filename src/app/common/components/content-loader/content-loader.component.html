@@ -1,0 +1,95 @@
+<ng-container [ngSwitch]="loaderType">
+    <!-- Form Card Loader -->
+    <div *ngSwitchCase="'form-card'" class="skeleton-card-form">
+        <div class="skeleton-card-header skeleton"></div>
+        
+        <!-- Form Layout with 3 inputs on the left and 3 inputs on the right -->
+        <div class="skeleton-form-grid">
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+    
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+          <div class="skeleton-form-group">
+            <div class="skeleton-label skeleton"></div>
+            <div class="skeleton-input skeleton"></div>
+          </div>
+        </div>
+    
+        <!-- Buttons at the bottom -->
+        <div class="skeleton-button-group">
+          <div class="skeleton-button skeleton"></div>
+          <div class="skeleton-button skeleton"></div>
+        </div>
+      </div>
+
+    <!-- Input Loader -->
+    <div *ngSwitchCase="'input'" class="skeleton-input skeleton"></div>
+
+    <!-- Profile Picture Loader -->
+    <div *ngSwitchCase="'profile-picture'" class="skeleton-profile-picture">
+        <div class="skeleton-profile-circle skeleton"></div>
+        <div class="skeleton-button-group">
+          <div class="skeleton-button skeleton"></div>
+          <div class="skeleton-button skeleton"></div>
+        </div>
+      </div>
+
+      <!-- Thumbnail Loader -->
+  <div *ngSwitchCase="'thumbnail'" class="skeleton-thumbnail">
+    <div class="skeleton-profile-circle skeleton"></div>
+    <div class="skeleton-text skeleton"></div>
+    <div class="skeleton-text skeleton"></div>
+  </div>
+
+    <!-- Button Loader -->
+    <div *ngSwitchCase="'button'" class="skeleton-button skeleton"></div>
+
+    <!-- Table Loader -->
+    <div *ngSwitchCase="'table'" class="skeleton-table">
+        <div class="skeleton-table-header skeleton"></div>
+        <!-- 4 rows and 4 columns -->
+        <div *ngFor="let _ of [].constructor(4)" class="skeleton-table-row">
+          <div class="skeleton-table-cell skeleton"></div>
+          <div class="skeleton-table-cell skeleton"></div>
+          <div class="skeleton-table-cell skeleton"></div>
+          <div class="skeleton-table-cell skeleton"></div>
+          <div class="skeleton-table-cell skeleton"></div>
+        </div>
+      </div>
+
+        <!-- Paginator Loader -->
+  <div *ngSwitchCase="'paginator'" class="skeleton-paginator">
+    <div class="skeleton-button skeleton"></div>
+    <div class="skeleton-button skeleton"></div>
+    <div class="skeleton-button skeleton"></div>
+  </div>
+
+    <!-- Card Loader -->
+    <div *ngSwitchCase="'card'" class="skeleton-card skeleton"></div>
+
+    <!-- Label Loader -->
+    <div *ngSwitchCase="'label'" class="skeleton-label skeleton"></div>
+
+    <!-- Badge Loader -->
+    <div *ngSwitchCase="'badge'" class="skeleton-badge skeleton"></div>
+
+    <!-- Default Loader -->
+    <div *ngSwitchDefault class="skeleton-default skeleton"></div>
+  </ng-container>

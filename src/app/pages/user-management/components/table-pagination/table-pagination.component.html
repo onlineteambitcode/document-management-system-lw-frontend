@@ -2,20 +2,28 @@
   <mat-card-content >
     <div class="row justify-content-between m-l-4 m-r-4">
       <div class="col-left">
-        <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+
+        <span *ngIf="isLoading" appearance="outline" class="w-100 m-b-0" color="primary">
+          <app-content-loader  [loaderType]="'input'"></app-content-loader>
+        </span>
+
+        <mat-form-field *ngIf="!isLoading" appearance="outline" class="w-100 m-b-0" color="primary">
           <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
         </mat-form-field>
+
       </div>
       <div class="col-right m-r-30 m-t-2">
-        <button color="primary" mat-stroked-button>
+        <button *ngIf="!isLoading"  color="primary" mat-stroked-button>
           <i-tabler style="color: blue;" name="user-plus" class="icon-22">
           </i-tabler>
         </button>
+        <app-content-loader *ngIf="isLoading" [loaderType]="'button'"></app-content-loader>
+
       </div>
     </div>
     
     <div class="table-responsive">
-      <table mat-table [dataSource]="dataSource" class="w-100">
+      <table  *ngIf="!isLoading" mat-table [dataSource]="dataSource" class="w-100">
     
         <ng-container matColumnDef="name">
           <th
@@ -163,6 +171,9 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
+      <app-content-loader style="padding-top: 2px !important;"  *ngIf="isLoading" [loaderType]="'table'"></app-content-loader>
+      <app-content-loader *ngIf="isLoading" [loaderType]="'paginator'"></app-content-loader>
+
     </div>
     <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]"
     showFirstLastButtons
@@ -171,6 +182,7 @@
 
  <!-- Paginator -->
  <mat-paginator
+ *ngIf="!isLoading"
  [length]="resultsLength"
  [pageSize]="pageSize"
  [pageSizeOptions]="[5, 10, 25, 100]"
