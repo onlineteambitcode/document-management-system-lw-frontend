@@ -81,7 +81,7 @@ export class HeaderComponent implements OnInit {
   }
 
   clickOnLogout(){
-    this.alertService.confirmAlert("Are you sure?",`You're about to log out`,"warning",true,"No",true,"Yes, Logout",this.logoutUser.bind(this))
+    this.alertService.confirmAlert("Are you sure?",`You're about to log out`,"warning",true,"No",true,"Yes, Logout",false,this.logoutUser.bind(this))
   }
 
   logoutUser(){

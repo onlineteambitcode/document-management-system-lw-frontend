@@ -182,7 +182,7 @@
 
  <!-- Paginator -->
  <mat-paginator
- *ngIf="!isLoading"
+ [style.visibility]="(!isLoading) ? 'visible' : 'hidden'"
  [length]="resultsLength"
  [pageSize]="pageSize"
  [pageSizeOptions]="[5, 10, 25, 100]"

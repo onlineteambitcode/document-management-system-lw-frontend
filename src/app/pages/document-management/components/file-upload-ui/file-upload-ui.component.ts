@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,10 @@ import { FileUploadService } from '../../services/file-upload.service';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { MatLabel } from '@angular/material/form-field';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { ComponentApiService } from '../../services/conponent-api.service';
+import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
+import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
+import { Router } from '@angular/router';
 export interface Section {
   name: string;
   updated: Date;
@@ -33,14 +37,20 @@ MatProgressSpinner],
   styleUrl: './file-upload-ui.component.scss'
 })
 export class FileUploadUiComponent implements OnInit  {
+  @Input() caseId: string = '';
+  @Output() backToCaseDetails = new EventEmitter<boolean>();
   progressStarted: boolean = false;           // Stores the current progress
   intervalId: any;                // To hold the reference to the setInterval
-  caseId: string = '4';
   files: File[] = [];
 
   progress: number = 0; // To track progress of each file upload
 
-  constructor(private fileUploadService: FileUploadService) {}
+  constructor(
+    private router: Router,
+    private fileUploadService: FileUploadService, 
+    private componentApiService: ComponentApiService,
+    private alertService: SweetAlertService,
+    private fullPageLoaderService: FullPageLoaderService) {}
 
   ngOnInit(): void {
 
@@ -80,18 +90,28 @@ export class FileUploadUiComponent implements OnInit  {
 
   uploadFiles(): void {
     if (this.files.length > 0) {
-      this.fileUploadService.uploadFiles(this.caseId, Array.from(this.files))
+      this.fullPageLoaderService.setLoadingStatus(true);
+      this.fileUploadService.uploadFiles(this.caseId, Array.from(this.files), this.componentApiService)
         .subscribe({
           next: (event) => {
             if (event.type === HttpEventType.Response) {
+              const params = { id: this.caseId };
+              this.fullPageLoaderService.setLoadingStatus(false);
               const response = event as HttpResponse<{ message: string }>;
               console.log('Upload successful:', response.body?.message); // Safely access the message
+              this.alertService.successAlert('center',"File upload success","",3000,true,true,true);
+              this.router.navigate(['/document-managemnt/single-case'], { queryParams: params });
+              this.backToCaseDetails.emit(true);
             }
           },
           error: (error) => {
+            this.fullPageLoaderService.setLoadingStatus(false);
             console.error('Upload failed:', error);
+            this.alertService.errorAlert('center',"Faill to upload files","",3000,false,"",false);
+
           },
           complete: ()=>{
+            this.fullPageLoaderService.setLoadingStatus(false);
             this.progressStarted = false;
           }
         });

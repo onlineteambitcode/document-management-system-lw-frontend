@@ -116,7 +116,7 @@ export class AppSideLoginComponent {
                 let errorData: ErrorSweetAlertData = LoginAndRegisterErrorHandlerUtil.handleErrorAndGetAlertData(error.error);
                 if(error.error.erroroCode === USER_STATUS_ENUM.REGISTRATION_OTP_VERIFICATION_PENDING){
                   this.otpType = OTP_TYPE.REGISTER_OTP_PENDING;
-                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this,''));
+                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText,false, this.calbackForPendingRegisterOtpVerification.bind(this,''));
                   this.storageService.setItem('user',error.error.data)
                 }else{
                   this.alertService.errorAlert('center',errorData.title, errorData.text, errorData.timer, errorData.showCancelButton, errorData.confirmButtonText, errorData.showConfirmButton);
@@ -168,7 +168,7 @@ export class AppSideLoginComponent {
               if(error && error.error && error.error.erroroCode){
                 let errorData: ErrorSweetAlertData = LoginAndRegisterErrorHandlerUtil.handleErrorAndGetAlertData(error.error);
                 if(error.error.erroroCode === USER_STATUS_ENUM.REGISTRATION_OTP_VERIFICATION_PENDING){
-                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText, this.calbackForPendingRegisterOtpVerification.bind(this, error.error.data));
+                  this.alertService.confirmAlert(errorData.title,errorData.text, 'warning', errorData.showCancelButton,"No",errorData.showConfirmButton,errorData.confirmButtonText,false, this.calbackForPendingRegisterOtpVerification.bind(this, error.error.data));
                   this.storageService.setItem('user',error.error.data)
                 }else{
                   this.alertService.errorAlert('center',errorData.title, errorData.text, errorData.timer, errorData.showCancelButton, errorData.confirmButtonText, errorData.showConfirmButton);

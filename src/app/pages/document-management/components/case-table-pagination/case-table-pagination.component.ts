@@ -22,6 +22,7 @@ import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 import { AuthService } from 'src/app/common/services/auth.service';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
 import { USER_ROLE_ENUM } from 'src/app/common/enums/user.enum';
+import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
 @Component({
   selector: 'app-case-table-pagination',
   standalone: true,
@@ -36,7 +37,8 @@ import { USER_ROLE_ENUM } from 'src/app/common/enums/user.enum';
     TablerIconsModule,
     DialogModule,
     RouterModule,
-    HttpCommonApiModule
+    HttpCommonApiModule,
+    ContentLoaderComponent
   ],
   templateUrl: './case-table-pagination.component.html',
   styleUrl: './case-table-pagination.component.scss',

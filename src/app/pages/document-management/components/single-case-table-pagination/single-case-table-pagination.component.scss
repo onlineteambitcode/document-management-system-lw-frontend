@@ -8,9 +8,27 @@
     }
 }
 
-.download-mat-spinner{
-    mat-spinner{
-    width: 18px !important;
-    height: 18px !important;
+.download-mat-spinner {
+    mat-spinner {
+        width: 18px !important;
+        height: 18px !important;
+    }
+}
+
+mat-accordion {
+    display: flex;
+    justify-content: end;
+}
+
+mat-panel-title {
+    color: #f14d7c !important;
+}
+
+mat-panel-description{
+    justify-content: center;
+}
+mat-expansion-panel-header{
+    .mat-expansion-indicator{
+        visibility: hidden !important;
     }
 }

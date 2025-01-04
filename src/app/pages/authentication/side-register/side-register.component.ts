@@ -115,7 +115,7 @@ export class AppSideRegisterComponent {
           this.fullPageLoaderService.setLoadingStatus(false);
           console.error('Registration failed:', error);
           if(error.error.errorCode === COMMON_ERROR_CODES.ALREADY_EXIST){
-            this.alertService.confirmAlert("Hay we know you!","You have registered befor with this email",'info',true,"No",true,"Try SignIn",this.calbackForPendingRegisterOtpVerification.bind(this));
+            this.alertService.confirmAlert("Hay we know you!","You have registered befor with this email",'info',true,"No",true,"Try SignIn",false,this.calbackForPendingRegisterOtpVerification.bind(this));
           }else{
           this.alertService.errorAlert('center', 'Registration failed', '',3000,false,'',false);
           }

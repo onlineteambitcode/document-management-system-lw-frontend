@@ -80,7 +80,29 @@ export class SweetAlertService {
           });
     }
 
-    confirmAlert(title: string, text:string, icon: SweetAlertIcon | "warning", showCancelButton: boolean | true, cancelButtonText: string | "No",showConfirmButton: boolean | false,confirmButtonText: string | 'Ok', callback: () => void){
+    confirmAlert(title: string, text:string, icon: SweetAlertIcon | "warning", showCancelButton: boolean | true, cancelButtonText: string | "No",showConfirmButton: boolean | false,confirmButtonText: string | 'Ok',hasInput: boolean, callback: () => void){
+     if(hasInput){
+      Swal.fire({
+        title,
+        text,
+        input: 'text',
+        inputPlaceholder: 'Type "delete" here',
+        icon,
+        showCancelButton,
+        confirmButtonText,
+        cancelButtonText,
+        inputValidator: (value) => {
+          if (value !== 'delete') {
+            return 'You need to type "delete" to proceed!';
+          }
+          return null;
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          callback();
+        }
+      });
+     }else{
       Swal.fire({
         title,
         text,
@@ -93,5 +115,6 @@ export class SweetAlertService {
           callback();
         }
       });
+     }
     }
 }

@@ -45,7 +45,7 @@
                   </div>
                 
                   <mat-card-actions *ngIf="isAdmin" align="end">
-                    <button *ngIf="!isCaseCreation" [disabled]="isReadOnly" class="m-r-8" mat-flat-button color="warn">Delete</button>
+                    <!-- <button >Delete</button> -->
                     <button mat-flat-button color="primary" (click)="clickCreateCase()" [disabled]="form.invalid" class="m-r-8">Save This</button>
                     <button  mat-stroked-button color="warn">Cancel</button>
                   </mat-card-actions>
@@ -60,7 +60,7 @@
       <button mat-button (click)="backToCase()" >
         <mat-icon style="    font-size: 1.4rem;">arrow_back</mat-icon>
                             </button>
-      <app-file-upload-ui></app-file-upload-ui>
+      <app-file-upload-ui [caseId]="caseId" (backToCaseDetails)="handleBackToCaseDetailsEvent($event)" ></app-file-upload-ui>
     </div>
    <div *ngIf="!isUpload" class="row">
     <div class="col" *ngIf="!isCaseCreation">
@@ -101,7 +101,7 @@
         <mat-card-content  >
             
               <div class="col-left" *ngIf="!isCaseCreation">
-                <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+                <mat-form-field appearance="outline" class="w-50 m-b-0" color="primary">
                   <input  matInput (keyup)="applyFilter($event)" placeholder="Filter">
                 </mat-form-field>
               </div>
@@ -225,6 +225,23 @@
             </mat-card-content>
           </mat-card>
     </div> -->
+   </div>
+   <div class="row">
+    <div class="col">
+      <mat-accordion *ngIf="!isCaseCreation" class="m-r-8" mat-flat-button color="warn">
+        <mat-expansion-panel [expanded]="false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Remove This Case
+              <mat-icon>delete</mat-icon>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <mat-panel-description style="justify-content: center;">
+          <button (click)="deleteConfirmation()" *ngIf="!isCaseCreation" [disabled]="isReadOnly" class="m-r-8" mat-flat-button color="warn">Delete</button>
+        </mat-panel-description>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
    </div>
   </div>
   

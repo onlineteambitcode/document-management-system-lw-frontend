@@ -114,7 +114,7 @@ export class UserProfileComponent {
       return;
     }
     const role = this.form.value.role;
-    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with role: ${role}?`,"warning",true,"No",true,"Yes, Proceed",this.submit.bind(this))
+    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with role: ${role}?`,"warning",true,"No",true,"Yes, Proceed",false,this.submit.bind(this))
   }
 
   submit() {
@@ -167,7 +167,7 @@ export class UserProfileComponent {
     if(this.isReadOnly){
       return;
     }
-    this.alertService.confirmAlert("Are you sure?",`Do you want to save the changes?`,"warning",true,"No",true,"Yes, Proceed",this.submitForUpdate.bind(this))
+    this.alertService.confirmAlert("Are you sure?",`Do you want to save the changes?`,"warning",true,"No",true,"Yes, Proceed",false,this.submitForUpdate.bind(this))
   }
 
   submitForUpdate() {

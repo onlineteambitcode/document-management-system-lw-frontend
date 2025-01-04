@@ -39,6 +39,8 @@ import { ComponentApiService } from '../../services/conponent-api.service';
 import { Response } from 'src/app/common/interfaces/response.interface';
 import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit.util';
 import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
+import { MAT_EXPANSION_PANEL_DEFAULT_OPTIONS, MatExpansionModule } from '@angular/material/expansion';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-single-case-table-pagination',
@@ -66,10 +68,21 @@ import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
     MatSlideToggleModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
-    HttpCommonApiModule],
+    HttpCommonApiModule,
+    MatExpansionModule,
+],
   templateUrl: './single-case-table-pagination.component.html',
   styleUrl: './single-case-table-pagination.component.scss',
-  providers: [ComponentApiService, AuthService]
+  providers: [ComponentApiService, AuthService,
+    {
+      provide: MAT_EXPANSION_PANEL_DEFAULT_OPTIONS,
+      useValue: {
+        expandedHeight: '48px', // Optional: Customize panel height when expanded
+        collapsedHeight: '48px', // Optional: Customize panel height when collapsed
+        animationDuration: '225ms cubic-bezier(0.4,0.0,0.2,1)' // Custom animation timing
+      }
+    }
+  ]
 })
 export class SingleCaseTablePaginationComponent {
   isAdmin: boolean = false; 
@@ -91,6 +104,7 @@ export class SingleCaseTablePaginationComponent {
   isUpload: boolean = false;
   form: FormGroup;
   caseData: CaseData;
+  selectedFilesList: string[] = [];
   readonly deleteConfirmDialog = inject(MatDialog);
   readonly documentUploadDialog = inject(MatDialog);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -153,7 +167,7 @@ export class SingleCaseTablePaginationComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(
-      private router: Router,
+        private router: Router,
         private activatedRoute: ActivatedRoute,
         private alertService: SweetAlertService,
         private apiService: ComponentApiService,
@@ -276,6 +290,13 @@ export class SingleCaseTablePaginationComponent {
   backToCase(){
     this.isUpload = false;
   }
+  handleBackToCaseDetailsEvent(event: boolean){
+    if(event){
+      this.isUpload = false;
+      this.loadCaseData();
+    }
+  }
+
  /** Whether the number of selected elements matches the total number of rows. */
  isAllSelected() {
   const numSelected = this.selection.selected.length;
@@ -294,8 +315,15 @@ export class SingleCaseTablePaginationComponent {
 }
 
 docwnloadSelected(){
-  console.log(this.selection);
-  this.sendBatchDownloadRequest();
+  if(this.selection.selected.length === 1){
+    return;
+  }else if(this.selection.selected.length > 1){
+    console.log(this.selection.selected);
+    this.sendBatchDownloadRequest();
+  }else{
+    this.alertService.errorToaster('top-end',"Please select documents to download");
+  }
+
 }
 
  /** The label for the checkbox on the passed row */
@@ -338,22 +366,6 @@ add(event: MatChipInputEvent): void {
   this.currentUserOrGroup.set('');
 }
 
-remove(removeItem: UserOrGroup): void {
-  this.usersOrGroups.update((items) => {
-    const index = items.findIndex((f) => f.id === removeItem.id);
-    if (index < 0) {
-      return items;
-    }
-
-    items.splice(index, 1);
-    this.announcer.announce(`Removed ${removeItem.name}`);
-    return [...items];
-  });
-
-  // Add the removed fruit back to the allFruits signal
-  this.allUsersOrGroups.update((all) => [...all, removeItem]);
-  this.updateFilteredData();
-}
 
 private updateFilteredData(): void {
   this.filteredUsersOrGroups();
@@ -364,7 +376,7 @@ handleBackspace(): void {
     const selectedItems = this.usersOrGroups();
     if (selectedItems.length > 0) {
       const lastFruit = selectedItems[selectedItems.length - 1];
-      this.remove(lastFruit);
+      // this.remove(lastFruit);
     }
   }
 }
@@ -400,23 +412,19 @@ selected(event: MatAutocompleteSelectedEvent): void {
   }
 
   sendBatchDownloadRequest() {
-    const requestBody = {
-      case_id: '4',
-      fileKeys: [
-        'DOC-20241209-WA0051 - signed.pdf',
-        'IMG-20240516-WA0002.jpg',
-        'Wireframe UIs.pdf'
-      ]
-    };
-
     // Send POST request to the batch download API with pipe and catchError
-    this.http.post('http://localhost:3000/api/documents/batch-download', requestBody, {
-      headers: new HttpHeaders().set('Authorization', 'Bearer your-token'), // Optional: Add your authorization token
-      responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
-    })
+    this.selectedFilesList = [];
+    this.selectedFilesList = this.selection.selected.map(elementData=>{
+      return elementData.file_url
+    });
+
+    this.fullPageLoaderService.setLoadingStatus(true);
+    this.apiService.fileBatchDownload<Blob>(this.caseId, this.selectedFilesList)
     .pipe(
       catchError(error => {
         console.error('Error during file download:', error);
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.alertService.errorToaster('top-end',"An error occurred. Please try again later.");
         // Handle the error: you can throw the error again or return an empty observable, depending on how you want to handle it
         throw error;  // Re-throw the error for downstream subscribers
       })
@@ -424,13 +432,18 @@ selected(event: MatAutocompleteSelectedEvent): void {
     .subscribe({
       next: (response: Blob) => {
         // Handle successful response (e.g., trigger download)
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.alertService.successToster('center',"Your download will begin now.",3000);
         this.downloadFile(response);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.alertService.errorToaster('top-end',"An error occurred. Please try again later.");
         console.error('Error in subscription:', error);
       },
       complete: () => {
+        this.fullPageLoaderService.setLoadingStatus(false);
         console.log('Batch download request completed.');
       }
     });
@@ -447,12 +460,16 @@ selected(event: MatAutocompleteSelectedEvent): void {
     window.URL.revokeObjectURL(url);
   }
 
+  deleteConfirmation(){
+    this.alertService.confirmAlert("Are you sure?",`Do you want to remove this Case?  ID: ${this.caseData.case_id}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeCase.bind(this));
+  }
+
   clickCreateCase(){
     // if(this.isReadOnly){
     //   return;
     // }
     const caseId = this.form.value.case_id;
-    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with Case ID: ${caseId}?`,"warning",true,"No",true,"Yes, Proceed",this.submit.bind(this));
+    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with Case ID: ${caseId}`,"warning",true,"No",true,"Yes, Proceed",false,this.submit.bind(this));
   }
 
     submit() {
@@ -474,8 +491,11 @@ selected(event: MatAutocompleteSelectedEvent): void {
       this.apiService.createNewCase<Response>(requestBody).subscribe(
         {
           next: (response: Response) => {
+            const params = { id: response.data.id };
             console.log('Case creation successful:', response);
             this.alertService.successAlert('center', 'Case creation success','', 3000);
+            this.router.navigate(['/document-managemnt/single-case'], { queryParams: params });
+            // this.loadCaseData();
           },
           error: (error) => {
             this.fullPageLoaderService.setLoadingStatus(false);
@@ -486,6 +506,44 @@ selected(event: MatAutocompleteSelectedEvent): void {
               this.alertService.errorAlert('center', 'Case creation failed', error.error.message, 3000, false, '', false);
             }else{
               this.alertService.errorAlert('center', 'Case creation failed', '', 3000, false, '', false);
+            }
+  
+  
+          },
+          complete: () => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.log('Case creation request completed.');
+          },
+        }
+      );
+    }
+
+    removeCase() {
+      if (this.form.invalid && (!this.isCaseCreation) && (!this.isReadOnly)) {
+        // Ensure form is valid before submission
+        console.error('Form is invalid');
+        return;
+      }
+  
+      this.fullPageLoaderService.setLoadingStatus(true);
+  
+      // Use the API service to send the POST request
+      this.apiService.removeCase<Response>(this.caseId).subscribe(
+        {
+          next: (response: Response) => {
+            console.log('Case deleation successful:', response);
+            this.alertService.successAlert('center', 'Case removed successfully','', 3000);
+            this.router.navigate(['/document-managemnt/document-upload']);
+          },
+          error: (error) => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.error('Registration failed:', error);
+            if(error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND){
+              this.alertService.errorAlert('center', 'Failed to remove the Case', error.error.message, 3000, false, '', false);
+            }else if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+              this.alertService.errorAlert('center', 'Failed to remove the Case', error.error.message, 3000, false, '', false);
+            }else{
+              this.alertService.errorAlert('center', 'Failed to remove the Case', '', 3000, false, '', false);
             }
   
   
