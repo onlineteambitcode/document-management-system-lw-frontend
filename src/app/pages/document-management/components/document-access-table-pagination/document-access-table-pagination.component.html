@@ -7,14 +7,14 @@
               <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Select Case ID</mat-label>
              <mat-form-field appearance="outline" class="w-100 m-b-0 m-t-2" color="primary">
               <input matInput [formControl]="myControl" [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                @for (option of filteredOptions | async; track option) {
-                  <mat-option [value]="option">{{option.case_id}}</mat-option>
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)" [displayWith]="displayFn">
+                @for (selectedCase of filteredOptions | async; track selectedCase) {
+                  <mat-option [value]="selectedCase">{{selectedCase.case_id}}</mat-option>
                 }
               </mat-autocomplete>
              </mat-form-field>
           </div>
-          <div class="col-md-6">
+          <!-- <div class="col-md-6">
               <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Allow users or groups</mat-label>
 
               <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
@@ -46,12 +46,165 @@
                     }
                   </mat-autocomplete>
                 </mat-form-field>
-          </div>
+          </div> -->
 
         </div>
-        <div class="row">
+        <mat-card class="document-card b-1 shadow-none">
+          <mat-card-header>
+            <div class="row justify-content-between">
+              <div class="col p-t-4">
+                <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
+                  Documents ({{tableData.length}})
+                </mat-label>
+              
+              </div>
       
-    
+            </div>
+              
+            </mat-card-header>
+      <mat-card-content  >
+          
+            <div class="col-left col-md-4">
+              <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
+                <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+              </mat-form-field>
+            </div>
+           
+          <div class="table-responsive">
+            <div class="justify-content-between">
+              <div class="row">
+                <div class="col align-items-start">
+                  <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
+                    [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+                  </mat-checkbox>
+                  {{checkboxLabel()}}
+                </div>
+                <div class="col align-items-start d-flex align-items-center gap-2">    
+                  <span class="cursor-pointer">
+                    <!-- <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
+                    </i-tabler>
+                    <mat-label class="p-5 align-middle">Delete Selected</mat-label> -->
+                  </span>
+                </div>
+              </div>
+            </div>
+            <table mat-table [dataSource]="dataSource" class="w-100">
+            
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef> Select </th>
+                <td mat-cell *matCellDef="let row">
+                  <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedRow" (change)="onRowSelectionChange($event, row)">
+                    <mat-radio-button [value]="row" [aria-label]="'Select ' + row.document_name">
+                    </mat-radio-button>
+                  </mat-radio-group>
+                </td>
+              </ng-container>
+      
+              <ng-container matColumnDef="name">
+                
+                  <td mat-cell *matCellDef="let element" class="mat-body-1">
+                      <div class="d-flex align-items-center">
+                        <i-tabler style="color: rgb(190, 8, 8); font-weight: bold;" name="file-type-pdf" class="icon-20"></i-tabler>
+                        <div class="d-flex flex-column">
+                          <!-- File Name -->
+                          <div>{{ element.document_name }}</div>
+                    
+                          <!-- File Size -->
+                          <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
+                        </div>
+                    
+                        <a class="cursor-pointer">
+                          <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
+                        </a>
+                      </div>
+                    </td>
+                    
+              </ng-container>
+      
+      
+              <!-- Symbol Column -->
+              <ng-container matColumnDef="action">
+                
+                <td mat-cell *matCellDef="let element" class="mat-body-1">
+                  <div class="d-flex justify-content-center gap-4">
+                    <a class="cursor-pointer" >
+                    <i-tabler name="edit" class="icon-22">
+                  </i-tabler>
+                  </a>
+                  <a class="cursor-pointer" >
+                      <i-tabler style="color: red;" name="trash" class="icon-22">
+                    </i-tabler>
+                    </a>
+                  </div>
+                </td>
+              </ng-container>
+      
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </div>
+          <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+          showFirstLastButtons
+          aria-label="Select page of periodic elements">
+      </mat-paginator>
+        </mat-card-content>
+      </mat-card>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="col-left m-b-6">
+              <mat-form-field style="margin-top: -0.06rem !important;" appearance="outline" class="w-100 m-b-0" color="primary">
+                <input [ngModelOptions]="{standalone: true}" [(ngModel)]="filterText" matInput  placeholder="Filter">
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+              <div class="col-md-6">
+                <mat-card class="b-1 shadow-none">
+                  <mat-card-header>
+                    <mat-card-title class="m-t-8 m-b-0">Allowed Members ({{ (userTableDataNotAllowed | userFilterByAccessStatus:updatedUserIdMap:true | userFilter: filterText).length }})
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+              
+                    <cdk-virtual-scroll-viewport itemSize="10" class="virtual-scroll-container">
+                      <mat-list>
+                        <mat-list-item class="mat-list-item-hover"
+                          *cdkVirtualFor="let userItem of userTableDataNotAllowed | userFilterByAccessStatus:updatedUserIdMap:true | userFilter: filterText; trackBy: trackByUserId">
+                          <div class="row justify-content-between m-l-4 m-r-4">
+                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="true" [iconName]="'circle-minus'"
+                              [iconColor]="'rgb(219, 10, 59)'" (clickActionIcon)="removeAccessWarn($event)"></app-user-thumbnail>
+              
+                          </div>
+                        </mat-list-item>
+                      </mat-list>
+                    </cdk-virtual-scroll-viewport>
+              
+                  </mat-card-content>
+                </mat-card>
+              </div>
+              <div class="col-md-6">
+                <mat-card class="b-1 shadow-none">
+                  <mat-card-header>
+                    <mat-card-title class="m-t-8 m-b-0">Not Allowed Members ({{userTableDataNotAllowed.length}})</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+              
+                    <cdk-virtual-scroll-viewport itemSize="10" class="virtual-scroll-container">
+                      <mat-list>
+                        <mat-list-item
+                          *cdkVirtualFor="let userItem of userTableDataNotAllowed  | userFilterByAccessStatus:updatedUserIdMap:false | userFilter: filterText; trackBy: trackByUserId">
+                          <div class="row justify-content-between m-l-4 m-r-4">
+                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="true" [iconName]="'circle-plus'"
+                              [iconColor]="'rgb(10, 17, 219)'" (clickActionIcon)="giveAccessWarn($event)"></app-user-thumbnail>
+              
+                          </div>
+                        </mat-list-item>
+                      </mat-list>
+                    </cdk-virtual-scroll-viewport>
+              
+                  </mat-card-content>
+                </mat-card>
+              </div>
           
         </div>
         <mat-card-actions align="end">
@@ -62,111 +215,4 @@
       </form>
     </mat-card-content>
   </mat-card>
-
-  <mat-card class="document-card b-1 shadow-none">
-    <mat-card-header>
-      <div class="row justify-content-between">
-        <div class="col p-t-4">
-          <mat-label class="mat-subtitle-1 f-s-18 f-w-600">
-            Documents ({{tableData.length}})
-          </mat-label>
-        
-        </div>
-
-      </div>
-        
-      </mat-card-header>
-<mat-card-content  >
-    
-      <div class="col-left col-md-4">
-        <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-          <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
-        </mat-form-field>
-      </div>
-     
-    <div class="table-responsive">
-      <div class="justify-content-between">
-        <div class="row">
-          <div class="col align-items-start">
-            <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
-              [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
-            </mat-checkbox>
-            {{checkboxLabel()}}
-          </div>
-          <div class="col align-items-start d-flex align-items-center gap-2">    
-            <span class="cursor-pointer">
-              <!-- <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
-              </i-tabler>
-              <mat-label class="p-5 align-middle">Delete Selected</mat-label> -->
-            </span>
-          </div>
-        </div>
-      </div>
-      <table mat-table [dataSource]="dataSource" class="w-100">
-        
-        <ng-container matColumnDef="select">
-          <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                          [checked]="selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selection.hasValue() && !isAllSelected()"
-                          [aria-label]="checkboxLabel()">
-            </mat-checkbox>
-          </th>
-          <td style="width: 5%;" mat-cell *matCellDef="let row">
-            <mat-checkbox (click)="$event.stopPropagation()"
-                          (change)="$event ? selection.toggle(row) : null"
-                          [checked]="selection.isSelected(row)"
-                          [aria-label]="checkboxLabel(row)">
-            </mat-checkbox>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="name">
-          
-            <td mat-cell *matCellDef="let element" class="mat-body-1">
-                <div class="d-flex align-items-center">
-                  <i-tabler style="color: rgb(190, 8, 8); font-weight: bold;" name="file-type-pdf" class="icon-20"></i-tabler>
-                  <div class="d-flex flex-column">
-                    <!-- File Name -->
-                    <div>{{ element.name }}</div>
-              
-                    <!-- File Size -->
-                    <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
-                  </div>
-              
-                  <a class="cursor-pointer">
-                    <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
-                  </a>
-                </div>
-              </td>
-              
-        </ng-container>
-
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="action">
-          
-          <td mat-cell *matCellDef="let element" class="mat-body-1">
-            <div class="d-flex justify-content-center gap-4">
-              <a class="cursor-pointer" >
-              <i-tabler name="edit" class="icon-22">
-            </i-tabler>
-            </a>
-            <a class="cursor-pointer" >
-                <i-tabler style="color: red;" name="trash" class="icon-22">
-              </i-tabler>
-              </a>
-            </div>
-          </td>
-        </ng-container>
-
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </div>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-    aria-label="Select page of periodic elements">
-</mat-paginator>
-  </mat-card-content>
-</mat-card>
   

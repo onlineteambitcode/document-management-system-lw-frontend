@@ -20,3 +20,17 @@
 
 @import "pages/auth";
 @import "pages/dashboard";
+
+/* For modern browsers */
+::-webkit-scrollbar {
+    width: 14px; /* Width of the scrollbar */
+    height: 12px; /* Height for horizontal scrollbar */
+  }
+  
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: thin; /* Thin scrollbar */
+    scrollbar-color: #8dc8ea #f1f1f1; /* Thumb and track colors */
+  }
+  

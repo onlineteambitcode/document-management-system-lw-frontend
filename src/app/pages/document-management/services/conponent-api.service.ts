@@ -13,8 +13,8 @@ export class ComponentApiService {
   }
 
   // GET method
-  getAllCases<T>(caseId:string): Observable<T> {
-    return this.apiService.get<T>(`/cases`);
+  getAllCases<T>(caseIdPartial:string): Observable<T> {
+    return this.apiService.get<T>(`/cases/?case_id=${caseIdPartial}`);
   }
 
     // GET method
@@ -26,6 +26,12 @@ export class ComponentApiService {
     .set('order', order);  
     return this.apiService.get<T>(`/cases`, params);
   }
+
+  // GET method
+  getAllowedUsersByDocId<T>(documentId:string): Observable<T> {
+    return this.apiService.get<T>(`/documents/${documentId}/users`);
+  }
+  
 
 
   // POST method
@@ -56,7 +62,6 @@ export class ComponentApiService {
 
   fileBatchDownload<Blob>(caseId: string, fileList: string[]): Observable<Blob> {
     const options = {
-          headers: new HttpHeaders().set('Authorization', 'Bearer your-token'), // Optional: Add your authorization token
           responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
         };
     const requestBody = {
@@ -64,6 +69,18 @@ export class ComponentApiService {
           fileKeys: fileList
         };
     return this.apiService.post<Blob>(`/documents/batch-download/`, requestBody, options);
+  }
+
+
+  singleFileDownload<Blob>(caseId: string, fileUrl: string): Observable<Blob> {
+    const options = {
+          responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
+        };
+    const requestBody = {
+          case_id: caseId,
+          fileUrl
+        };
+    return this.apiService.post<Blob>(`/documents/single-download`, requestBody, options);
   }
 
 }

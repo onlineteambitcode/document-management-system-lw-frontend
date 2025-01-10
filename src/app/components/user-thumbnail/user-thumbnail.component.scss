@@ -2,3 +2,28 @@
     border: #ffffff;
     background: #ffffff;
 }
+
+.action-icon{
+    cursor: pointer !important;
+}
+
+      .icon {
+            width: 1em; /* Initial size */
+            height: 1em; /* Match width */
+            transition: transform 0.3s ease; /* Smooth scale transition */
+        }
+
+        .icon:hover {
+            transform: scale(1.15); /* Increase size by 15% (roughly 3px for 20px size) */
+        }
+
+
+        .fallback-dp {
+            width: 35px;
+            height: 35px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            object-fit: cover;
+        }

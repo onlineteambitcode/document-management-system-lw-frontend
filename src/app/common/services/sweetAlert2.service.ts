@@ -117,4 +117,20 @@ export class SweetAlertService {
       });
      }
     }
+
+    confirmAlertWithHtml(title: string, html: string, icon: SweetAlertIcon | "warning", showCancelButton: boolean | true, cancelButtonText: string | "No",showConfirmButton: boolean | false,confirmButtonText: string | 'Ok',hasInput: boolean, callback: () => void){
+      
+      Swal.fire({
+        title,
+        html,
+        icon,
+        showCancelButton,
+        confirmButtonText,
+        cancelButtonText
+      }).then((result) => {
+        if (result.isConfirmed) {
+          callback();
+        }
+      });
+     }
 }

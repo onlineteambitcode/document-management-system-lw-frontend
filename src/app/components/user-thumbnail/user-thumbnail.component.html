@@ -1,19 +1,35 @@
-
-    <div class="row justify-content-between m-l-4 m-r-4">
-        <div class="col d-flex align-items-center">
-            <button mat-fab extended color="inherit" aria-label="Notifications"
-                class="d-flex justify-content-center profile-btn-dd">
-                <ng-container *ngIf="isGroup">
-                    <i-tabler style="color: rgb(10, 17, 219);fill: rgb(10, 17, 219);" name="users-group" class="icon-22">
-                    </i-tabler>
-                </ng-container>
-                <ng-container *ngIf="!isGroup">
-                    <img [src]="item.profile_image" class="rounded-circle object-cover icon-35 profile-dd" width="35" />
-                </ng-container>
-            </button>
-            <div class="m-l-16">
-                <h6 class="mat-subtitle-1 f-s-14 f-w-600"> {{item.name}} </h6>
-                <span *ngIf="!isGroup" class="mat-body-1 f-s-12"> {{item.email}} </span>
-            </div>
+<div class="row justify-content-between m-l-4 m-r-4">
+    <div class="col d-flex align-items-center">
+        <span *ngIf="showLabels && isNew" class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2">
+            New
+        </span>
+        <span *ngIf="showLabels && isRemoved" class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2">
+            New
+        </span>
+        <button mat-fab extended color="inherit" aria-label="Notifications"
+            class="d-flex justify-content-center profile-btn-dd">
+            <ng-container *ngIf="isGroup">
+                <i-tabler style="color: rgb(10, 17, 219);fill: rgb(10, 17, 219);" name="users-group" class="icon-22">
+                </i-tabler>
+            </ng-container>
+            <ng-container *ngIf="!isGroup">
+         
+                <div *ngIf="item.profile_image"
+                    class="fallback-dp rounded-circle d-flex align-items-center justify-content-center"
+                    [style.background-color]="item.profile_image">
+                    {{ getInitials(item.name) }}
+                </div>
+            </ng-container>
+        </button>
+        <div class="m-l-16">
+            <h6 class="mat-subtitle-1 f-s-14 f-w-600"> {{item.name}} </h6>
+            <span *ngIf="!isGroup" class="mat-body-1 f-s-12"> {{item.email}} </span>
         </div>
+        <div class="m-l-16" *ngIf="hasActionIcon">
+            <i-tabler style="cursor: pointer;" class="action-icon" (click)="onClickActionIcon()"
+                [style.color]="iconColor" [name]="iconName" class="icon-22">
+            </i-tabler>
+        </div>
+
     </div>
+</div>

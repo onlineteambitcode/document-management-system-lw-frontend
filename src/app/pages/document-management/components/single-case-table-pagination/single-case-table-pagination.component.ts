@@ -196,6 +196,8 @@ export class SingleCaseTablePaginationComponent {
   }
   ngOnInit(): void {
     this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
+    this.enableDesableFrom(!this.isAdmin);
+    this.isReadOnly = !this.isAdmin;
     this.activatedRoute.queryParams.subscribe((params) => {
       this.caseId = params['id'];
       this.loadCaseData();
@@ -314,9 +316,40 @@ export class SingleCaseTablePaginationComponent {
   this.selection.select(...this.dataSource.data);
 }
 
-docwnloadSelected(){
+downloadConfirm(){
+  if(this.selection.selected.length> 0){
+    const selectedFilesNameList: string[] = this.selection.selected.map(elementData=>{
+      return elementData.document_name
+    });
+    const selectedFilesNameListString = this.generateHtmlList(selectedFilesNameList);
+  
+    this.alertService.confirmAlertWithHtml("Do you want to download below documents?",selectedFilesNameListString,"warning",true,"No",true,"Yes, Proceed",false,this.downloadSelected.bind(this));
+  }
+}
+
+downloadConfirmForIconClick(fileUrl: string, fileName: string){
+  if(fileUrl && fileName){
+    const selectedFilesNameList: string[] = [fileName];
+    const selectedFilesNameListString = this.generateHtmlList(selectedFilesNameList);
+  
+    this.alertService.confirmAlertWithHtml("Do you want to download below documents?",selectedFilesNameListString,"warning",true,"No",true,"Yes, Proceed",false,this.sendSingleFileDownloadRequest.bind(this,fileUrl, fileName));
+  }
+}
+
+// Generate the HTML list with dots
+generateHtmlList (names: string[]): string {
+  return `<ul style="list-style-type: disclosure-closed;justify-content: center; display: grid;">
+    ${names.map((name) => `<li>${name}</li>`).join('')}
+  </ul>`;
+};
+
+downloadSelected(){
   if(this.selection.selected.length === 1){
-    return;
+    if(this.selection.selected[0].file_url){
+      const fileUrl = this.selection.selected[0].file_url;
+      const fileName = this.selection.selected[0].document_name;
+      this.sendSingleFileDownloadRequest(fileUrl,fileName); 
+    }
   }else if(this.selection.selected.length > 1){
     console.log(this.selection.selected);
     this.sendBatchDownloadRequest();
@@ -400,7 +433,9 @@ selected(event: MatAutocompleteSelectedEvent): void {
 }
 
   openFileUploadDialog():void{
-    
+    if(this.isReadOnly || this.enableDownloadSelected){
+      return;
+    }
     // this.documentUploadDialog.open(FileUploadUiComponent, {
     //   width: '50%',
     //   height: 'auto',
@@ -449,7 +484,39 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
   }
 
-  downloadFile(response: Blob) {
+  sendSingleFileDownloadRequest(fileUrl: string, fileName: string){
+    this.fullPageLoaderService.setLoadingStatus(true);
+    this.apiService.singleFileDownload<Blob>(this.caseId, fileUrl)
+    .pipe(
+      catchError(error => {
+        console.error('Error during single file download:', error);
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.alertService.errorToaster('top-end',"An error occurred. Please try again later.");
+        // Handle the error: you can throw the error again or return an empty observable, depending on how you want to handle it
+        throw error;  // Re-throw the error for downstream subscribers
+      })
+    )
+    .subscribe({
+      next: (response: Blob) => {
+        // Handle successful response (e.g., trigger download)
+        this.alertService.successToster('center',"Your file download is starting now.",3000);
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.downloadSingleFile(response,fileName);
+      },
+      error: (error) => {
+        // Handle the error if the observable throws (after catchError)
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.alertService.errorToaster('top-end',"An error occurred. Please try again later.");
+        console.error('Error in subscription:', error);
+      },
+      complete: () => {
+        this.fullPageLoaderService.setLoadingStatus(false);
+        console.log('Single file download request completed.');
+      }
+    });
+  }
+
+  private downloadFile(response: Blob) {
     // Create a link element to trigger the file download
     const blob = new Blob([response], { type: 'application/zip' });
     const url = window.URL.createObjectURL(blob);
@@ -460,14 +527,25 @@ selected(event: MatAutocompleteSelectedEvent): void {
     window.URL.revokeObjectURL(url);
   }
 
+  private downloadSingleFile(blob: Blob, fileName: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
   deleteConfirmation(){
     this.alertService.confirmAlert("Are you sure?",`Do you want to remove this Case?  ID: ${this.caseData.case_id}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeCase.bind(this));
   }
 
   clickCreateCase(){
-    // if(this.isReadOnly){
-    //   return;
-    // }
+    if(this.isReadOnly || this.form.disabled || this.form.invalid){
+      return;
+    }
     const caseId = this.form.value.case_id;
     this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with Case ID: ${caseId}`,"warning",true,"No",true,"Yes, Proceed",false,this.submit.bind(this));
   }
@@ -556,6 +634,15 @@ selected(event: MatAutocompleteSelectedEvent): void {
       );
     }
 
+    enableDesableFrom(isReadOnlyFrom: boolean){
+      if (isReadOnlyFrom) {
+        this.form.disable(); // Disable all inputs
+
+      } else {
+        this.form.enable(); // Enable all inputs
+      }
+    }
+
     loadCaseData(){
       
           if (!this.caseId) {
@@ -582,13 +669,14 @@ selected(event: MatAutocompleteSelectedEvent): void {
                   this.form.disable();
                 }
                 this.documentTableData = this.caseData.documents;
-                this.dataSource = new MatTableDataSource<CaseDocumentData>(this.documentTableData);
+                this.loadDocumentTableData();
                 console.log('this.caseData');
                 console.log(this.caseData);
                 console.log('this.caseData');
                 this.isLoading = false;
               },
               error: (error) => {
+                this.enableDesableFrom(true);
                 this.fullPageLoaderService.setLoadingStatus(false);
                 console.error('Case loading failed:', error);
                 if(error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND){
@@ -606,6 +694,15 @@ selected(event: MatAutocompleteSelectedEvent): void {
               },
             }
           );
+    }
+
+    loadDocumentTableData(){
+      this.dataSource = new MatTableDataSource<CaseDocumentData>(this.documentTableData);
+      this.dataSource.paginator = this.paginator;
+    }
+
+    clickBack(){
+      this.router.navigate(['/document-managemnt/document-upload']);
     }
 
     // mapAndLoadDocuments(documents: any[]){

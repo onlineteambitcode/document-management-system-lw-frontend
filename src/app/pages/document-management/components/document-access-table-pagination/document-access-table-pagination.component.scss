@@ -7,3 +7,14 @@
         display: inline-block;
     }
 }
+
+.virtual-scroll-container {
+    height: 300px;
+    width: 100%;
+    overflow: auto;
+  }
+
+mat-list-item:hover{
+    background: #e5f5ff;
+
+}

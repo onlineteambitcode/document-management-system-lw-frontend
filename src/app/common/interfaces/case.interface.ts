@@ -10,6 +10,7 @@ export interface CaseDocumentData {
 
 
 export interface CaseData {
+    id: string;
     case_id: string;
     name: string;
     allowed_users: number;

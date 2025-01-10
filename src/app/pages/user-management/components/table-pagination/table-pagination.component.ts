@@ -96,6 +96,7 @@ export class AppTablePaginationComponent implements AfterViewInit {
       .subscribe((data) => {
         this.isLoadingResults = false;
         this.tableData = data;
+        this.isLoading = false;
         this.dataSource = new MatTableDataSource(this.tableData);
       });
   }

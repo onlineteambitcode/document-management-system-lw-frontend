@@ -87,7 +87,7 @@
             <!-- Confirm Password -->
             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Confirm Password</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password" />
+              <input (keydown.enter)="submit()" matInput formControlName="confirmPassword" [type]="hideConfirmPassword ? 'password' : 'text'" placeholder="Confirm your password" />
               <mat-icon (click)="showHideConfirmPassword()" class="show-hide-icon" matSuffix>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
               <mat-error
               *ngIf="f['confirmPassword'].hasError('required') && (f['confirmPassword'].touched || f['confirmPassword'].dirty)">
