@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiBaseUrl: 'http://52-144-46-54.cloud-xip.com:3000',  // Replace with your local API base URL
+    apiBaseUrl: 'https://api.lawyercloud.work.gd',  // Replace with your production API base URL
   };
 
   
