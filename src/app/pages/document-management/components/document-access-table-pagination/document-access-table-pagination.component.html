@@ -208,8 +208,10 @@
           
         </div>
         <mat-card-actions align="end">
-          <button mat-flat-button color="primary" class="m-r-8">Save This</button>
-          <button routerLink="/document-managemnt/document-upload" mat-stroked-button color="warn">Cancel</button>
+          <button type="button" (click)="clickBack()"  mat-stroked-button color="warn" class="m-r-10">
+            <mat-icon style=" font-size: 1.4rem;">arrow_back</mat-icon>
+            Back</button>
+          <button [disabled]="!selectedCase" mat-flat-button color="primary" class="m-r-8">Save This</button>
         </mat-card-actions>
         
       </form>

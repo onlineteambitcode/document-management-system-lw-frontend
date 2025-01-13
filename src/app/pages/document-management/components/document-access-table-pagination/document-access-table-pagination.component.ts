@@ -1,5 +1,5 @@
 import { DialogModule } from '@angular/cdk/dialog';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, computed, inject, Input, model, OnInit, signal, ViewChild } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -173,6 +173,7 @@ export class DocumentAccessTablePaginationComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(
+    private location: Location,
     private router: Router,
     private alertService: SweetAlertService,
     private authService: AuthService,
@@ -388,6 +389,10 @@ export class DocumentAccessTablePaginationComponent {
   }
   backToCase() {
     this.isUpload = false;
+  }
+
+  clickBack(){
+    this.location.back();
   }
 
   removeAccessWarn(eventData: any) {

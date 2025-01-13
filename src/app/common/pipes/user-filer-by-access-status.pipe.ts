@@ -10,7 +10,7 @@ import { UserData } from '../interfaces/user.interface';
 export class UserFilterByAccessStatus implements PipeTransform {
     transform(users: UserData[], updatedUserIdMap: Map<string, ITEM_STATUS>, isReturnInMap: boolean): any[] {
         if (!users || updatedUserIdMap.size == 0) {
-            return users; // Return the full list if there's no filter
+            return isReturnInMap ? [] : users; // Return the full list if there's no filter
         }
 
         return users.filter(user => {

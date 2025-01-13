@@ -1,5 +1,5 @@
 import { DialogModule } from '@angular/cdk/dialog';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { AfterViewInit, Component, computed, inject, Input, model, OnInit, signal, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -167,6 +167,7 @@ export class SingleCaseTablePaginationComponent {
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
     constructor(
+        private location: Location,
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private alertService: SweetAlertService,
@@ -547,7 +548,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
       return;
     }
     const caseId = this.form.value.case_id;
-    this.alertService.confirmAlert("Are you sure?",`Do you want to create this user with Case ID: ${caseId}`,"warning",true,"No",true,"Yes, Proceed",false,this.submit.bind(this));
+    this.alertService.confirmAlert("Are you sure?",`Do you want to create this case with Case ID: ${caseId}`,"warning",true,"No",true,"Yes, Proceed",false,this.submit.bind(this));
   }
 
     submit() {
@@ -702,7 +703,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
     }
 
     clickBack(){
-      this.router.navigate(['/document-managemnt/document-upload']);
+      this.location.back(); // Navigate to the previous page
     }
 
     // mapAndLoadDocuments(documents: any[]){

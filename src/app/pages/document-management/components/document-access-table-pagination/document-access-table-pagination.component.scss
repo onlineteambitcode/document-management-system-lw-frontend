@@ -12,9 +12,22 @@
     height: 300px;
     width: 100%;
     overflow: auto;
-  }
+}
 
-mat-list-item:hover{
-    background: #e5f5ff;
+mat-list-item:hover {
+    background: #e5f5ff !important;
+    /* Background color for mat-list-item */
+}
 
+::ng-deep mat-list-item:hover .profile-btn-dd {
+    background-color: #e5f5ff !important;
+}
+mat-list-item{
+    ::ng-deep i-tabler:hover{
+        height: 25px !important;
+        width: 25px !important;
+    }
+    i-tabler{
+        cursor: poiner !important;   
+    }
 }
