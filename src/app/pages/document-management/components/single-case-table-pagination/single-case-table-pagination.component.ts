@@ -537,6 +537,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
       const urlBlob = URL.createObjectURL(blob);
 
       a.href = urlBlob;
+      a.download = url.split('/').pop() ?? 'download';  // This will set the filename to the last part of the URL or default to 'download'
       a.click();
       URL.revokeObjectURL(urlBlob); // Clean up the blob URL
     } catch (error) {
