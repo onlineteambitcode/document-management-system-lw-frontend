@@ -48,7 +48,7 @@ export class CaseTablePaginationComponent implements AfterViewInit,OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   tableData: CaseData[] = [];
-  public displayedColumns: string[] = ['id', 'documents', 'last_updated', 'action'];
+  public displayedColumns: string[] = ['id', 'documents', 'last_updated'];
   removeDialogTitle: string = 'Do you want to remove?';
   messageBodayKey: string = '';
   editRouterLink: string = '';

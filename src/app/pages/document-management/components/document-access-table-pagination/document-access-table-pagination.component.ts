@@ -86,7 +86,6 @@ export class DocumentAccessTablePaginationComponent {
   myControl = new FormControl<string | CaseData>('');
   filteredOptions: Observable<CaseData[]>;
   selectedCase: CaseData;
-  selectedRow: any;  // Will hold the selected row
   isAdmin: boolean = true;
   tableData: CaseDocumentData[] = [];
   selectData: CaseData[] = [];
@@ -96,7 +95,7 @@ export class DocumentAccessTablePaginationComponent {
   displayedColumns: string[] = ['select', 'name', 'action'];
   selection = new SelectionModel<CaseDocumentData>(true, []);
   dataSource: MatTableDataSource<CaseDocumentData> = new MatTableDataSource<CaseDocumentData>();
-  removeDialogTitle: string = 'Do you want to remove?';
+  removeDialogTitle: string = 'Do you want to fremove?';
   messageBodayKey: string = '';
   editRouterLink: string = '';
   caseName = 'CASE_2012_SPE_15_1';
@@ -104,6 +103,7 @@ export class DocumentAccessTablePaginationComponent {
   isUpload: boolean = false;
   updatedUserIdMap: Map<string, ITEM_STATUS> = new Map();
   userCurrentMap: Map<string, UserData> = new Map();
+  currentSelectedDocumentId: string = '';
   readonly deleteConfirmDialog = inject(MatDialog);
   readonly documentUploadDialog = inject(MatDialog);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -194,8 +194,8 @@ export class DocumentAccessTablePaginationComponent {
     // this.selectData = CASE_MOCK_DATA;
 
     // this.userTableDataAllowed = USER_MOCK_DATA_ALLOWED;
-    this.userTableDataNotAllowed = USER_MOCK_DATA_NOT_ALLOWED;
-    this.userTableDataNotAllowed.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+    // this.userTableDataNotAllowed = USER_MOCK_DATA_NOT_ALLOWED;
+    this.loadAllUsers();
     this.dataSource = new MatTableDataSource<CaseDocumentData>(this.tableData);
 
     this.filteredOptions = this.myControl.valueChanges.pipe(
@@ -314,6 +314,34 @@ export class DocumentAccessTablePaginationComponent {
 
   }
 
+  loadAllUsers() {
+    this.isReadOnly = (!PermittedRoleToEdit.hasCommonEditPermission(this.authService));
+    this.updatedUserIdMap = new Map();
+    this.fullPageLoaderService.setLoadingStatus(true);
+
+    // Use the API service to send the POST request
+    this.apiService.getAllUsers<Response>().subscribe(
+      {
+        next: (response: Response) => {
+          console.log('All users fetching successful - Document access:', response);
+          this.userTableDataNotAllowed = response.data;
+          this.userTableDataNotAllowed.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.error('All user loading failed:', error);
+          this.alertService.errorAlert('center', 'Error while loading user details', '', 3000, false, '', false);
+        },
+        complete: () => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.log('All user details loading request completed.');
+        },
+      }
+    );
+
+  }
+
   loadAllowedUsers(documentId: string) {
 
     if (!documentId) {
@@ -322,7 +350,7 @@ export class DocumentAccessTablePaginationComponent {
       return;
     }
     this.isReadOnly = (!PermittedRoleToEdit.hasCommonEditPermission(this.authService));
-
+    this.updatedUserIdMap = new Map();
     this.fullPageLoaderService.setLoadingStatus(true);
 
     // Use the API service to send the POST request
@@ -335,6 +363,7 @@ export class DocumentAccessTablePaginationComponent {
             this.updatedUserIdMap.set(element.user_id.toString(), ITEM_STATUS.CURRENT);
             this.userCurrentMap.set(element.user_id, element);
           });
+          this.userTableDataAllowed.map(ele=> ele.profile_image = RandomColor.getRandomColor())
           console.log('documentId');
           console.log(documentId);
           console.log('documentId');
@@ -373,6 +402,7 @@ export class DocumentAccessTablePaginationComponent {
   onRowSelectionChange(event: any, row: any) {
     console.log('Selected Row:', row);
     this.loadAllowedUsers(row.document_id);
+    this.currentSelectedDocumentId = row.document_id;
       // You can perform other operations like fetching more details about the selected row
   }
 
@@ -406,24 +436,67 @@ export class DocumentAccessTablePaginationComponent {
   }
 
   addUserToAllowedMap(user: UserData){
-    if(this.updatedUserIdMap.has(user.user_id) && this.updatedUserIdMap.get(user.user_id) === ITEM_STATUS.CURRENT){
+    const userId = user.user_id.toString();
+    if(this.updatedUserIdMap.has(userId) && this.updatedUserIdMap.get(userId) === ITEM_STATUS.CURRENT){
       return;
     }
-    if(this.userCurrentMap.has(user.user_id)){
-      this.updatedUserIdMap.set(user.user_id, ITEM_STATUS.CURRENT);
+    if(this.userCurrentMap.has(userId)){
+      this.updatedUserIdMap.set(userId, ITEM_STATUS.CURRENT);
     }
-    if(!this.updatedUserIdMap.has(user.user_id)){
-      this.updatedUserIdMap.set(user.user_id, ITEM_STATUS.NEW);
+    if(!this.updatedUserIdMap.has(userId)){
+      this.updatedUserIdMap.set(userId, ITEM_STATUS.NEW);
     }
+    this.updateUserDocumentAccess();
   }
 
   removeUserFromAllowedList(user: UserData){
-    if((!this.updatedUserIdMap.has(user.user_id)) || this.updatedUserIdMap.get(user.user_id) === ITEM_STATUS.REMOVED){
+    const userId = user.user_id.toString();
+    if((!this.updatedUserIdMap.has(userId)) || this.updatedUserIdMap.get(userId) === ITEM_STATUS.REMOVED){
       return;
     }
-    if(this.updatedUserIdMap.has(user.user_id)){
-      this.updatedUserIdMap.set(user.user_id, ITEM_STATUS.REMOVED);
+    if(this.updatedUserIdMap.has(userId)){
+      if(this.updatedUserIdMap.get(userId) === ITEM_STATUS.NEW){
+        this.updatedUserIdMap.delete(userId);
+      }else{
+      this.updatedUserIdMap.set(userId, ITEM_STATUS.REMOVED);
     }
+    }
+    this.updateUserDocumentAccess();
+  }
+
+  updateUserDocumentAccess(): void{
+    this.fullPageLoaderService.setLoadingStatus(true);
+    const selectedDocumentId = this.currentSelectedDocumentId;
+    const userList: string[] = Array.from(this.updatedUserIdMap.entries())
+    .filter(([key, value]) => value !== ITEM_STATUS.REMOVED) // Filter out 'active' values
+    .map(([key]) => key.toString()); // Convert keys to strings
+
+    // Use the API service to send the POST request
+    this.apiService.updateDocumentAccess<Response>(userList,selectedDocumentId).subscribe(
+      {
+        next: (response: Response) => {
+          console.log('Document access modification successfull:', response);
+          this.alertService.successToster('top-end', 'The document access settings have been updated successfully', 5000);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.error('Document access modification  failed:', error);
+          if (error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND) {
+            this.alertService.errorAlert('center', 'Document not found', error.error.message, 3000, false, '', false);
+          } else if (error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED) {
+            this.alertService.errorAlert('center', `You are not permitted to update the document access`, error.error.message, 4000, false, '', false);
+          } else {
+            this.alertService.errorAlert('center', 'Error while updating document access', '', 3000, false, '', false);
+          }
+        },
+        complete: () => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          this.loadAllCaseData();
+          console.log('Document access modification request completed.');
+        },
+      }
+    );
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -553,4 +626,48 @@ export class DocumentAccessTablePaginationComponent {
     return user && user.case_id ? user.case_id : '';
   }
 
+
+  deleteConfirmation(documentName:string){
+    this.alertService.confirmAlert("Are you sure?",`Do you want to remove this document?  ID: ${documentName}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeDocumentCascade.bind(this));
+  }
+
+  removeDocumentCascade() {
+    this.isReadOnly = (!PermittedRoleToEdit.hasCommonEditPermission(this.authService));
+    if (!this.currentSelectedDocumentId && (!this.isAdmin) && this.isReadOnly && (!this.isLoading)) {
+      // Ensure form is valid before submission
+      console.error('Cannot preceed to remove document');
+      return;
+    }
+
+    this.fullPageLoaderService.setLoadingStatus(true);
+
+    // Use the API service to send the POST request
+    this.apiService.removeDocumentCasecase<Response>(this.currentSelectedDocumentId).subscribe(
+      {
+        next: (response: Response) => {
+          console.log('Document casecade deleation successful:', response);
+          this.alertService.successAlert('center', 'Document removed successfully','', 3000);
+          this.loadCaseData();
+          this.loadAllUsers();
+        },
+        error: (error) => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.error('Document casecade deleation failed:', error);
+          if(error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND){
+            this.alertService.errorAlert('center', 'Failed to remove the Document', error.error.message, 3000, false, '', false);
+          }else if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+            this.alertService.errorAlert('center', 'Failed to remove the Document', error.error.message, 3000, false, '', false);
+          }else{
+            this.alertService.errorAlert('center', 'Failed to remove the Document', '', 3000, false, '', false);
+          }
+
+
+        },
+        complete: () => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.log('Document casecade deleation request completed.');
+        },
+      }
+    );
+  }
 }

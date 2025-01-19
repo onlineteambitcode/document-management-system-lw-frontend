@@ -159,9 +159,9 @@
                             <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
                           </div>
                       
-                          <a (click)="downloadConfirmForIconClick(element.file_url, element.document_name)" class="cursor-pointer" *ngIf="isAdmin">
+                          <!-- <a (click)="downloadConfirmForIconClick(element.file_url, element.document_name)" class="cursor-pointer" *ngIf="isAdmin">
                             <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
-                          </a>
+                          </a> -->
                         </div>
                       </td>
                       
@@ -231,7 +231,7 @@
    </div>
    <div class="row">
     <div class="col">
-      <mat-accordion *ngIf="!isCaseCreation" class="m-r-8" mat-flat-button color="warn">
+      <mat-accordion *ngIf="!isCaseCreation && isAdmin && !isUpload" class="m-r-8" mat-flat-button color="warn">
         <mat-expansion-panel [expanded]="false">
           <mat-expansion-panel-header>
             <mat-panel-title>

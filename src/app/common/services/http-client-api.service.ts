@@ -8,6 +8,7 @@ import { environment } from 'src/app/environments/environment';
 })
 export class HttpClientApiService {
   private readonly baseUrl = environment.apiBaseUrl; // Use the base URL from environment
+  
   constructor(private http: HttpClient) {}
 
   // GET method

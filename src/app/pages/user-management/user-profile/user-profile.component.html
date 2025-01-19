@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="col">
+    <!-- <div class="col">
         <mat-card class="mat-mdc-card mdc-card cardWithShadow">
             <mat-card-content class="mat-mdc-card-content p-y-24">
                 <mat-card-title class="mat-mdc-card-title">
@@ -34,7 +34,7 @@
                 </div>
                 <app-content-loader *ngIf="isLoading" [loaderType]="'profile-picture'"></app-content-loader>
             </mat-card-content></mat-card>
-    </div>
+    </div> -->
 
     <div class="col">
         <mat-card class="mat-mdc-card mdc-card cardWithShadow">
@@ -51,6 +51,7 @@
     </div>
 </div>
 <div class="row">
+    <div class="col">
     <mat-card *ngIf="!isLoading" class="cardWithShadow theme-card">
         <mat-card-header>
             <mat-card-title class="m-b-0">{{ isUserProfile ? 'Profile' : 'Add New User'}}</mat-card-title>
@@ -92,7 +93,7 @@
                     </div>
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
-                        <mat-label>
+                        <mat-label *ngIf="isUserProfile">
                             <span
                                 [ngClass]="{'bg-light-error text-error': userData.role === 'ADMIN', 'bg-light-warning text-warning' : userData.role === 'USER'}"
                                 class="rounded f-w-600 p-6 m-t-4 p-y-4 f-s-12 m-r-2">
@@ -174,10 +175,10 @@
 
                 <div class="m-t-12">
 
-                    @if(userData.status === 'ADMIN_VERIFICATION_PENDING') {
+                    @if(isUserProfile && userData.status === 'ADMIN_VERIFICATION_PENDING') {
                     <button class="m-r-8 verify-button" *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly"
                         mat-stroked-button color="accent">Verify Account</button>
-                    }@else if(userData.status === 'DEACTIVE') {
+                    }@else if(isUserProfile && userData.status === 'DEACTIVE') {
 
                     }@else{
                     <button *ngIf="!isUserProfile" [disabled]="form.invalid  || isReadOnly" mat-flat-button
@@ -196,6 +197,7 @@
             </form>
         </mat-card-content>
     </mat-card>
+</div>
     <div *ngIf="isLoading" class="col-md-6">
         <mat-card class="mat-mdc-card mdc-card cardWithShadow">
             <mat-card-header>

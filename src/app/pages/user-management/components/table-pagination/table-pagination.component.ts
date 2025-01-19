@@ -160,4 +160,12 @@ export class AppTablePaginationComponent implements AfterViewInit {
     this.router.navigate(['/user-managemnt/user-profile'], { queryParams: params });
 
   }
+
+  onToggle(event: any): void {
+    // Prevent the default toggling behavior
+    event.preventDefault();
+    console.log("Toggle");
+    // Prevent immediate toggling
+    event.source.checked = true;
+  }
 }

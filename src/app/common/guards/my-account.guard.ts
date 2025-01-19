@@ -44,7 +44,7 @@ export class MyAccountGuard implements CanActivate {
         return false;
       }
     } catch (error) {
-      console.error('Invalid token:', error);
+      console.error('Invalid authToken:', error);
       this.sweetAlertService.errorToaster('top',"Your are not permitted to load other accounts");
       return false;
     }

@@ -100,8 +100,14 @@ export class UserProfileComponent {
     this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
     // Subscribe to query parameters
     this.route.queryParams.subscribe((params) => {
-      this.userId = params['id'];
+      if(params['id']){
+        this.userId = params['id'];
       this.loadUserData();
+      }else{
+        this.fullPageLoaderService.setLoadingStatus(false);
+        this.isLoading = false;
+        this.isUserProfile = false;
+      }
     });
   }
 
@@ -215,7 +221,8 @@ export class UserProfileComponent {
 
   loadUserData() {
     if (!this.userId) {
-      this.isLoading = true;
+      this.fullPageLoaderService.setLoadingStatus(false);
+      this.isLoading = false;
       // Ensure form is valid before submission
       this.isUserProfile = false;
       console.error('User Id is invalid');

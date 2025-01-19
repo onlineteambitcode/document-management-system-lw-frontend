@@ -101,6 +101,7 @@ export class FileUploadUiComponent implements OnInit  {
               console.log('Upload successful:', response.body?.message); // Safely access the message
               this.alertService.successAlert('center',"File upload success","",3000,true,true,true);
               this.router.navigate(['/document-managemnt/single-case'], { queryParams: params });
+              this.progressStarted = false;
               this.backToCaseDetails.emit(true);
             }
           },
@@ -108,7 +109,8 @@ export class FileUploadUiComponent implements OnInit  {
             this.fullPageLoaderService.setLoadingStatus(false);
             console.error('Upload failed:', error);
             this.alertService.errorAlert('center',"Faill to upload files","",3000,false,"",false);
-
+            this.progressStarted = false;
+            this.backToCaseDetails.emit(true);
           },
           complete: ()=>{
             this.fullPageLoaderService.setLoadingStatus(false);

@@ -18,7 +18,7 @@ export class AuthService {
         this.role = decodedToken.role || '';
         this.logedInUserId = decodedToken.userId || '';
       } catch (error) {
-        console.error('Invalid token', error);
+        console.error('Invalid authToken', error);
         this.logout(); // Clear token if decoding fails
       }
     }
@@ -26,7 +26,7 @@ export class AuthService {
 
   // Fetch token from storage
   getToken(): string | null {
-    return this.storageService.getItem('token'); // Or get from secure cookies
+    return this.storageService.getItem('token');
   }
 
   // Check if user is logged in
@@ -41,7 +41,7 @@ export class AuthService {
 
   isMyLogedInId(id:string): boolean{
     return parseInt(this.logedInUserId) === parseInt(id);
-  }
+  }   
 
   getLogedInUserId(): string{
     return this.logedInUserId;

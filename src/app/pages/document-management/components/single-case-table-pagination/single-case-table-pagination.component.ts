@@ -197,11 +197,17 @@ export class SingleCaseTablePaginationComponent {
   }
   ngOnInit(): void {
     this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
+    if(!this.isAdmin && this.form){
+      this.f['case_id'].disable();
+      this.f['description'].disable();
+    }
     this.enableDesableFrom(!this.isAdmin);
     this.isReadOnly = !this.isAdmin;
     this.activatedRoute.queryParams.subscribe((params) => {
-      this.caseId = params['id'];
-      this.loadCaseData();
+      if(params['id']){
+        this.caseId = params['id'];
+        this.loadCaseData();
+      }
     });
 
       this.userTableData = [
@@ -288,7 +294,13 @@ export class SingleCaseTablePaginationComponent {
       ];
   }
   onToggleChange(){
-    
+    if(!this.isAdmin){
+      this.f['case_id'].disable();
+      this.f['description'].disable();
+    }else{
+      this.f['case_id'].enable();
+      this.f['description'].enable();
+    }
   }
   backToCase(){
     this.isUpload = false;
@@ -345,13 +357,7 @@ generateHtmlList (names: string[]): string {
 };
 
 downloadSelected(){
-  if(this.selection.selected.length === 1){
-    if(this.selection.selected[0].file_url){
-      const fileUrl = this.selection.selected[0].file_url;
-      const fileName = this.selection.selected[0].document_name;
-      this.sendSingleFileDownloadRequest(fileUrl,fileName); 
-    }
-  }else if(this.selection.selected.length > 1){
+  if(this.selection.selected.length > 0){
     console.log(this.selection.selected);
     this.sendBatchDownloadRequest();
   }else{
@@ -455,7 +461,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
 
     this.fullPageLoaderService.setLoadingStatus(true);
-    this.apiService.fileBatchDownload<Blob>(this.caseId, this.selectedFilesList)
+    this.apiService.fileBatchDownload<Response>(this.caseId, this.selectedFilesList)
     .pipe(
       catchError(error => {
         console.error('Error during file download:', error);
@@ -466,11 +472,11 @@ selected(event: MatAutocompleteSelectedEvent): void {
       })
     )
     .subscribe({
-      next: (response: Blob) => {
+      next:async (response: Response) => {
         // Handle successful response (e.g., trigger download)
         this.fullPageLoaderService.setLoadingStatus(false);
         this.alertService.successToster('center',"Your download will begin now.",3000);
-        this.downloadFile(response);
+        await this.downloadFilesAsync(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -487,7 +493,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
 
   sendSingleFileDownloadRequest(fileUrl: string, fileName: string){
     this.fullPageLoaderService.setLoadingStatus(true);
-    this.apiService.singleFileDownload<Blob>(this.caseId, fileUrl)
+    this.apiService.singleFileDownload<Response>(this.caseId, fileUrl)
     .pipe(
       catchError(error => {
         console.error('Error during single file download:', error);
@@ -498,11 +504,11 @@ selected(event: MatAutocompleteSelectedEvent): void {
       })
     )
     .subscribe({
-      next: (response: Blob) => {
+      next: async (response: Response) => {
         // Handle successful response (e.g., trigger download)
         this.alertService.successToster('center',"Your file download is starting now.",3000);
         this.fullPageLoaderService.setLoadingStatus(false);
-        this.downloadSingleFile(response,fileName);
+        await this.downloadFilesAsync(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -517,15 +523,25 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
   }
 
-  private downloadFile(response: Blob) {
-    // Create a link element to trigger the file download
-    const blob = new Blob([response], { type: 'application/zip' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'batch-files.zip'; // Default file name for the downloaded ZIP
-    a.click();
-    window.URL.revokeObjectURL(url);
+  private async downloadFilesAsync(urls: string[]) {
+    const downloadPromises = urls.map((url) => this.downloadFile(url));
+    await Promise.all(downloadPromises);
+    console.log('All files downloaded');
+  }
+
+  private async downloadFile(url: string): Promise<void> {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const a = document.createElement('a');
+      const urlBlob = URL.createObjectURL(blob);
+
+      a.href = urlBlob;
+      a.click();
+      URL.revokeObjectURL(urlBlob); // Clean up the blob URL
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
   }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {

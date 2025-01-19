@@ -31,6 +31,11 @@ export class ComponentApiService {
   getAllowedUsersByDocId<T>(documentId:string): Observable<T> {
     return this.apiService.get<T>(`/documents/${documentId}/users`);
   }
+
+  // GET method
+  getAllUsers<T>(): Observable<T> {
+    return this.apiService.get<T>(`/users`);
+  }
   
 
 
@@ -49,6 +54,11 @@ export class ComponentApiService {
   return this.apiService.delete<T>(`/cases/${caseId}`);
 }
 
+ // GET method
+ removeDocumentCasecase<T>(documentId:string): Observable<T> {
+  return this.apiService.delete<T>(`/documents/${documentId}`);
+}
+
   fileBatchUpload<T>(caseId: string, formData: FormData): Observable<T> {
     const options = {
           headers: new HttpHeaders({
@@ -60,15 +70,12 @@ export class ComponentApiService {
     return this.apiService.post<T>(`/documents/batch-upload/${caseId}`, formData, options);
   }
 
-  fileBatchDownload<Blob>(caseId: string, fileList: string[]): Observable<Blob> {
-    const options = {
-          responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
-        };
+  fileBatchDownload<T>(caseId: string, fileList: string[]): Observable<T> {
     const requestBody = {
           case_id: caseId,
           fileKeys: fileList
         };
-    return this.apiService.post<Blob>(`/documents/batch-download/`, requestBody, options);
+    return this.apiService.post<T>(`/documents/batch-download/`, requestBody);
   }
 
 
@@ -83,4 +90,12 @@ export class ComponentApiService {
     return this.apiService.post<Blob>(`/documents/single-download`, requestBody, options);
   }
 
+   // POST method
+   updateDocumentAccess<T>(userIds: string[],documentId: string, options?: object): Observable<T> {
+    const requestBody = {
+      documentId,
+      userIds
+    }
+    return this.apiService.put<T>(`/documents/assign-access`, requestBody, options);
+  }
 }

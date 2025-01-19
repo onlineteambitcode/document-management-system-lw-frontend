@@ -49,6 +49,7 @@
           </div> -->
 
         </div>
+        @if(selectedCase){
         <mat-card class="document-card b-1 shadow-none">
           <mat-card-header>
             <div class="row justify-content-between">
@@ -73,12 +74,6 @@
           <div class="table-responsive">
             <div class="justify-content-between">
               <div class="row">
-                <div class="col align-items-start">
-                  <mat-checkbox (change)="$event ? toggleAllRows() : null" [checked]="selection.hasValue() && isAllSelected()"
-                    [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
-                  </mat-checkbox>
-                  {{checkboxLabel()}}
-                </div>
                 <div class="col align-items-start d-flex align-items-center gap-2">    
                   <span class="cursor-pointer">
                     <!-- <i-tabler style="color: red; vertical-align: middle; margin-bottom: 3px;" name="trash" class="icon-22">
@@ -93,10 +88,10 @@
               <ng-container matColumnDef="select">
                 <th mat-header-cell *matHeaderCellDef> Select </th>
                 <td mat-cell *matCellDef="let row">
-                  <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedRow" (change)="onRowSelectionChange($event, row)">
-                    <mat-radio-button [value]="row" [aria-label]="'Select ' + row.document_name">
+                  <!-- <mat-radio-group [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedRow" (change)="onRowSelectionChange($event, row)"> -->
+                    <mat-radio-button [checked]="row.document_id === currentSelectedDocumentId" [value]="row" [aria-label]="'Select ' + row.document_name" (change)="onRowSelectionChange($event, row)">
                     </mat-radio-button>
-                  </mat-radio-group>
+                  <!-- </mat-radio-group> -->
                 </td>
               </ng-container>
       
@@ -113,9 +108,9 @@
                           <div style="font-size: 12px; color: gray; line-height: 1;">{{ element.file_size }}MB</div>
                         </div>
                     
-                        <a class="cursor-pointer">
+                        <!-- <a class="cursor-pointer">
                           <i-tabler style="color: rgb(16, 152, 6); font-weight: bold;" name="download" class="icon-22"></i-tabler>
-                        </a>
+                        </a> -->
                       </div>
                     </td>
                     
@@ -125,13 +120,13 @@
               <!-- Symbol Column -->
               <ng-container matColumnDef="action">
                 
-                <td mat-cell *matCellDef="let element" class="mat-body-1">
-                  <div class="d-flex justify-content-center gap-4">
+                <td  mat-cell *matCellDef="let element" class="mat-body-1">
+                  <div *ngIf="currentSelectedDocumentId ===element.document_id" class="d-flex justify-content-center gap-4">
                     <a class="cursor-pointer" >
                     <i-tabler name="edit" class="icon-22">
                   </i-tabler>
                   </a>
-                  <a class="cursor-pointer" >
+                  <a class="cursor-pointer" (click)="deleteConfirmation(element.document_name)" >
                       <i-tabler style="color: red;" name="trash" class="icon-22">
                     </i-tabler>
                     </a>
@@ -148,6 +143,7 @@
       </mat-paginator>
         </mat-card-content>
       </mat-card>
+        @if(currentSelectedDocumentId){
         <div class="row">
           <div class="col-md-6">
             <div class="col-left m-b-6">
@@ -185,7 +181,7 @@
               <div class="col-md-6">
                 <mat-card class="b-1 shadow-none">
                   <mat-card-header>
-                    <mat-card-title class="m-t-8 m-b-0">Not Allowed Members ({{userTableDataNotAllowed.length}})</mat-card-title>
+                    <mat-card-title class="m-t-8 m-b-0">Not Allowed Members ({{(userTableDataNotAllowed | userFilterByAccessStatus:updatedUserIdMap:false).length}})</mat-card-title>
                   </mat-card-header>
                   <mat-card-content>
               
@@ -213,7 +209,8 @@
             Back</button>
           <button [disabled]="!selectedCase" mat-flat-button color="primary" class="m-r-8">Save This</button>
         </mat-card-actions>
-        
+          }
+        }
       </form>
     </mat-card-content>
   </mat-card>
