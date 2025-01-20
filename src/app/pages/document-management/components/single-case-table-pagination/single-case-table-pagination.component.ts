@@ -351,7 +351,7 @@ downloadConfirmForIconClick(fileUrl: string, fileName: string){
 
 // Generate the HTML list with dots
 generateHtmlList (names: string[]): string {
-  return `<ul style="list-style-type: disclosure-closed;justify-content: center; display: grid;">
+  return `<ul style="list-style-type: decimal; text-align: start !important;">
     ${names.map((name) => `<li>${name}</li>`).join('')}
   </ul>`;
 };

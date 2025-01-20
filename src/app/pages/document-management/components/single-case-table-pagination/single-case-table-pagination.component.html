@@ -86,11 +86,13 @@
                 
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6 p-t-6">
-                  <button *ngIf="!enableDownloadSelected" [disabled]="(!(selection.hasValue() && (selection.selected.length <= 5)))" mat-stroked-button (click)="downloadConfirm()">
+                  <ng-container  *ngIf="!enableDownloadSelected" >               
+                    <button [ngClass]="{'highlight-download':(selection.hasValue() && (selection.selected.length <= 5))}" [disabled]="(!(selection.hasValue() && (selection.selected.length <= 5)))" mat-stroked-button (click)="downloadConfirm()">
                     <mat-icon style="color: #24db0e;" aria-hidden="false">download_file</mat-icon>
                     Download Files
                   </button>
-
+                </ng-container>
+ 
                   <button class="download-mat-spinner" *ngIf="enableDownloadSelected" [disabled]="true" mat-stroked-button>
                     <mat-icon><mat-spinner color="accent" diameter="20">
                     </mat-spinner></mat-icon>
