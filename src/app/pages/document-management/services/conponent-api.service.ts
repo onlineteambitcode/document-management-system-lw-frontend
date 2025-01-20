@@ -70,13 +70,17 @@ export class ComponentApiService {
     return this.apiService.post<T>(`/documents/batch-upload/${caseId}`, formData, options);
   }
 
-  fileBatchDownload<T>(caseId: string, fileList: string[]): Observable<T> {
+  fileBatchDownload<Blob>(caseId: string, fileList: string[]): Observable<Blob> {
+    const options = {
+          responseType: 'blob'  // Ensure we receive a binary response (ZIP file)
+        };
     const requestBody = {
           case_id: caseId,
           fileKeys: fileList
         };
-    return this.apiService.post<T>(`/documents/batch-download/`, requestBody);
+    return this.apiService.post<Blob>(`/documents/batch-download/`, requestBody, options);
   }
+
 
 
   singleFileDownload<Blob>(caseId: string, fileUrl: string): Observable<Blob> {
