@@ -14,6 +14,11 @@ export class FileDownloadService {
     return firstValueFrom(this.http.get(url, { responseType: 'blob' }));
   }
 
+  // Convert Blob to Uint8Array
+  async blobToUint8Array(blob: Blob): Promise<Uint8Array> {
+    return new Uint8Array(await blob.arrayBuffer());
+  }
+
   // Download ZIP file
   downloadZip(zipData: Uint8Array, filename: string): void {
     const blob = new Blob([zipData], { type: 'application/zip' });
@@ -33,8 +38,8 @@ export class FileDownloadService {
       try {
         const blob = await this.fetchFile(url);
         const filename = url.split('/').pop() || 'file';
-        const arrayBuffer = await blob.arrayBuffer();
-        zipFiles[filename] = new Uint8Array(arrayBuffer);
+        const fileData = await this.blobToUint8Array(blob);
+        zipFiles[filename] = fileData;
       } catch (error) {
         console.error(`Error downloading file: ${url}`, error);
       }
