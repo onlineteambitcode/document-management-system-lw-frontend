@@ -41,7 +41,6 @@ import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit
 import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 import { MAT_EXPANSION_PANEL_DEFAULT_OPTIONS, MatExpansionModule } from '@angular/material/expansion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FileDownloadService } from 'src/app/common/services/file-download.service';
 
 @Component({
   selector: 'app-single-case-table-pagination',
@@ -174,8 +173,7 @@ export class SingleCaseTablePaginationComponent {
         private alertService: SweetAlertService,
         private apiService: ComponentApiService,
         private authService: AuthService,
-        private fullPageLoaderService: FullPageLoaderService,
-        private fileDownloadService: FileDownloadService){
+        private fullPageLoaderService: FullPageLoaderService){
       this.form = new FormGroup(
             {
               case_id: new FormControl('', [
@@ -359,7 +357,13 @@ generateHtmlList (names: string[]): string {
 };
 
 downloadSelected(){
-  if(this.selection.selected.length > 0){
+  if(this.selection.selected.length === 1){
+    if(this.selection.selected[0].file_url){
+      const fileUrl = this.selection.selected[0].file_url;
+      const fileName = this.selection.selected[0].document_name;
+      this.sendSingleFileDownloadRequest(fileUrl,fileName); 
+    }
+  }else if(this.selection.selected.length > 1){
     console.log(this.selection.selected);
     this.sendBatchDownloadRequest();
   }else{
@@ -478,7 +482,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
         // Handle successful response (e.g., trigger download)
         this.fullPageLoaderService.setLoadingStatus(false);
         this.alertService.successToster('center',"Your download will begin now.",3000);
-        await this.fileDownloadService.downloadMultipleFiles(response.data);
+        await this.downloadFilesAsync(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -510,7 +514,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
         // Handle successful response (e.g., trigger download)
         this.alertService.successToster('center',"Your file download is starting now.",3000);
         this.fullPageLoaderService.setLoadingStatus(false);
-        // await this.downloadFilesAsync(response.data);
+        await this.downloadFilesAsync(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -525,24 +529,9 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
   }
 
-  // private async downloadFilesAsync(urls: string[]) {
-  
-  //   console.log('All files downloaded');
-  // }
-
-  // async downloadFilesAsync(urls: string[]): Promise<void> {
-  //   const downloadPromises = urls.map(async (url) => {
-  //     try {
-  //       const blob = await this.fileDownloadService.fetchFile(url);
-  //       const filename = url.split('/').pop() || 'download';
-  //       this.fileDownloadService.downloadFile(blob, filename);
-  //     } catch (error) {
-  //       console.error(`Error downloading file: ${url}`, error);
-  //     }
-  //   });
-  
-  //   await Promise.all(downloadPromises);
-  // }
+  private async downloadFilesAsync(urls: string[]) {
+    console.log('All files downloaded');
+  }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {
     const url = window.URL.createObjectURL(blob);
