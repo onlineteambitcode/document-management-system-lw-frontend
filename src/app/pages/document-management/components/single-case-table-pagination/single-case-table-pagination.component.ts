@@ -478,7 +478,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
         // Handle successful response (e.g., trigger download)
         this.fullPageLoaderService.setLoadingStatus(false);
         this.alertService.successToster('center',"Your download will begin now.",3000);
-        await this.fileDownloadService.createAndDownloadZip(response.data, 'my-files.zip');
+        await this.fileDownloadService.downloadMultipleFiles(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
