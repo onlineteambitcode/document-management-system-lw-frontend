@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { zipSync, strToU8 } from 'fflate';
+import { zipSync } from 'fflate';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +16,9 @@ export class FileDownloadService {
 
   // Convert Blob to Uint8Array
   async blobToUint8Array(blob: Blob): Promise<Uint8Array> {
-    return new Uint8Array(await blob.arrayBuffer());
+    const arrayBuffer = await blob.arrayBuffer();
+    console.log(`Blob size: ${blob.size}, ArrayBuffer size: ${arrayBuffer.byteLength}`);
+    return new Uint8Array(arrayBuffer);
   }
 
   // Download ZIP file
@@ -36,9 +38,11 @@ export class FileDownloadService {
 
     for (const url of urls) {
       try {
+        console.log(`Fetching file from: ${url}`);
         const blob = await this.fetchFile(url);
-        const filename = url.split('/').pop() || 'file';
+        const filename = url.split('/').pop() || `file-${Date.now()}`;
         const fileData = await this.blobToUint8Array(blob);
+        console.log(`Adding file to ZIP: ${filename}, Size: ${fileData.length}`);
         zipFiles[filename] = fileData;
       } catch (error) {
         console.error(`Error downloading file: ${url}`, error);
@@ -46,7 +50,9 @@ export class FileDownloadService {
     }
 
     // Create ZIP
+    console.log(`Creating ZIP with ${Object.keys(zipFiles).length} files`);
     const zipData = zipSync(zipFiles);
+    console.log(`ZIP size: ${zipData.length}`);
     this.downloadZip(zipData, zipName);
   }
 }
