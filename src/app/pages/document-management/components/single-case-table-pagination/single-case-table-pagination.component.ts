@@ -510,7 +510,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
         // Handle successful response (e.g., trigger download)
         this.alertService.successToster('center',"Your file download is starting now.",3000);
         this.fullPageLoaderService.setLoadingStatus(false);
-        await this.downloadFilesAsync(response.data);
+        // await this.downloadFilesAsync(response.data);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -530,19 +530,19 @@ selected(event: MatAutocompleteSelectedEvent): void {
   //   console.log('All files downloaded');
   // }
 
-  async downloadFilesAsync(urls: string[]): Promise<void> {
-    const downloadPromises = urls.map(async (url) => {
-      try {
-        const blob = await this.fileDownloadService.fetchFile(url);
-        const filename = url.split('/').pop() || 'download';
-        this.fileDownloadService.downloadFile(blob, filename);
-      } catch (error) {
-        console.error(`Error downloading file: ${url}`, error);
-      }
-    });
+  // async downloadFilesAsync(urls: string[]): Promise<void> {
+  //   const downloadPromises = urls.map(async (url) => {
+  //     try {
+  //       const blob = await this.fileDownloadService.fetchFile(url);
+  //       const filename = url.split('/').pop() || 'download';
+  //       this.fileDownloadService.downloadFile(blob, filename);
+  //     } catch (error) {
+  //       console.error(`Error downloading file: ${url}`, error);
+  //     }
+  //   });
   
-    await Promise.all(downloadPromises);
-  }
+  //   await Promise.all(downloadPromises);
+  // }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {
     const url = window.URL.createObjectURL(blob);
