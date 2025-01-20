@@ -41,6 +41,7 @@ import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit
 import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 import { MAT_EXPANSION_PANEL_DEFAULT_OPTIONS, MatExpansionModule } from '@angular/material/expansion';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FileDownloadService } from 'src/app/common/services/file-download.service';
 
 @Component({
   selector: 'app-single-case-table-pagination',
@@ -173,7 +174,8 @@ export class SingleCaseTablePaginationComponent {
         private alertService: SweetAlertService,
         private apiService: ComponentApiService,
         private authService: AuthService,
-        private fullPageLoaderService: FullPageLoaderService){
+        private fullPageLoaderService: FullPageLoaderService,
+        private fileDownloadService: FileDownloadService){
       this.form = new FormGroup(
             {
               case_id: new FormControl('', [
@@ -523,26 +525,23 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
   }
 
-  private async downloadFilesAsync(urls: string[]) {
-    const downloadPromises = urls.map((url) => this.downloadFile(url));
+  // private async downloadFilesAsync(urls: string[]) {
+  
+  //   console.log('All files downloaded');
+  // }
+
+  async downloadFilesAsync(urls: string[]): Promise<void> {
+    const downloadPromises = urls.map(async (url) => {
+      try {
+        const blob = await this.fileDownloadService.fetchFile(url);
+        const filename = url.split('/').pop() || 'download';
+        this.fileDownloadService.downloadFile(blob, filename);
+      } catch (error) {
+        console.error(`Error downloading file: ${url}`, error);
+      }
+    });
+  
     await Promise.all(downloadPromises);
-    console.log('All files downloaded');
-  }
-
-  private async downloadFile(url: string): Promise<void> {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const a = document.createElement('a');
-      const urlBlob = URL.createObjectURL(blob);
-
-      a.href = urlBlob;
-      a.download = url.split('/').pop() ?? 'download';  // This will set the filename to the last part of the URL or default to 'download'
-      a.click();
-      URL.revokeObjectURL(urlBlob); // Clean up the blob URL
-    } catch (error) {
-      console.error('Error downloading file:', error);
-    }
   }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {
