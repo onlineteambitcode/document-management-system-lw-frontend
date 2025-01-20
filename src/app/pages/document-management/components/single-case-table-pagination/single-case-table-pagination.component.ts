@@ -467,7 +467,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
 
     this.fullPageLoaderService.setLoadingStatus(true);
-    this.apiService.fileBatchDownload<Response>(this.caseId, this.selectedFilesList)
+    this.apiService.fileBatchDownload<Blob>(this.caseId, this.selectedFilesList)
     .pipe(
       catchError(error => {
         console.error('Error during file download:', error);
@@ -478,11 +478,11 @@ selected(event: MatAutocompleteSelectedEvent): void {
       })
     )
     .subscribe({
-      next:async (response: Response) => {
+      next: (response: Blob) => {
         // Handle successful response (e.g., trigger download)
         this.fullPageLoaderService.setLoadingStatus(false);
         this.alertService.successToster('center',"Your download will begin now.",3000);
-        await this.downloadFilesAsync(response.data);
+        this.downloadFile(response);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -499,7 +499,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
 
   sendSingleFileDownloadRequest(fileUrl: string, fileName: string){
     this.fullPageLoaderService.setLoadingStatus(true);
-    this.apiService.singleFileDownload<Response>(this.caseId, fileUrl)
+    this.apiService.singleFileDownload<Blob>(this.caseId, fileUrl)
     .pipe(
       catchError(error => {
         console.error('Error during single file download:', error);
@@ -510,11 +510,11 @@ selected(event: MatAutocompleteSelectedEvent): void {
       })
     )
     .subscribe({
-      next: async (response: Response) => {
+      next: (response: Blob) => {
         // Handle successful response (e.g., trigger download)
         this.alertService.successToster('center',"Your file download is starting now.",3000);
         this.fullPageLoaderService.setLoadingStatus(false);
-        await this.downloadFilesAsync(response.data);
+        this.downloadSingleFile(response,fileName);
       },
       error: (error) => {
         // Handle the error if the observable throws (after catchError)
@@ -529,8 +529,15 @@ selected(event: MatAutocompleteSelectedEvent): void {
     });
   }
 
-  private async downloadFilesAsync(urls: string[]) {
-    console.log('All files downloaded');
+  private downloadFile(response: Blob) {
+    // Create a link element to trigger the file download
+    const blob = new Blob([response], { type: 'application/zip' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'batch-files.zip'; // Default file name for the downloaded ZIP
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {
@@ -543,6 +550,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   }
+
 
   deleteConfirmation(){
     this.alertService.confirmAlert("Are you sure?",`Do you want to remove this Case?  ID: ${this.caseData.case_id}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeCase.bind(this));
