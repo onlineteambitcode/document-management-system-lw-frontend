@@ -531,17 +531,27 @@ selected(event: MatAutocompleteSelectedEvent): void {
   // }
 
   async downloadFilesAsync(urls: string[]): Promise<void> {
-    const downloadPromises = urls.map(async (url) => {
-      try {
-        const blob = await this.fileDownloadService.fetchFile(url);
-        const filename = url.split('/').pop() || 'download';
-        this.fileDownloadService.downloadFile(blob, filename);
-      } catch (error) {
-        console.error(`Error downloading file: ${url}`, error);
-      }
-    });
+    try {
+      // Fetch all files concurrently
+      const blobs = await Promise.all(
+        urls.map((url) =>
+          this.fileDownloadService.fetchFile(url).catch((error) => {
+            console.error(`Error downloading file from ${url}`, error);
+            return null; // Skip the errored file
+          })
+        )
+      );
   
-    await Promise.all(downloadPromises);
+      // Loop through the downloaded blobs and trigger the download
+      blobs.forEach((blob, index) => {
+        if (blob) {
+          const filename = urls[index].split('/').pop() || `download_${index + 1}`;
+          this.fileDownloadService.downloadFile(blob, filename);
+        }
+      });
+    } catch (error) {
+      console.error('Error downloading files:', error);
+    }
   }
 
   private downloadSingleFile(blob: Blob, fileName: string): void {
