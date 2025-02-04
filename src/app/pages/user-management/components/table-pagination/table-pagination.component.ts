@@ -23,6 +23,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ComponentApiService } from '../../services/componentApi.service';
 import { DeleteConfirmComponent } from 'src/app/components/modal/delete-confirm/delete-confirm.component';
 import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
+import { UserData } from 'src/app/common/interfaces/user.interface';
+import { COMMON_ERROR_CODES } from 'src/app/common/enums/common-error-codes.enum';
+import { UserThumbnailComponent } from 'src/app/components/user-thumbnail/user-thumbnail.component';
+import { RandomColor } from 'src/app/common/utils/random-lolor.util';
 
 
 @Component({
@@ -43,7 +47,8 @@ import { ContentLoaderComponent } from 'src/app/common/components/content-loader
     MatSortModule,
     HttpCommonApiModule,
     MatChipsModule,
-    ContentLoaderComponent
+    ContentLoaderComponent,
+    UserThumbnailComponent
   ],
   providers: [ComponentApiService],
   templateUrl: './table-pagination.component.html',
@@ -68,7 +73,8 @@ export class AppTablePaginationComponent implements AfterViewInit {
     private router: Router,
     private apiService: ComponentApiService,
     private alertService: SweetAlertService,
-    private deleteConfirmDialog: MatDialog
+    private deleteConfirmDialog: MatDialog,
+    private fullPageLoaderService: FullPageLoaderService
   ) { }
 
   ngAfterViewInit(): void {
@@ -78,27 +84,33 @@ export class AppTablePaginationComponent implements AfterViewInit {
     if (this.sort) {
       this.dataSource.sort = this.sort;
     }
+    this.loadTableData();
+   
+  }
 
-    // Listen for changes in the paginator and sort after view initialization
-    this.paginator.page
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
 
-          // Ensure that sort direction and active column are available
-          const sortDirection = this.sort ? this.sort.direction : 'asc';
-          const sortActive = this.sort ? this.sort.active : 'user_id';
+  loadTableData(){
+     // Listen for changes in the paginator and sort after view initialization
+     this.paginator.page
+     .pipe(
+       startWith({}),
+       switchMap(() => {
+         this.isLoadingResults = true;
 
-          return this.requestTableData(sortActive, sortDirection);
-        })
-      )
-      .subscribe((data) => {
-        this.isLoadingResults = false;
-        this.tableData = data;
-        this.isLoading = false;
-        this.dataSource = new MatTableDataSource(this.tableData);
-      });
+         // Ensure that sort direction and active column are available
+         const sortDirection = this.sort ? this.sort.direction : 'asc';
+         const sortActive = this.sort ? this.sort.active : 'user_id';
+
+         return this.requestTableData(sortActive, sortDirection);
+       })
+     )
+     .subscribe((data) => {
+       this.isLoadingResults = false;
+       this.tableData = data;
+       this.tableData.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+       this.isLoading = false;
+       this.dataSource = new MatTableDataSource(this.tableData);
+     });
   }
   // Method to disable the "Back" button
   isBackDisabled(): boolean {
@@ -145,14 +157,57 @@ export class AppTablePaginationComponent implements AfterViewInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, element: any): void {
-    this.deleteConfirmDialog.open(DeleteConfirmComponent, {
-      width: '20%',
-      enterAnimationDuration,
-      exitAnimationDuration,
-      data: { item: element[this.messageBodayKey], title: this.removeDialogTitle }
-    });
+  // openDialog(enterAnimationDuration: string, exitAnimationDuration: string, element: any): void {
+  //   this.deleteConfirmDialog.open(DeleteConfirmComponent, {
+  //     width: '20%',
+  //     enterAnimationDuration,
+  //     exitAnimationDuration,
+  //     data: { item: element[this.messageBodayKey], title: this.removeDialogTitle }
+  //   });
+  // }
+
+  warnRemoveAccount(userData: UserData){
+    const name = userData.name;
+    this.alertService.confirmAlert("Are you sure?",`Do you want to remove this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",true,this.adminRemoveUser.bind(this, userData.user_id));
+
   }
+
+    adminRemoveUser(id: string) {
+      if (!id) {
+        // Ensure form is valid before submission
+        console.error('id is invalid');
+        return;
+      }
+  
+      this.fullPageLoaderService.setLoadingStatus(true);
+  
+      // Use the API service to send the POST request
+      this.apiService.adminRemoveOneUser<Response>(id).subscribe(
+        {
+          next: (response: Response) => {
+            console.log('User removed successful:', response);
+            this.alertService.successAlert('center', 'Profile has been successfully removed!','', 3000);
+            this.loadTableData();
+          },
+          error: (error) => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.error('Registration failed:', error);
+            if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+              this.alertService.errorAlert('center', "We couldn't remove this profile", error.error.message, 3000, false, '', false);
+            }else{
+              this.alertService.errorAlert('center', "We couldn't remove this profile", '', 3000, false, '', false);
+            }
+  
+  
+          },
+          complete: () => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.log('Registration request completed.');
+          },
+        }
+      );
+    }
+
   navigateToEdit(userData: any){
     console.log(userData);
     const params = { id: userData.user_id };

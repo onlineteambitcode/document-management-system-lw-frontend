@@ -6,15 +6,14 @@ import { USER_ROLE_ENUM } from '../enums/user.enum';
 @Injectable({
   providedIn: 'root'
 })
-export class RoleGuard implements CanActivate {
+export class LoggedInUserGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const expectedRole = route.data['expectedRole'];
-    if (this.authService.isLoggedIn() && this.authService.hasRole(expectedRole)) {
+    if (this.authService.isLoggedIn()) {
       return true;
     }
-    this.router.navigate(['/unauthorized']); // Redirect to unauthorized page
+    this.router.navigate(['/authentication/login']); // Redirect to login page
     return false;
   }
 }

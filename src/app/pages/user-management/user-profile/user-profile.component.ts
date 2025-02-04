@@ -18,7 +18,7 @@ import { COMMON_ERROR_CODES } from 'src/app/common/enums/common-error-codes.enum
 import { MaterialModule } from 'src/app/material.module';
 import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 import { UserData } from 'src/app/common/interfaces/user.interface';
-import { USER_ROLE_ENUM } from 'src/app/common/enums/user.enum';
+import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
 import { AuthService } from 'src/app/common/services/auth.service';
 import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit.util';
 import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
@@ -194,6 +194,67 @@ export class UserProfileComponent {
 
     // Use the API service to send the POST request
     this.apiService.updateUser<Response>(requestBody, this.userId).subscribe(
+      {
+        next: (response: Response) => {
+          console.log('User update successful:', response);
+          this.alertService.successAlert('center', 'Profile has been successfully updated!','', 3000);
+          this.loadUserData();
+        },
+        error: (error) => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.error('Registration failed:', error);
+          if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+            this.alertService.errorAlert('center', "We couldn't update profile", error.error.message, 3000, false, '', false);
+          }else{
+            this.alertService.errorAlert('center', "We couldn't update profile", '', 3000, false, '', false);
+          }
+
+
+        },
+        complete: () => {
+          this.fullPageLoaderService.setLoadingStatus(false);
+          console.log('Registration request completed.');
+        },
+      }
+    );
+  }
+
+  warnDeactiveAccount(){
+    if(this.isReadOnly){
+      return;
+    }
+    const name = this.form.value.name;
+    this.alertService.confirmAlert("Are you sure?",`Do you want to deactivate this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",false,this.adminSubmitForUpdate.bind(this, USER_STATUS_ENUM.DEACTIVE))
+  }
+
+  warnVerifyAccount(){
+    if(this.isReadOnly){
+      return;
+    }
+    const name = this.form.value.name;
+    this.alertService.confirmAlert("Are you sure?",`Do you want to active this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",false,this.adminSubmitForUpdate.bind(this, USER_STATUS_ENUM.ACTIVE))
+  }
+
+
+  adminSubmitForUpdate(status: USER_STATUS_ENUM) {
+    if (this.form.invalid) {
+      // Ensure form is valid before submission
+      console.error('Form is invalid');
+      return;
+    }
+
+    this.fullPageLoaderService.setLoadingStatus(true);
+
+    // Prepare the request body from the form data
+    const requestBody = {
+      name: this.form.value.name,
+      email: this.form.value.email,
+      mobileNumber: `+94${this.form.value.mobileNumber}`,
+      status: status
+    };
+
+    // Use the API service to send the POST request
+    this.apiService.adminUpdateUser<Response>(requestBody, this.userId).subscribe(
       {
         next: (response: Response) => {
           console.log('User update successful:', response);

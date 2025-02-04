@@ -4,6 +4,7 @@ import { FullComponent } from './layouts/full/full.component';
 import { RoleGuard } from './common/guards/role.guard';
 import { USER_ROLE_ENUM } from './common/enums/user.enum';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { LoggedInUserGuard } from './common/guards/loggedInUser.guard';
 
 export const routes: Routes = [
   {
@@ -19,7 +20,7 @@ export const routes: Routes = [
         path: 'dashboard',
         loadChildren: () =>
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
-        canActivate: [RoleGuard], // Apply the canActivate guard here
+        canActivate: [LoggedInUserGuard,RoleGuard], // Apply the canActivate guard here
         data: { expectedRole: USER_ROLE_ENUM.ADMIN }, 
       },
       {
@@ -28,6 +29,7 @@ export const routes: Routes = [
           import('./pages/document-management/document-management.routes').then(
             (m) => m.DocumentManagemntRoutes
           ),
+          canActivate: [LoggedInUserGuard]
       },
       {
         path: 'user-managemnt',
@@ -35,6 +37,7 @@ export const routes: Routes = [
           import('./pages/user-management/user-management.routes').then(
             (m) => m.UserManagemntRoutes
           ),
+          canActivate: [LoggedInUserGuard]
       },
       {
         path: 'records',
@@ -42,19 +45,8 @@ export const routes: Routes = [
           import('./pages/records/records.routes').then(
             (m) => m.RecordsRoutes
           ),
-      },
-      {
-        path: 'ui-components',
-        loadChildren: () =>
-          import('./pages/ui-components/ui-components.routes').then(
-            (m) => m.UiComponentsRoutes
-          ),
-      },
-      {
-        path: 'extra',
-        loadChildren: () =>
-          import('./pages/extra/extra.routes').then((m) => m.ExtraRoutes),
-      },
+          canActivate: [LoggedInUserGuard]
+      }
     ],
   },
   {

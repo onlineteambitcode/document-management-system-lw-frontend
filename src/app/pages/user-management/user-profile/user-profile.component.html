@@ -91,6 +91,8 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
+
+
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
                         <mat-label *ngIf="isUserProfile">
@@ -101,7 +103,7 @@
                             </span>
 
                         </mat-label>
-                        <mat-form-field *ngIf="!isUserProfile" appearance="outline" class="w-50 m-l--16">
+                        <mat-form-field *ngIf="!isUserProfile" appearance="outline" class="w-50">
                             <mat-select formControlName="role" [(value)]="selectedRole">
                                 @for(option of role; track option.value) {
                                 <mat-option [value]="option.value">{{
@@ -177,7 +179,7 @@
 
                     @if(isUserProfile && userData.status === 'ADMIN_VERIFICATION_PENDING') {
                     <button class="m-r-8 verify-button" *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly"
-                        mat-stroked-button color="accent">Verify Account</button>
+                        mat-stroked-button color="accent" (click)="warnVerifyAccount()" >Verify Account</button>
                     }@else if(isUserProfile && userData.status === 'DEACTIVE') {
 
                     }@else{
@@ -192,7 +194,7 @@
                         mat-stroked-button color="warn">Revert changes</button>
                     }
                     <button *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly" mat-flat-button
-                        color="warn">Deactivate</button>
+                        color="warn" (click)="warnDeactiveAccount()">Deactivate</button>
                 </div>
             </form>
         </mat-card-content>

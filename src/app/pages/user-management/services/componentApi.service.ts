@@ -42,7 +42,7 @@ export class ComponentApiService {
     return this.apiService.post<T>('/auth/password-reset', body, options);
   }
 
-  // PUT method
+  // POST method
   verifyOtp<T>(body: any, options?: object): Observable<T> {
     return this.apiService.post<T>('/auth/verify-otp', body, options);
   }
@@ -59,6 +59,16 @@ export class ComponentApiService {
   // POST method
   updateUser<T>(body: any,userId: string, options?: object): Observable<T> {
     return this.apiService.put<T>(`/users/${userId}`, body, options);
+  }
+
+  // POST method
+  adminUpdateUser<T>(body: any,userId: string, options?: object): Observable<T> {
+    return this.apiService.put<T>(`/auth/${userId}`, body, options);
+  }
+
+   // GET method
+   adminRemoveOneUser<T>(userId:string): Observable<T> {
+    return this.apiService.delete<T>(`/auth/${userId}`);
   }
 
 }
