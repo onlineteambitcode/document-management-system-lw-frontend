@@ -55,7 +55,7 @@ export class ComponentApiService {
 }
 
  // GET method
- removeDocumentCasecase<T>(documentId:string): Observable<T> {
+ removeDocumentCasecade<T>(documentId:string): Observable<T> {
   return this.apiService.delete<T>(`/documents/${documentId}`);
 }
 

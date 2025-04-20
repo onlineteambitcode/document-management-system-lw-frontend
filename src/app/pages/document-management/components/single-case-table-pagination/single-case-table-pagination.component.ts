@@ -551,6 +551,9 @@ selected(event: MatAutocompleteSelectedEvent): void {
     window.URL.revokeObjectURL(url);
   }
 
+  deleteDocumentConfirmation(){
+    this.alertService.confirmAlert("Are you sure?",`Do you want to remove this document?  ID: ${this.selection.selected[0].document_id}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeDocument.bind(this));
+  }
 
   deleteConfirmation(){
     this.alertService.confirmAlert("Are you sure?",`Do you want to remove this Case?  ID: ${this.caseData.case_id}?`,"warning",true,"No",true,"Yes, Proceed",true,this.removeCase.bind(this));
@@ -610,6 +613,7 @@ selected(event: MatAutocompleteSelectedEvent): void {
       );
     }
 
+
     removeCase() {
       if (this.form.invalid && (!this.isCaseCreation) && (!this.isReadOnly)) {
         // Ensure form is valid before submission
@@ -648,6 +652,42 @@ selected(event: MatAutocompleteSelectedEvent): void {
       );
     }
 
+    removeDocument() {
+      if ((!this.isCaseCreation) && (!this.isReadOnly)) {
+        // Ensure form is valid before submission
+        console.error('invalid for delete doc');
+        return;
+      }
+  
+      this.fullPageLoaderService.setLoadingStatus(true);
+  
+      // Use the API service to send the POST request
+      this.apiService.removeDocumentCasecade<Response>(this.caseId).subscribe(
+        {
+          next: (response: Response) => {
+            console.log('Document deleation successful:', response);
+            this.alertService.successAlert('center', 'Document removed successfully','', 3000);
+          },
+          error: (error) => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.error('Document delete failed:', error);
+            if(error.error.errorCode === COMMON_ERROR_CODES.NOT_FOUND){
+              this.alertService.errorAlert('center', 'Failed to remove the Document', error.error.message, 3000, false, '', false);
+            }else if(error.error.errorCode === COMMON_ERROR_CODES.ACCESSDENIED){
+              this.alertService.errorAlert('center', 'Failed to remove the Document', error.error.message, 3000, false, '', false);
+            }else{
+              this.alertService.errorAlert('center', 'Failed to remove the Document', '', 3000, false, '', false);
+            }
+  
+  
+          },
+          complete: () => {
+            this.fullPageLoaderService.setLoadingStatus(false);
+            console.log('Document deletion request completed.');
+          },
+        }
+      );
+    }
     enableDesableFrom(isReadOnlyFrom: boolean){
       if (isReadOnlyFrom) {
         this.form.disable(); // Disable all inputs

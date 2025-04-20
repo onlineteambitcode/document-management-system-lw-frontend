@@ -642,7 +642,7 @@ export class DocumentAccessTablePaginationComponent {
     this.fullPageLoaderService.setLoadingStatus(true);
 
     // Use the API service to send the POST request
-    this.apiService.removeDocumentCasecase<Response>(this.currentSelectedDocumentId).subscribe(
+    this.apiService.removeDocumentCasecade<Response>(this.currentSelectedDocumentId).subscribe(
       {
         next: (response: Response) => {
           console.log('Document casecade deleation successful:', response);
