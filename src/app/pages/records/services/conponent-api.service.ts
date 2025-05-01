@@ -17,7 +17,7 @@ export class ComponentApiService {
     const params = new HttpParams()
     .set('page', page.toString())
     .set('limit', limit.toString())
-    .set('sortBy', sortBy)
+    .set('createdAt', sortBy)
     .set('order', order);  
     return this.apiService.get<T>(`/activity`, params);
   }

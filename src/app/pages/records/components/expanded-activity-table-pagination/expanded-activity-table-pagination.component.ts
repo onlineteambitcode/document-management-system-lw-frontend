@@ -3,12 +3,12 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { UserData } from 'src/app/common/interfaces/user.interface';
 import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum';
 import { MatListModule } from '@angular/material/list';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { UserThumbnailComponent } from 'src/app/components/user-thumbnail/user-thumbnail.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -23,19 +23,19 @@ import { catchError, map, Observable, startWith, switchMap } from 'rxjs';
 import { RandomColor } from 'src/app/common/utils/random-lolor.util';
 import { ComponentApiService } from '../../services/conponent-api.service';
 import { SweetAlertService } from 'src/app/common/services/sweetAlert2.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.service';
 import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
 import { TablerIconsModule } from 'angular-tabler-icons';
+import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
 
 @Component({
   selector: 'app-expanded-activity-table-pagination',
   templateUrl: './expanded-activity-table-pagination.component.html',
   styleUrl: './expanded-activity-table-pagination.component.scss',
-  providers:[ComponentApiService],
+  providers:[ComponentApiService, DatePipe],
   imports: [
     CommonModule,
-    MatPaginatorModule,
     MatTableModule, 
     MatButtonModule, 
     MatIconModule,
@@ -48,17 +48,19 @@ MatFormFieldModule,
 MatInputModule,
 MatDatepickerModule,
 ContentLoaderComponent,
-TablerIconsModule],
+TablerIconsModule,
+HttpCommonApiModule,
+MatDialogModule],
   standalone: true
 })
 export class TableExpandableRowsExample {
-  @Input() displayedColumns: any[] = [];
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
    @Input() removeDialogTitle: string = 'Do you want to remove?';
    @Input() messageBodayKey: string = '';
    @Input() editRouterLink: string = '';
-   @ViewChild(MatPaginator) paginator: MatPaginator;
-   @ViewChild(MatSort) sort: MatSort;
- 
+
+   public displayedColumns: string[] = ['user','activity_type', 'created_date','status','summary'];
    tableData: any[] = [];
    dataSource: MatTableDataSource<any> = new MatTableDataSource<any>();
    resultsLength = 0;
@@ -95,8 +97,8 @@ export class TableExpandableRowsExample {
           this.isLoadingResults = true;
  
           // Ensure that sort direction and active column are available
-          const sortDirection = this.sort ? this.sort.direction : 'asc';
-          const sortActive = this.sort ? this.sort.active : 'user_id';
+          const sortDirection = this.sort ? this.sort.direction : 'desc';
+          const sortActive = this.sort ? this.sort.active : 'createdAt';
  
           return this.requestTableData(sortActive, sortDirection);
         })
@@ -104,20 +106,12 @@ export class TableExpandableRowsExample {
       .subscribe((data) => {
         this.isLoadingResults = false;
         this.tableData = data;
-        this.tableData.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+        RandomColor.getConsitantRandomColorPerUser(this.tableData,false);
         this.isLoading = false;
         this.dataSource = new MatTableDataSource(this.tableData);
       });
    }
-  // Method to disable the "Back" button
-  isBackDisabled(): boolean {
-    return this.paginator.pageIndex === 0;
-  }
-
-  // Method to disable the "Next" button
-  isNextDisabled(): boolean {
-    return this.paginator.pageIndex === Math.ceil(this.resultsLength / this.paginator.pageSize) - 1;
-  }
+  
   requestTableData(sortActive: string, sortDirection: string): Observable<any> {
     return this.apiService.getAllActivitiesWithServerSidePagination<any>(
       this.paginator.pageIndex,
@@ -126,7 +120,7 @@ export class TableExpandableRowsExample {
       sortDirection
     ).pipe(
       map((data: any) => {
-        this.resultsLength = data.total;
+        this.resultsLength = data.totalRecords;
         return data.data;
       }),
       catchError(() => {
@@ -140,11 +134,11 @@ export class TableExpandableRowsExample {
   onPageChange() {
     this.isLoadingResults = true;
     const sortDirection = this.sort ? this.sort.direction : 'asc';
-    const sortActive = this.sort ? this.sort.active : 'user_id';
+    const sortActive = this.sort ? this.sort.active : 'createdAt';
 
     this.requestTableData(sortActive, sortDirection).subscribe((data: any) => {
       this.isLoadingResults = false;
-      this.resultsLength = data.total;
+      this.resultsLength = data.totalRecords;
       this.dataSource.data = data.data;
     });
   }

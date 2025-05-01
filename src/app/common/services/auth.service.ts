@@ -11,6 +11,10 @@ export class AuthService {
   private storageService = inject(StorageService); // Inject the SweetAlertService service
 
   constructor() {
+    this.updateAuth();
+  }
+
+  updateAuth(){
     const token = this.getToken();
     if (token) {
       try {

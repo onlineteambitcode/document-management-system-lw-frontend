@@ -325,7 +325,7 @@ export class DocumentAccessTablePaginationComponent {
         next: (response: Response) => {
           console.log('All users fetching successful - Document access:', response);
           this.userTableDataNotAllowed = response.data;
-          this.userTableDataNotAllowed.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+          RandomColor.getConsitantRandomColorPerUser(this.userTableDataNotAllowed, true);
           this.isLoading = false;
         },
         error: (error) => {
@@ -363,7 +363,7 @@ export class DocumentAccessTablePaginationComponent {
             this.updatedUserIdMap.set(element.user_id.toString(), ITEM_STATUS.CURRENT);
             this.userCurrentMap.set(element.user_id, element);
           });
-          this.userTableDataAllowed.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+          RandomColor.getConsitantRandomColorPerUser(this.userTableDataAllowed, true);
           console.log('documentId');
           console.log(documentId);
           console.log('documentId');

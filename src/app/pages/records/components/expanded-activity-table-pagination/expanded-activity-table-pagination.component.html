@@ -1,13 +1,13 @@
 <mat-card class="cardWithShadow">
   <mat-card-content >
-    <div class="row justify-content-between m-l-4 m-r-4">
-      <div class="col-left">
+    <div class="row justify-content-between">
+      <div class="col">
 
-        <span *ngIf="isLoading" appearance="outline" class="w-100 m-b-0" color="primary">
+        <span *ngIf="isLoadingResults" appearance="outline" class="w-100 m-b-0" color="primary">
           <app-content-loader  [loaderType]="'input'"></app-content-loader>
         </span>
 
-        <mat-form-field *ngIf="!isLoading" appearance="outline" class="w-100 m-b-0" color="primary">
+        <mat-form-field *ngIf="!isLoadingResults" appearance="outline" class="w-100 m-b-0" color="primary">
           <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
         </mat-form-field>
 
@@ -16,70 +16,38 @@
     </div>
     
     <div class="table-responsive">
-      <table  *ngIf="!isLoading" mat-table [dataSource]="dataSource" class="w-100">
+      <table  *ngIf="!isLoadingResults" mat-table [dataSource]="dataSource" class="w-100">
     
-        <ng-container matColumnDef="name">
+        <ng-container matColumnDef="user">
           <th
             mat-header-cell
             *matHeaderCellDef
             class="f-w-600 mat-subtitle-1 f-s-14"
           >
-            Name
+          User
           </th>
           <td mat-cell *matCellDef="let element" class="mat-body-1">
 
-          <app-user-thumbnail [item]="element" [hasActionIcon]="false" [iconName]="'circle-plus'"
+          <app-user-thumbnail [item]="element.user" [hasActionIcon]="false" [iconName]="'circle-plus'"
                               [iconColor]="'rgb(10, 17, 219)'"></app-user-thumbnail>
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="role">
+        <ng-container matColumnDef="activity_type">
           <th
             mat-header-cell
             *matHeaderCellDef
             class="f-w-600 mat-subtitle-1 f-s-14"
           >
-            Role
+          Activity Type
           </th>
           <td mat-cell *matCellDef="let element">
-            @if(element.role == 'ADMIN') {
+          
               <span
               class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2"
             >
-              {{ element.role | titlecase }}
+              {{ element.activity_type | titlecase }}
             </span>
-            <span
-            class="bg-light-success text-success rounded f-w-600 p-6 p-y-4 f-s-12"
-          >
-          Full Access
-          </span>
-            }
-
-            @if(element.role == 'SUB_ADMIN') {
-              <span
-              class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2"
-            >
-              {{ 'sub admin' | titlecase }}
-            </span>
-            <span
-            class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12"
-          >
-          Read Access
-          </span>
-            }
-
-            @if(element.role == 'USER') {
-              <span
-              class="bg-light-warning text-warning rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2"
-            >
-              {{ element.role | titlecase }}
-            </span>
-            <span
-            class="bg-light-primary text-primary rounded f-w-600 p-6 p-y-4 f-s-12"
-          >
-          Download
-          </span>
-            }
           </td>
         </ng-container>
 
@@ -92,29 +60,17 @@
             Status
           </th>
           <td mat-cell *matCellDef="let element">
-            @if(element.status == 'ACTIVE') {
-             <mat-label class="label-active">ACTIVE</mat-label>
-            }
-            @if(element.status == 'DEACTIVE'){
-              <mat-label class="label-deactivated">DEACTIVETED</mat-label>
-            }
-            @if(element.status == 'ADMIN_VERIFICATION_PENDING'){
-              <!-- <p> -->
-                <mat-icon
-                matTooltip="Admin verification pending"
-                class="vibrate admin-verification-pending">admin_panel_settings</mat-icon>
-              <!-- </p> -->
-            }
-            @if(element.status == 'REGISTRATION_OTP_VERIFICATION_PENDING'){
-              <!-- <mat-label appearance="outlined">
-                OTP Verification Pending
-              </mat-label> -->
-              
-              <mat-icon
-              matTooltip="OTP Verification pending"
-              class="otp-verification-pending">app_blocking</mat-icon>
-          
-            }
+            <span class="row">
+              @if(element.status == 'SUCCESS') {
+                <mat-label class="label-active">SUCCESS</mat-label>
+               }
+               @if(element.status == 'FAIL'){
+                 <mat-label class="label-deactivated">FAIL</mat-label>
+               }
+               @if(element.status == 'INFO'){
+                <mat-label class="label-info">INFO</mat-label>
+               }
+            </span>
           </td>
         </ng-container>
 
@@ -127,46 +83,32 @@
             Created Date
           </th>
           <td mat-cell class="mat-body-1 f-s-12 f-w-600" *matCellDef="let element">
-            {{element.createdAt}}
+            {{element.createdAt | date:'dd MMM yyyy, HH:mm:ss'}}
           </td>
         </ng-container>
-
-
-
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="action">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-600 mat-subtitle-1 f-s-14"
-          >Action</th>
-          <td mat-cell *matCellDef="let element" class="mat-body-1">
-            <a class="m-r-10 cursor-pointer">
-              <i-tabler name="edit" class="icon-22">
-            </i-tabler>
-            </a>
-            <a class="m-r-10 cursor-pointer">
-              <i-tabler  name="trash" class="icon-22 outline-red">
-            </i-tabler>
-            </a>
+        
+        <ng-container matColumnDef="summary">
+          <th mat-header-cell *matHeaderCellDef> Summary </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="wrap-cell f-w-600 mat-subtitle-1 f-s-12">
+              {{ element.detail_status }}
+            </div>
           </td>
+
+         
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       </table>
-      <app-content-loader style="padding-top: 2px !important;"  *ngIf="isLoading" [loaderType]="'table'"></app-content-loader>
-      <app-content-loader *ngIf="isLoading" [loaderType]="'paginator'"></app-content-loader>
+      <app-content-loader style="padding-top: 2px !important;"  *ngIf="isLoadingResults" [loaderType]="'table'"></app-content-loader>
+      <app-content-loader *ngIf="isLoadingResults" [loaderType]="'paginator'"></app-content-loader>
 
     </div>
-    <!-- <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-    aria-label="Select page of periodic elements">
-</mat-paginator> -->
 
  <!-- Paginator -->
  <mat-paginator
- [style.visibility]="(!isLoading) ? 'visible' : 'hidden'"
+ [style.visibility]="(!isLoadingResults) ? 'visible' : 'hidden'"
  [length]="resultsLength"
  [pageSize]="pageSize"
  [pageSizeOptions]="[5, 10, 25, 100]"

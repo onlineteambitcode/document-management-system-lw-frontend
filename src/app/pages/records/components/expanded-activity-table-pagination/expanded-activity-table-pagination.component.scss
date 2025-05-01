@@ -115,4 +115,59 @@ table {
     font-size: 20px; /* Adjust icon size if needed */
   }
   
-  
+    
+
+.label-active{
+  border-style: solid;
+  border-width: 1.5px;
+  font-weight: 600;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  font-size: small;
+  color: #34ab3c;
+}
+
+.label-deactivated{
+  border-style: solid;
+  border-width: 1.5px;
+  font-weight: 600;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  font-size: small;
+  color: #cd1515cd;;
+}
+
+.label-info{
+  border-style: solid;
+  border-width: 1.5px;
+  font-weight: 600;
+  padding-left: 2px;
+  padding-right: 2px;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+  font-size: small;
+  color: rgb(6 64 253 / 86%);
+}
+
+.bg-light-error {
+  background-color: #ebebeb !important;
+}
+.text-error {
+  color: #070811 !important;
+}
+
+.truncate {
+  max-height: 3em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrap-cell {
+  white-space: pre-wrap;   /* respects line breaks and wraps text */
+  word-break: break-word;  /* breaks long words if needed */
+  max-width: 200px;        /* optional: set a max width */
+}

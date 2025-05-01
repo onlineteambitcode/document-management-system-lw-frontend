@@ -107,7 +107,7 @@ export class AppTablePaginationComponent implements AfterViewInit {
      .subscribe((data) => {
        this.isLoadingResults = false;
        this.tableData = data;
-       this.tableData.map(ele=> ele.profile_image = RandomColor.getRandomColor())
+       RandomColor.getConsitantRandomColorPerUser(this.tableData, true);
        this.isLoading = false;
        this.dataSource = new MatTableDataSource(this.tableData);
      });
@@ -129,7 +129,7 @@ export class AppTablePaginationComponent implements AfterViewInit {
       sortDirection
     ).pipe(
       map((data: any) => {
-        this.resultsLength = data.total;
+        this.resultsLength = data.totalRecords;
         return data.data;
       }),
       catchError(() => {
@@ -147,7 +147,7 @@ export class AppTablePaginationComponent implements AfterViewInit {
 
     this.requestTableData(sortActive, sortDirection).subscribe((data: any) => {
       this.isLoadingResults = false;
-      this.resultsLength = data.total;
+      this.resultsLength = data.totalRecords;
       this.dataSource.data = data.data;
     });
   }

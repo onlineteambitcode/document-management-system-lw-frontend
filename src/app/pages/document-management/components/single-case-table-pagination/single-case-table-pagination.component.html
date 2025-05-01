@@ -1,6 +1,6 @@
 <div class="container">
 
-    <p><mat-slide-toggle  (change)="onToggleChange()" [(ngModel)]="isAdmin">{{ isAdmin ? 'Admin View': 'User View'}}</mat-slide-toggle></p>
+    <p><mat-slide-toggle  (change)="onToggleChange()" [(ngModel)]="isAdmin">{{ isAdmin ? 'Admin View': 'User View'}} (Note: Only for testing purpose)</mat-slide-toggle></p>
 
     <div *ngIf="!isUpload" class="row">
         <div class="col">

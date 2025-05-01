@@ -101,17 +101,11 @@ export class CaseTablePaginationComponent implements AfterViewInit,OnInit {
       .subscribe((data) => {
         this.isLoadingResults = false;
         this.tableData = data;
+        this.isLoading = false;
         this.dataSource = new MatTableDataSource(this.tableData);
       });
   }
-  // Method to disable the "Back" button
-  isBackDisabled(): boolean {
-    return this.paginator.pageIndex === 0;
-  }
-  // Method to disable the "Next" button
-  isNextDisabled(): boolean {
-    return this.paginator.pageIndex === Math.ceil(this.resultsLength / this.paginator.pageSize) - 1;
-  }
+ 
   requestTableData(sortActive: string, sortDirection: string): Observable<any> {
     return this.apiService.getAllCasesWithServerSidePagination<any>(
       this.paginator.pageIndex,
@@ -155,10 +149,7 @@ export class CaseTablePaginationComponent implements AfterViewInit,OnInit {
       data: { item: element[this.messageBodayKey], title: this.removeDialogTitle }
     });
   }
-
-  // navigateSingleCase(element: CaseData){
-
-  // }
+  
   navigateSingleCase(caseData: any){
     console.log(caseData);
     const params = { id: caseData.id };

@@ -14,6 +14,7 @@ import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.
 import { CountdownModule } from 'ngx-countdown';
 import { OtpEvent } from 'src/app/common/interfaces/otp-event.interface';
 import { Response } from 'src/app/common/interfaces/response.interface';
+import { AuthService } from 'src/app/common/services/auth.service';
 
 @Component({
   selector: 'app-otp',
@@ -45,6 +46,7 @@ export class OtpComponent {
   otpSuccessTitle: string = "Your registration was successful";
   constructor(
     private apiService: ComponentApiService,
+    private authService: AuthService,
     private storageService: StorageService,
     private alertService: SweetAlertService,
     private fullPageLoaderService: FullPageLoaderService,
@@ -106,11 +108,13 @@ export class OtpComponent {
       case OTP_TYPE.LOGIN_OTP_PENDING:
         this.showSuccessLoginToaster();
         this.storageService.setItem('token',data);
+        this.authService.updateAuth();
         this.otpVerifyEvent.emit({data:'',status: true,type: OTP_TYPE.LOGIN_OTP_PENDING})
         break;
       case OTP_TYPE.FORGET_PASSWORD_OTP_PENDING:
         this.showSuccessLoginToaster();
         this.storageService.setItem('token',data);
+        // this.authService.updateAuth();
         this.otpVerifyEvent.emit({data:'',status: true,type: OTP_TYPE.FORGET_PASSWORD_OTP_VERIFIED})
         break;
       default:
