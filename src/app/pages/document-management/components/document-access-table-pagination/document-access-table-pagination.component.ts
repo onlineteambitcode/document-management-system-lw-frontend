@@ -79,6 +79,7 @@ import { RandomColor } from 'src/app/common/utils/random-lolor.util';
   providers: [ComponentApiService]
 })
 export class DocumentAccessTablePaginationComponent {
+  isMembersAreaVisibal:boolean = false;
   caseId: string = '';
   isReadOnly: boolean = true;
   isLoading: boolean = true;
@@ -153,7 +154,7 @@ export class DocumentAccessTablePaginationComponent {
         name: 'K.S.C.Janith',
         email: 'test@gmail.com',
         role: USER_ROLE_ENUM.USER,
-        status: USER_STATUS_ENUM.DEACTIVE,
+        status: USER_STATUS_ENUM.DEACTIVATED,
         created_date: '202-10-27',
         profile_image: 'assets/images/profile/user-5.jpg'
       }
@@ -368,6 +369,7 @@ export class DocumentAccessTablePaginationComponent {
           console.log(documentId);
           console.log('documentId');
           this.isLoading = false;
+          this.isMembersAreaVisibal = true;
         },
         error: (error) => {
           this.fullPageLoaderService.setLoadingStatus(false);
@@ -382,6 +384,7 @@ export class DocumentAccessTablePaginationComponent {
           this.updatedUserIdMap = new Map();
           this.userCurrentMap = new Map();
           this.router.navigate(['/document-managemnt/document-upload']);
+          this.isMembersAreaVisibal = false;
         },
         complete: () => {
           this.fullPageLoaderService.setLoadingStatus(false);
@@ -409,6 +412,7 @@ export class DocumentAccessTablePaginationComponent {
 
 
   onOptionSelected(eventData: any){
+    this.isMembersAreaVisibal = false;
     console.log(eventData.option.value);
     this.selectedCase = eventData.option.value;
     this.caseId = this.selectedCase.id;

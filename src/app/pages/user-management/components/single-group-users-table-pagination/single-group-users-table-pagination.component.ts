@@ -95,7 +95,7 @@ export class SingleGroupUsersTablePaginationComponent implements AfterViewInit, 
         name: 'K.S.C.Janith',
         email: 'test@gmail.com',
         role: USER_ROLE_ENUM.USER,
-        status: USER_STATUS_ENUM.DEACTIVE,
+        status: USER_STATUS_ENUM.DEACTIVATED,
         created_date: '202-10-27',
         profile_image: 'assets/images/profile/user-5.jpg'
       },

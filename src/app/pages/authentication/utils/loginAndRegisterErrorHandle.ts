@@ -7,7 +7,7 @@ import { Response } from "src/app/common/interfaces/response.interface";
 export class LoginAndRegisterErrorHandlerUtil {
 
     static handleErrorAndGetAlertData(errorResponse: Response): ErrorSweetAlertData{
-        if(errorResponse.erroroCode === USER_STATUS_ENUM.DEACTIVE){
+        if(errorResponse.erroroCode === USER_STATUS_ENUM.DEACTIVATED){
             return {
                 position: "center",
                 text: 'Your account Deactivated by ADMIN',

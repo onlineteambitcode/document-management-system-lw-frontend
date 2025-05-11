@@ -173,7 +173,7 @@ export class UserProfileComponent {
     if(this.isReadOnly){
       return;
     }
-    this.alertService.confirmAlert("Are you sure?",`Do you want to save the changes?`,"warning",true,"No",true,"Yes, Proceed",false,this.submitForUpdate.bind(this))
+    this.alertService.confirmAlert("Are you sure?",`Do you want to save the changes?`,"warning",true,"No",true,"Yes, Proceed",false,this.isAdmin ? this.adminSubmitForUpdate.bind(this, this.userData.status) :(this.submitForUpdate.bind(this)))
   }
 
   submitForUpdate() {
@@ -224,7 +224,15 @@ export class UserProfileComponent {
       return;
     }
     const name = this.form.value.name;
-    this.alertService.confirmAlert("Are you sure?",`Do you want to deactivate this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",false,this.adminSubmitForUpdate.bind(this, USER_STATUS_ENUM.DEACTIVE))
+    this.alertService.confirmAlert("Are you sure?",`Do you want to deactivate this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",false,this.adminSubmitForUpdate.bind(this, USER_STATUS_ENUM.DEACTIVATED))
+  }
+
+  warnReactiveAccount(){
+    if(this.isReadOnly){
+      return;
+    }
+    const name = this.form.value.name;
+    this.alertService.confirmAlert("Are you sure?",`Do you want to Reactive this user : ${name}?`,"warning",true,"No",true,"Yes, Proceed",false,this.adminSubmitForUpdate.bind(this, USER_STATUS_ENUM.ACTIVE))
   }
 
   warnVerifyAccount(){
@@ -250,7 +258,8 @@ export class UserProfileComponent {
       name: this.form.value.name,
       email: this.form.value.email,
       mobileNumber: `+94${this.form.value.mobileNumber}`,
-      status: status
+      status: status,
+      role: this.form.value.role
     };
 
     // Use the API service to send the POST request
@@ -360,7 +369,8 @@ export class UserProfileComponent {
           ])
         }
       );
-    }
+    }else{
+
     this.form = new FormGroup(
       {
         name: new FormControl('', [
@@ -378,5 +388,6 @@ export class UserProfileComponent {
         ]),
       }
     );
+  }
   }
 }

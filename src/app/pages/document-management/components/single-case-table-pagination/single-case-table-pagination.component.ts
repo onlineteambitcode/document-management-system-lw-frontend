@@ -91,7 +91,6 @@ export class SingleCaseTablePaginationComponent {
   isReadOnly: boolean = true;
   isLoading: boolean = true;
   documentTableData: CaseDocumentData[] = [];
-  userTableData: UserData[] = [];
   displayedColumns: string[]  = ['select','document_name', 'action'];
   selection = new SelectionModel<CaseDocumentData>(true, []);
   enableDownloadSelected: boolean = false;
@@ -146,7 +145,7 @@ export class SingleCaseTablePaginationComponent {
         name: 'K.S.C.Janith',
         email: 'test@gmail.com',
         role: USER_ROLE_ENUM.USER,
-        status: USER_STATUS_ENUM.DEACTIVE,
+        status: USER_STATUS_ENUM.DEACTIVATED,
         created_date: '202-10-27',
         profile_image: 'assets/images/profile/user-5.jpg'
       }
@@ -209,89 +208,6 @@ export class SingleCaseTablePaginationComponent {
         this.loadCaseData();
       }
     });
-
-      this.userTableData = [
-        {
-          user_id: '1',
-          name: 'Dilupa Marasinghe',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.ADMIN,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-1.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '2',
-          name: 'Asith siriwardhana',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-2.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '3',
-          name: 'Kasun janaka',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-3.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '4',
-          name: 'Herath P.L.G',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-4.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '5',
-          name: 'K.S.C.Janith',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.DEACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-5.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '6',
-          name: 'Kamal Senath',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-6.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '7',
-          name: 'Lal Guruge',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-7.jpg',
-          mobileNumber: '+94712390348'
-        },
-        {
-          user_id: '8',
-          name: 'Sahan H.L.R',
-          email: 'test@gmail.com',
-          role: USER_ROLE_ENUM.USER,
-          status: USER_STATUS_ENUM.ACTIVE,
-          created_date: '202-10-27',
-          profile_image: 'assets/images/profile/user-8.jpg',
-          mobileNumber: '+94712390348'
-        },
-      ];
   }
   onToggleChange(){
     if(!this.isAdmin){

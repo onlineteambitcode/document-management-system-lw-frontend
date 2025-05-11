@@ -14,39 +14,7 @@
               </mat-autocomplete>
              </mat-form-field>
           </div>
-          <!-- <div class="col-md-6">
-              <mat-label class="mat-subtitle-2 f-s-14 f-w-600">Allow users or groups</mat-label>
-
-              <mat-form-field appearance="outline" class="w-100 m-b-0" color="primary">
-                  <mat-chip-grid #chipGrid aria-label="User or Group selection">
-                    @for (userOrGroup of usersOrGroups(); track userOrGroup.id) {
-                    <mat-chip-row (removed)="remove(userOrGroup)">
-
-                      <i-tabler *ngIf="userOrGroup.isGroup" style="color: rgb(10, 17, 219);fill: rgb(10, 17, 219);" name="users-group" class="icon-15">
-                      </i-tabler>
-                      <i-tabler *ngIf="!userOrGroup.isGroup" name="user" class="icon-15">
-                      </i-tabler>
-                      <span class="f-s-12">{{userOrGroup.name}}</span>
-                      <button matChipRemove [attr.aria-label]="'remove ' + userOrGroup.name">
-                        <mat-icon>cancel</mat-icon>
-                      </button>
-                    </mat-chip-row>
-                    }
-                  </mat-chip-grid>
-                  <input name="currentUserOrGroup.name"  #fruitInput
-                    [(ngModel)]="currentUserOrGroup" [matChipInputFor]="chipGrid" [matAutocomplete]="autoAllowUsersOrGroups"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" (matChipInputTokenEnd)="add($event)"
-                    (keydown.backspace)="handleBackspace()" />
-                  <mat-autocomplete #autoAllowUsersOrGroups="matAutocomplete" (optionSelected)="selected($event)">
-                    @for (filteredUserOrGroup of filteredUsersOrGroups(); track filteredUserOrGroup.id) {
-                    <mat-option [value]="filteredUserOrGroup">
-                      <app-user-thumbnail [item]="filteredUserOrGroup.isGroup ? filteredUserOrGroup : filteredUserOrGroup.user"
-                        [isGroup]="filteredUserOrGroup.isGroup"></app-user-thumbnail>
-                    </mat-option>
-                    }
-                  </mat-autocomplete>
-                </mat-form-field>
-          </div> -->
+         
 
         </div>
         @if(selectedCase){
@@ -153,7 +121,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div *ngIf="isMembersAreaVisibal" class="row">
               <div class="col-md-6">
                 <mat-card class="b-1 shadow-none">
                   <mat-card-header>
@@ -203,11 +171,11 @@
               </div>
           
         </div>
-        <mat-card-actions align="end">
+        <mat-card-actions align="start">
           <button type="button" (click)="clickBack()"  mat-stroked-button color="warn" class="m-r-10">
             <mat-icon style=" font-size: 1.4rem;">arrow_back</mat-icon>
             Back</button>
-          <button [disabled]="!selectedCase" mat-flat-button color="primary" class="m-r-8">Save This</button>
+          <!-- <button [disabled]="!selectedCase" mat-flat-button color="primary" class="m-r-8">Save This</button> -->
         </mat-card-actions>
           }
         }

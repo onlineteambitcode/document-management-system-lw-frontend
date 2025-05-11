@@ -95,7 +95,7 @@
 
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
-                        <mat-label *ngIf="isUserProfile">
+                        <mat-label *ngIf="isUserProfile && (!isAdmin)">
                             <span
                                 [ngClass]="{'bg-light-error text-error': userData.role === 'ADMIN', 'bg-light-warning text-warning' : userData.role === 'USER'}"
                                 class="rounded f-w-600 p-6 m-t-4 p-y-4 f-s-12 m-r-2">
@@ -103,7 +103,7 @@
                             </span>
 
                         </mat-label>
-                        <mat-form-field *ngIf="!isUserProfile" appearance="outline" class="w-50">
+                        <mat-form-field *ngIf="isAdmin" appearance="outline" class="w-50">
                             <mat-select formControlName="role" [(value)]="selectedRole">
                                 @for(option of role; track option.value) {
                                 <mat-option [value]="option.value">{{
@@ -180,8 +180,9 @@
                     @if(isUserProfile && userData.status === 'ADMIN_VERIFICATION_PENDING') {
                     <button class="m-r-8 verify-button" *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly"
                         mat-stroked-button color="accent" (click)="warnVerifyAccount()" >Verify Account</button>
-                    }@else if(isUserProfile && userData.status === 'DEACTIVE') {
-
+                    }@else if(isUserProfile && userData.status === 'DEACTIVATED') {
+                    <button *ngIf="isAdmin && isUserProfile" class="mat-success" [disabled]="isReadOnly" mat-flat-button
+                        color="success" (click)="warnReactiveAccount()">Reactivate</button>
                     }@else{
                     <button *ngIf="!isUserProfile" [disabled]="form.invalid  || isReadOnly" mat-flat-button
                         color="primary" class="m-r-8" (click)="clickCreateUser()">Create User</button>
@@ -193,8 +194,12 @@
                     <button class="m-r-8" *ngIf="isUserProfile" [disabled]="isReadOnly" (click)="loadUserData()"
                         mat-stroked-button color="warn">Revert changes</button>
                     }
-                    <button *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly" mat-flat-button
-                        color="warn" (click)="warnDeactiveAccount()">Deactivate</button>
+
+                    @if(isUserProfile && userData.status !== 'DEACTIVATED') {
+                        <button *ngIf="isAdmin && isUserProfile" [disabled]="isReadOnly" mat-flat-button
+                            color="warn" (click)="warnDeactiveAccount()">Deactivate</button>
+                        }
+
                 </div>
             </form>
         </mat-card-content>

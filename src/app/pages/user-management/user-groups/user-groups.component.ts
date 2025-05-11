@@ -54,7 +54,7 @@ export class UserGroupsComponent {
         name: 'CASE_2024_NOV_2_USER_GROUP',
         permission: USER_ROLE_ENUM.USER,
         count: 10,
-        status: USER_STATUS_ENUM.DEACTIVE,
+        status: USER_STATUS_ENUM.DEACTIVATED,
         created_date: '202-10-27'
       }
     ];
