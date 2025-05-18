@@ -1,11 +1,6 @@
 <div class="row justify-content-between m-l-4 m-r-4">
     <div class="col d-flex align-items-center">
-        <span *ngIf="showLabels && isNew" class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2">
-            New
-        </span>
-        <span *ngIf="showLabels && isRemoved" class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-r-2">
-            New
-        </span>
+  
         <button mat-fab extended color="inherit" aria-label="Notifications"
             class="d-flex justify-content-center profile-btn-dd">
             <ng-container *ngIf="isGroup">
@@ -30,6 +25,9 @@
                 [style.color]="iconColor" [name]="iconName" class="icon-22">
             </i-tabler>
         </div>
-
+        
+        <span  *ngIf="showLabels && isNew" class="bg-light-error text-error rounded f-w-600 p-6 p-y-4 f-s-12 m-l-6">
+            Not Saved
+        </span>
     </div>
 </div>

@@ -95,7 +95,7 @@
 
                     <div class="col-lg-6">
                         <mat-label class="f-w-600 m-b-8 d-block">Role</mat-label>
-                        <mat-label *ngIf="isUserProfile && (!isAdmin)">
+                        <mat-label *ngIf="isUserProfile && userData.user_id == userId">
                             <span
                                 [ngClass]="{'bg-light-error text-error': userData.role === 'ADMIN', 'bg-light-warning text-warning' : userData.role === 'USER'}"
                                 class="rounded f-w-600 p-6 m-t-4 p-y-4 f-s-12 m-r-2">
@@ -103,7 +103,7 @@
                             </span>
 
                         </mat-label>
-                        <mat-form-field *ngIf="isAdmin" appearance="outline" class="w-50">
+                        <mat-form-field *ngIf="isUserProfile && (userData.user_id != userId) && isAdmin" appearance="outline" class="w-50">
                             <mat-select formControlName="role" [(value)]="selectedRole">
                                 @for(option of role; track option.value) {
                                 <mat-option [value]="option.value">{{
@@ -191,7 +191,7 @@
 
                     <button *ngIf="!isUserProfile" [disabled]="isReadOnly" mat-stroked-button
                         color="warn">Clear</button>
-                    <button class="m-r-8" *ngIf="isUserProfile" [disabled]="isReadOnly" (click)="loadUserData()"
+                    <button class="m-r-8" *ngIf="isUserProfile && form['dirty']" [disabled]="isReadOnly" (click)="loadUserData()"
                         mat-stroked-button color="warn">Revert changes</button>
                     }
 

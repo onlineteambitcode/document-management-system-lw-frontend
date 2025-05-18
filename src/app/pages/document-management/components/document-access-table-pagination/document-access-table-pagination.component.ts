@@ -87,7 +87,7 @@ export class DocumentAccessTablePaginationComponent {
   myControl = new FormControl<string | CaseData>('');
   filteredOptions: Observable<CaseData[]>;
   selectedCase: CaseData;
-  isAdmin: boolean = true;
+  isAdmin: boolean = false;
   tableData: CaseDocumentData[] = [];
   selectData: CaseData[] = [];
   userTableDataAllowed: UserData[] = [];
@@ -103,6 +103,7 @@ export class DocumentAccessTablePaginationComponent {
   caseDescription = 'Test description'
   isUpload: boolean = false;
   updatedUserIdMap: Map<string, ITEM_STATUS> = new Map();
+  tempUpdatedUserIdMap: Map<string, ITEM_STATUS> = new Map();
   userCurrentMap: Map<string, UserData> = new Map();
   currentSelectedDocumentId: string = '';
   readonly deleteConfirmDialog = inject(MatDialog);
@@ -205,6 +206,7 @@ export class DocumentAccessTablePaginationComponent {
       switchMap((value) => this.searchCases(value as string)) // Call the API with the input value
     );
 
+    this.isAdmin = this.authService.hasRole(USER_ROLE_ENUM.ADMIN);
 
   }
 
@@ -352,6 +354,7 @@ export class DocumentAccessTablePaginationComponent {
     }
     this.isReadOnly = (!PermittedRoleToEdit.hasCommonEditPermission(this.authService));
     this.updatedUserIdMap = new Map();
+    this.tempUpdatedUserIdMap = new Map();
     this.fullPageLoaderService.setLoadingStatus(true);
 
     // Use the API service to send the POST request
@@ -362,7 +365,9 @@ export class DocumentAccessTablePaginationComponent {
           this.userTableDataAllowed = response.data;
           this.userTableDataAllowed.forEach(element => {
             this.updatedUserIdMap.set(element.user_id.toString(), ITEM_STATUS.CURRENT);
+            this.tempUpdatedUserIdMap.set(element.user_id.toString(), ITEM_STATUS.CURRENT);
             this.userCurrentMap.set(element.user_id, element);
+            element.user_id = element.user_id+"";
           });
           RandomColor.getConsitantRandomColorPerUser(this.userTableDataAllowed, true);
           console.log('documentId');
@@ -382,6 +387,7 @@ export class DocumentAccessTablePaginationComponent {
             this.alertService.errorAlert('center', 'Error while document access details', '', 3000, false, '', false);
           }
           this.updatedUserIdMap = new Map();
+          this.tempUpdatedUserIdMap = new Map();
           this.userCurrentMap = new Map();
           this.router.navigate(['/document-managemnt/document-upload']);
           this.isMembersAreaVisibal = false;
@@ -450,7 +456,7 @@ export class DocumentAccessTablePaginationComponent {
     if(!this.updatedUserIdMap.has(userId)){
       this.updatedUserIdMap.set(userId, ITEM_STATUS.NEW);
     }
-    this.updateUserDocumentAccess();
+    // this.updateUserDocumentAccess();
   }
 
   removeUserFromAllowedList(user: UserData){
@@ -465,7 +471,11 @@ export class DocumentAccessTablePaginationComponent {
       this.updatedUserIdMap.set(userId, ITEM_STATUS.REMOVED);
     }
     }
-    this.updateUserDocumentAccess();
+    // this.updateUserDocumentAccess();
+  }
+
+  saveChanges(){
+    this.alertService.confirmAlert("Are you sure?", `Update access?`, "warning", true, "No", true, "Yes, Proceed", false, this.updateUserDocumentAccess.bind(this))
   }
 
   updateUserDocumentAccess(): void{
@@ -482,6 +492,7 @@ export class DocumentAccessTablePaginationComponent {
           console.log('Document access modification successfull:', response);
           this.alertService.successToster('top-end', 'The document access settings have been updated successfully', 5000);
           this.isLoading = false;
+          this.loadAllowedUsers(selectedDocumentId);
         },
         error: (error) => {
           this.fullPageLoaderService.setLoadingStatus(false);

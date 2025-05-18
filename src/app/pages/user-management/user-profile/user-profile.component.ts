@@ -298,7 +298,8 @@ export class UserProfileComponent {
       console.error('User Id is invalid');
       return;
     }
-    this.isUserProfile = true;
+    if(this.isAdmin || (this.authService.getLogedInUserId() === this.userId)){
+      this.isUserProfile = true;
 
     this.fullPageLoaderService.setLoadingStatus(true);
 
@@ -339,6 +340,8 @@ export class UserProfileComponent {
         },
       }
     );
+    }
+    
   }
 
   showHideConfirmPassword(){

@@ -135,9 +135,8 @@
                         <mat-list-item class="mat-list-item-hover"
                           *cdkVirtualFor="let userItem of userTableDataNotAllowed | userFilterByAccessStatus:updatedUserIdMap:true | userFilter: filterText; trackBy: trackByUserId">
                           <div class="row justify-content-between m-l-4 m-r-4">
-                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="true" [iconName]="'circle-minus'"
+                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="isAdmin" [iconName]="'circle-minus'" [showLabels]="updatedUserIdMap.get(userItem.user_id+'') !== 'CURRENT'" [isNew]="true"
                               [iconColor]="'rgb(219, 10, 59)'" (clickActionIcon)="removeAccessWarn($event)"></app-user-thumbnail>
-              
                           </div>
                         </mat-list-item>
                       </mat-list>
@@ -158,9 +157,8 @@
                         <mat-list-item
                           *cdkVirtualFor="let userItem of userTableDataNotAllowed  | userFilterByAccessStatus:updatedUserIdMap:false | userFilter: filterText; trackBy: trackByUserId">
                           <div class="row justify-content-between m-l-4 m-r-4">
-                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="true" [iconName]="'circle-plus'"
+                            <app-user-thumbnail [item]="userItem" [hasActionIcon]="isAdmin" [iconName]="'circle-plus'" [showLabels]="updatedUserIdMap.get(userItem.user_id+'') === 'REMOVED'" [isNew]="true"
                               [iconColor]="'rgb(10, 17, 219)'" (clickActionIcon)="giveAccessWarn($event)"></app-user-thumbnail>
-              
                           </div>
                         </mat-list-item>
                       </mat-list>
@@ -175,7 +173,7 @@
           <button type="button" (click)="clickBack()"  mat-stroked-button color="warn" class="m-r-10">
             <mat-icon style=" font-size: 1.4rem;">arrow_back</mat-icon>
             Back</button>
-          <!-- <button [disabled]="!selectedCase" mat-flat-button color="primary" class="m-r-8">Save This</button> -->
+          <button *ngIf="isAdmin" [disabled]="!selectedCase" (click)="saveChanges()" mat-flat-button color="primary" class="m-r-8">Save Changes</button>
         </mat-card-actions>
           }
         }

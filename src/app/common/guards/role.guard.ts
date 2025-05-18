@@ -14,6 +14,9 @@ export class RoleGuard implements CanActivate {
     if (this.authService.isLoggedIn() && this.authService.hasRole(expectedRole)) {
       return true;
     }
+    if(this.authService.getIsReadOnlyAdmin()){
+      return true;
+    }
     this.router.navigate(['/unauthorized']); // Redirect to unauthorized page
     return false;
   }
