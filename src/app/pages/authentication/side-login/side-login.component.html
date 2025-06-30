@@ -1,4 +1,4 @@
-<ng-container *ngIf="isLoginEnable">
+<ng-container *ngIf="isLoginEnable && isLoginPage">
   <div class="blank-layout-container justify-content-center align-items-center bg-light">
     <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
       <div class="col-lg-4 d-flex align-items-center">
@@ -55,7 +55,7 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="isResetPasswordEnable">
+<ng-container *ngIf="isResetPasswordEnable && isLoginPage">
   <div class="blank-layout-container justify-content-center align-items-center bg-light">
     <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
       <div class="col-lg-4 d-flex align-items-center">
@@ -95,12 +95,12 @@
   </div>
 </ng-container>
 
-<ng-container *ngIf="isOtpEnable">
+<ng-container *ngIf="isOtpEnable && isLoginPage">
  
 <app-otp (otpVerifyEvent)="onOtpVerifyEvent($event)" [otpType]="otpType"></app-otp>
 </ng-container>
 
 
-<ng-container *ngIf="isFrogetPasswordEnable">
-  <app-password-reset (passwordRestOutputEvent)="onPasswordRestOutputEvent($event)" ></app-password-reset>
+<ng-container *ngIf="isFrogetPasswordEnable || !isLoginPage">
+  <app-password-reset [isLoginPage]="isLoginPage" (passwordRestOutputEvent)="onPasswordRestOutputEvent($event)" ></app-password-reset>
 </ng-container>

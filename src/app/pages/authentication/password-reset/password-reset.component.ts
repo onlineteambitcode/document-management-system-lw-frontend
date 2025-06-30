@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpCommonApiModule } from 'src/app/common/modules/http-api.module';
@@ -23,6 +23,7 @@ import { FullPageLoaderService } from 'src/app/common/services/full-page-loader.
   styleUrl: './password-reset.component.scss'
 })
 export class PasswordResetComponent {
+@Input() isLoginPage: boolean = true;
 @Output() passwordRestOutputEvent = new EventEmitter<boolean>();
 form: FormGroup;
 constructor(
@@ -74,7 +75,7 @@ constructor(
             error: (error) => {
               this.fullPageLoaderService.setLoadingStatus(false);
               console.error('Password rest failed:', error);
-              this.alertService.errorAlert('center', 'Password rest failed', '',3000,false,'',false);
+              this.alertService.errorAlert('center', 'Password rest failed', error.error.message,3000,false,'',false);
               this.passwordRestOutputEvent.emit(false);
 
     

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -40,6 +40,7 @@ import { PasswordResetComponent } from '../password-reset/password-reset.compone
   templateUrl: './side-login.component.html',
 })
 export class AppSideLoginComponent {
+  @Input() isLoginPage: boolean = true;
   hidePassword: boolean = true;
   otpType: OTP_TYPE = OTP_TYPE.LOGIN_OTP_PENDING;
   isLoginEnable:boolean = true;
@@ -260,7 +261,11 @@ export class AppSideLoginComponent {
   onPasswordRestOutputEvent(eventData: boolean){
     console.log(eventData);
     if(eventData){
+      if(this.isLoginPage){
       this.backToLogin();
+      }else{
+        this.alertService.successAlert('center','Password updated success','',3000,true,true,true);
+      }
     }
   }
 

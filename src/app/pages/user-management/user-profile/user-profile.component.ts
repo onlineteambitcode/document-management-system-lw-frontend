@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -22,6 +22,8 @@ import { USER_ROLE_ENUM, USER_STATUS_ENUM } from 'src/app/common/enums/user.enum
 import { AuthService } from 'src/app/common/services/auth.service';
 import { PermittedRoleToEdit } from 'src/app/common/utils/permitted-role-to-edit.util';
 import { ContentLoaderComponent } from 'src/app/common/components/content-loader/content-loader.component';
+import { AppSideLoginComponent } from '../../authentication/side-login/side-login.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 interface ISelectKeyValue {
   value: string;
@@ -42,12 +44,15 @@ interface ISelectKeyValue {
     MatInputModule,
     MaterialModule,
     HttpCommonApiModule,
-    ContentLoaderComponent],
+    MatExpansionModule,
+    ContentLoaderComponent,
+    AppSideLoginComponent],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
   providers: [ComponentApiService, AuthService]
 })
 export class UserProfileComponent {
+  readonly panelOpenState = signal(false);
   isLoading: boolean = true;
   userId:string = '';
   isUserProfile: boolean = false;

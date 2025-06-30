@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocument_management_system_lw_frontend=self.webpackChunkdocument_management_system_lw_frontend||[]).push([[76],{356:(o,n,s)=>{s.d(n,{q:()=>r});var t=s(5505);class r{static hasProfileEditPermission(e,u){return!!e.hasRole(t.N.ADMIN)||!!e.isMyLogedInId(u.user_id)}static hasCommonEditPermission(e){return!!e.hasRole(t.N.ADMIN)}}}}]);

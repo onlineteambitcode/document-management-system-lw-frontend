@@ -42,10 +42,17 @@
                 <mat-card-title class="mat-mdc-card-title">
                     Change Password
                 </mat-card-title>
-                <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
-                    To change your password please confirm here
-
+                <mat-accordion>
+                <mat-expansion-panel hideToggle>
+                    <mat-expansion-panel-header>
+                    <mat-card-subtitle class="mat-mdc-card-subtitle mat-body-1">
+                    Tap here to change your password
                 </mat-card-subtitle>
+                    </mat-expansion-panel-header>
+                    <app-side-login [isLoginPage]="false"></app-side-login>
+                </mat-expansion-panel>
+        
+                </mat-accordion>
 
             </mat-card-content></mat-card>
     </div>
